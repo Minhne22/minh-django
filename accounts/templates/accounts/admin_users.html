@@ -1,0 +1,113 @@
+<h3>👤 Quản lý Users</h3>
+
+<!-- Hiển thị thông báo -->
+<div id="message" class="alert" style="display: none;"></div>
+
+<!-- Form thêm user -->
+<form id="addUserForm" class="mb-3">
+    {% csrf_token %}
+    <div class="mb-2">
+        <label>Username:</label>
+        <input type="text" name="username" class="form-control" required>
+    </div>
+    <div class="mb-2">
+        <label>Password:</label>
+        <input type="password" name="password" class="form-control" required>
+    </div>
+    <div class="mb-2">
+        <label>Role:</label>
+        <select name="role" class="form-control">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">➕ Add User</button>
+</form>
+
+<!-- Hiển thị danh sách user -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="userTable">
+        {% for user in users %}
+        <tr id="userRow-{{ user.username }}">
+            <td>{{ user.username }}</td>
+            <td id="role-{{ user.username }}">{{ user.role }}</td>
+            <td>
+                <button class="btn btn-warning btn-sm change-role" data-username="{{ user.username }}">🔄 Đổi quyền</button>
+                <button class="btn btn-danger btn-sm delete-user" data-username="{{ user.username }}">❌ Xóa</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        // Xử lý thêm user
+        $("#addUserForm").submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: "{% url 'add_user' %}",
+                type: "POST",
+                data: $(this).serialize(),
+                success: function (response) {
+                    $("#message").removeClass("alert-danger").addClass("alert-success")
+                        .text("User added successfully!").show();
+
+                    let username = $("input[name='username']").val();
+                    let role = $("select[name='role']").val();
+                    let newRow = `<tr id="userRow-${username}">
+                        <td>${username}</td>
+                        <td id="role-${username}">${role}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm change-role" data-username="${username}">🔄 Đổi quyền</button>
+                            <button class="btn btn-danger btn-sm delete-user" data-username="${username}">❌ Xóa</button>
+                        </td>
+                    </tr>`;
+                    $("#userTable").append(newRow);
+                    $("#addUserForm")[0].reset();
+                },
+                error: function (xhr) {
+                    $("#message").removeClass("alert-success").addClass("alert-danger")
+                        .text(xhr.responseJSON.error).show();
+                }
+            });
+        });
+
+        // Xử lý đổi quyền user
+        $(document).on("click", ".change-role", function () {
+            let username = $(this).data("username");
+            $.ajax({
+                url: `/admin-dashboard/change-role/${username}/`,
+                type: "GET",
+                success: function (response) {
+                    $(`#role-${username}`).text(response.new_role);
+                },
+                error: function (xhr) {
+                    alert(xhr.responseJSON.error);
+                }
+            });
+        });
+
+        // Xử lý xóa user
+        $(document).on("click", ".delete-user", function () {
+            let username = $(this).data("username");
+            $.ajax({
+                url: `/admin-dashboard/delete-user/${username}/`,
+                type: "GET",
+                success: function () {
+                    $(`#userRow-${username}`).remove();
+                },
+                error: function (xhr) {
+                    alert(xhr.responseJSON.error);
+                }
+            });
+        });
+    });
+</script>
