@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from accounts.views import login_view, logout_view, register_view, admin_dashboard, user_dashboard, admin_comments, admin_links, admin_tokens, dashboard_comments, dashboard_links, dashboard_tokens, manage_users, delete_user, change_role, add_user
+from accounts.views import login_view, logout_view, register_view, admin_dashboard, user_dashboard, admin_comments, admin_links, admin_tokens, dashboard_comments, dashboard_links, dashboard_tokens, manage_users, delete_user, change_role, add_user, \
+    get_links, toggle_link, delete_link, add_link, \
+        admin_proxies, get_proxies, add_proxy, delete_proxy, toggle_proxy
 
 
 urlpatterns = [
@@ -38,4 +40,14 @@ urlpatterns = [
     path("admin-dashboard/delete-user/<str:username>/", delete_user, name="delete_user"),
     path("admin-dashboard/change-role/<str:username>/", change_role, name="change_role"),
     path("admin-dashboard/add-user/", add_user, name="add_user"),
+    path("admin-dashboard/get_links/", get_links, name="get_links"),
+    path("admin-dashboard/toggle_link/", toggle_link, name="toggle_link"),
+    path("admin-dashboard/delete_link/", delete_link, name="delete_link"),
+    path("admin-dashboard/add_link/", add_link, name="add_link"),
+    path("admin-dashboard/proxies/", admin_proxies, name="admin_proxies"),
+    path("admin-dashboard/api/get_proxies/", get_proxies, name="get_proxies"),
+    path("admin-dashboard/api/add_proxy/", add_proxy, name="add_proxy"),
+    path("admin-dashboard/api/delete_proxy/", delete_proxy, name="delete_proxy"),
+    path("admin-dashboard/api/toggle_proxy/", toggle_proxy, name="toggle_proxy"),
+
 ]

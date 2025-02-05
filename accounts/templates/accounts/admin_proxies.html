@@ -1,0 +1,127 @@
+<h3>🖧 Quản lý Proxy</h3>
+
+<!-- Nhập proxy mới -->
+<div>
+    <input type="text" id="newProxy" placeholder="Nhập proxy (ip:port hoặc ip:port:user:pass)" class="form-control" />
+    <button id="addProxy" class="btn btn-success mt-2">➕ Thêm Proxy</button>
+</div>
+
+<!-- Hiển thị danh sách proxy -->
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>IP</th>
+            <th>Port</th>
+            <th>User</th>
+            <th>Pass</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody id="proxyTable"></tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        function loadProxies() {
+            $.ajax({
+                url: "{% url 'get_proxies' %}",
+                type: "GET",
+                success: function (response) {
+                    let rows = "";
+                    response.proxies.forEach((proxy, index) => {
+                        let isActive = proxy.status === "active";
+                        let statusText = isActive ? "🟢 Hoạt động" : "🔴 Tắt";
+                        let buttonText = isActive ? "⛔ Tắt" : "✅ Bật";
+                        let buttonClass = isActive ? "btn-warning" : "btn-success";
+
+                        rows += `<tr id="proxyRow-${index}">
+                            <td>${index + 1}</td>
+                            <td>${proxy.ip}</td>
+                            <td>${proxy.port}</td>
+                            <td>${proxy.username || "—"}</td>
+                            <td>${proxy.password ? "🔒" : "—"}</td>
+                            <td id="status-${index}">${statusText}</td>
+                            <td>
+                                <button class="btn ${buttonClass} btn-sm toggle-proxy" 
+                                        data-ip="${proxy.ip}" data-port="${proxy.port}" data-index="${index}">
+                                    ${buttonText}
+                                </button>
+                                <button class="btn btn-danger btn-sm delete-proxy" 
+                                        data-ip="${proxy.ip}" data-port="${proxy.port}" data-index="${index}">
+                                    ❌ Xóa
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+                    $("#proxyTable").html(rows);
+                }
+            });
+        }
+
+        loadProxies(); // Load danh sách proxy khi trang mở
+
+        // Thêm proxy mới
+        $("#addProxy").click(function () {
+            let proxyInput = $("#newProxy").val().trim();
+            if (!proxyInput) {
+                alert("Vui lòng nhập proxy!");
+                return;
+            }
+
+            $.ajax({
+                url: "{% url 'add_proxy' %}",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ "proxy": proxyInput, "csrfmiddlewaretoken": "{{ csrf_token }}" }),
+                success: function () {
+                    $("#newProxy").val(""); // Xóa input sau khi thêm
+                    loadProxies(); // Load lại danh sách
+                },
+                error: function (response) {
+                    alert(response.responseJSON.error);
+                }
+            });
+        });
+
+        // Bật/Tắt proxy
+        $(document).on("click", ".toggle-proxy", function () {
+            let ip = $(this).data("ip");
+            let port = $(this).data("port");
+            let index = $(this).data("index");
+            let button = $(this);
+
+            $.ajax({
+                url: "{% url 'toggle_proxy' %}",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ "ip": ip, "port": port, "csrfmiddlewaretoken": "{{ csrf_token }}" }),
+                success: function (response) {
+                    let isActive = response.new_status === "active";
+                    $(`#status-${index}`).text(isActive ? "🟢 Hoạt động" : "🔴 Tắt");
+
+                    button.toggleClass("btn-warning btn-success")
+                          .text(isActive ? "⛔ Tắt" : "✅ Bật");
+                }
+            });
+        });
+
+        // Xóa proxy
+        $(document).on("click", ".delete-proxy", function () {
+            let ip = $(this).data("ip");
+            let port = $(this).data("port");
+            let index = $(this).data("index");
+
+            $.ajax({
+                url: "{% url 'delete_proxy' %}",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ "ip": ip, "port": port, "csrfmiddlewaretoken": "{{ csrf_token }}" }),
+                success: function () {
+                    $(`#proxyRow-${index}`).remove();
+                }
+            });
+        });
+    });
+</script>

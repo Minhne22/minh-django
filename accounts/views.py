@@ -8,9 +8,12 @@ import myproject.settings as settings
 import bcrypt
 from django.contrib.auth.decorators import login_required
 from werkzeug.security import generate_password_hash, check_password_hash
+import json
 
 users_collection = settings.users_collection
-
+fb_detail = settings.client['fb_cmt_manage']
+links_collection = fb_detail['facebook_links']
+proxies_collection = fb_detail['proxies']
 
 @csrf_exempt
 def login_view(request):
@@ -19,6 +22,9 @@ def login_view(request):
         password = request.POST.get("password")
 
         user = users_collection.find_one({"username": username})
+        # print(user['password'])
+        # print(password)
+        # print(generate_password_hash(password))
         if user and check_password_hash(user["password"], password):
             # Lưu session
             request.session["user_id"] = str(user["_id"])
@@ -129,3 +135,104 @@ def add_user(request):
         return JsonResponse({"success": True})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+def get_links(request):
+    """Lấy danh sách links từ MongoDB"""
+    links = list(links_collection.find({}, {"_id": 0, "url": 1, "status": 1}))  # Lấy URL + Trạng thái
+    return JsonResponse({"links": links})
+
+def toggle_link(request):
+    """Chuyển trạng thái ẩn/hiện của link"""
+    if request.method == "POST":
+        url = request.POST.get("url")
+        link = links_collection.find_one({"url": url})
+
+        if link:
+            new_status = "active" if link["status"] == "hidden" else "hidden"
+            links_collection.update_one({"url": url}, {"$set": {"status": new_status}})
+            return JsonResponse({"success": True, "new_status": new_status})
+
+    return JsonResponse({"error": "Link không tồn tại"}, status=400)
+
+
+def delete_link(request):
+    """Xóa link khỏi MongoDB"""
+    if request.method == "POST":
+        url = request.POST.get("url")
+        links_collection.delete_one({"url": url})
+        return JsonResponse({"success": True})
+
+def add_link(request):
+    """Thêm link mới vào MongoDB"""
+    if request.method == "POST":
+        url = request.POST.get("url")
+
+        # Kiểm tra link đã tồn tại chưa
+        if links_collection.find_one({"url": url}):
+            return JsonResponse({"error": "Link đã tồn tại!"}, status=400)
+
+        # Thêm link vào database
+        links_collection.insert_one({"url": url, "status": "active"})
+        return JsonResponse({"success": True, "url": url})
+
+
+def admin_proxies(request):
+    """Render trang quản lý proxy"""
+    return render(request, "accounts/admin_proxies.html")
+
+@csrf_exempt
+def get_proxies(request):
+    """Lấy danh sách proxy từ MongoDB"""
+    proxies = list(proxies_collection.find({}, {"_id": 0}))
+    return JsonResponse({"proxies": proxies})
+
+@csrf_exempt
+def add_proxy(request):
+    """Thêm proxy mới"""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        proxy_input = data.get("proxy")
+
+        parts = proxy_input.split(":")
+        if len(parts) not in [2, 4]:  # Chỉ chấp nhận ip:port hoặc ip:port:user:pass
+            return JsonResponse({"error": "Định dạng proxy không hợp lệ!"}, status=400)
+
+        proxy_data = {
+            "ip": parts[0],
+            "port": parts[1],
+            "username": parts[2] if len(parts) == 4 else "",
+            "password": parts[3] if len(parts) == 4 else "",
+            "status": "active"
+        }
+
+        # Kiểm tra trùng lặp
+        if proxies_collection.find_one({"ip": proxy_data["ip"], "port": proxy_data["port"]}):
+            return JsonResponse({"error": "Proxy đã tồn tại!"}, status=400)
+
+        proxies_collection.insert_one(proxy_data)
+        return JsonResponse({"success": True, "proxy": proxy_data})
+
+@csrf_exempt
+def delete_proxy(request):
+    """Xóa proxy"""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        ip, port = data.get("ip"), data.get("port")
+
+        proxies_collection.delete_one({"ip": ip, "port": port})
+        return JsonResponse({"success": True})
+
+@csrf_exempt
+def toggle_proxy(request):
+    """Bật/Tắt proxy"""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        ip, port = data.get("ip"), data.get("port")
+
+        proxy = proxies_collection.find_one({"ip": ip, "port": port})
+        if proxy:
+            new_status = "inactive" if proxy["status"] == "active" else "active"
+            proxies_collection.update_one({"ip": ip, "port": port}, {"$set": {"status": new_status}})
+            return JsonResponse({"success": True, "new_status": new_status})
+
+    return JsonResponse({"error": "Proxy không tồn tại"}, status=400)

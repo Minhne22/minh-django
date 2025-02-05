@@ -1,2 +1,89 @@
-<h3>🔗 Quản lý Links</h3>
-<p>Danh sách link sẽ hiển thị ở đây.</p>
+<h3>🔗 Danh sách Links</h3>
+
+<!-- Bảng hiển thị links -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>URL</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody id="linksTable"></tbody>
+</table>
+
+<script>
+    $(document).ready(function () {
+        function loadLinks() {
+            $.ajax({
+                url: "{% url 'get_links' %}",
+                type: "GET",
+                success: function (response) {
+                    let rows = "";
+                    response.links.forEach((link, index) => {
+                        let isHidden = link.status === "hidden";
+                        let statusText = isHidden ? "🚫 Ẩn" : "✅ Hiện";
+                        let buttonText = isHidden ? "👁 Hiện" : "🚫 Ẩn";
+                        let buttonClass = isHidden ? "btn-success" : "btn-warning";
+
+                        rows += `<tr id="linkRow-${index}">
+                            <td>${index + 1}</td>
+                            <td>${link.url}</td>
+                            <td id="status-${index}">${statusText}</td>
+                            <td>
+                                <button class="btn ${buttonClass} btn-sm toggle-link" 
+                                        data-url="${link.url}" data-index="${index}">
+                                    ${buttonText}
+                                </button>
+                                <button class="btn btn-danger btn-sm delete-link" 
+                                        data-url="${link.url}" data-index="${index}">
+                                    ❌ Xóa
+                                </button>
+                            </td>
+                        </tr>`;
+                    });
+                    $("#linksTable").html(rows);
+                }
+            });
+        }
+
+        loadLinks(); // Load dữ liệu khi trang mở
+
+        // Toggle Ẩn/Hiện
+        $(document).on("click", ".toggle-link", function () {
+            let url = $(this).data("url");
+            let index = $(this).data("index");
+            let button = $(this);
+
+            $.ajax({
+                url: "{% url 'toggle_link' %}",
+                type: "POST",
+                data: { "url": url, "csrfmiddlewaretoken": "{{ csrf_token }}" },
+                success: function (response) {
+                    let isHidden = response.new_status === "hidden";
+                    $(`#status-${index}`).text(isHidden ? "🚫 Ẩn" : "✅ Hiện");
+
+                    // Cập nhật nút
+                    button.toggleClass("btn-warning btn-success")
+                          .text(isHidden ? "👁 Hiện" : "🚫 Ẩn");
+                }
+            });
+        });
+
+        // Xóa link
+        $(document).on("click", ".delete-link", function () {
+            let url = $(this).data("url");
+            let index = $(this).data("index");
+
+            $.ajax({
+                url: "{% url 'delete_link' %}",
+                type: "POST",
+                data: { "url": url, "csrfmiddlewaretoken": "{{ csrf_token }}" },
+                success: function () {
+                    $(`#linkRow-${index}`).remove();
+                }
+            });
+        });
+    });
+</script>
