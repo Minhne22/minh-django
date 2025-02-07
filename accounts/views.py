@@ -9,6 +9,7 @@ import bcrypt
 from django.contrib.auth.decorators import login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
+from datetime import datetime
 
 users_collection = settings.users_collection
 fb_detail = settings.client['fb_cmt_manage']
@@ -137,44 +138,79 @@ def add_user(request):
     return JsonResponse({"error": "Invalid request"}, status=400)
 
 def get_links(request):
-    """Lấy danh sách links từ MongoDB"""
-    links = list(links_collection.find({}, {"_id": 0, "url": 1, "status": 1}))  # Lấy URL + Trạng thái
+    """Lấy danh sách link"""
+    links = list(links_collection.find({}, {"_id": 0}))
     return JsonResponse({"links": links})
 
-def toggle_link(request):
-    """Chuyển trạng thái ẩn/hiện của link"""
-    if request.method == "POST":
-        url = request.POST.get("url")
-        link = links_collection.find_one({"url": url})
-
-        if link:
-            new_status = "active" if link["status"] == "hidden" else "hidden"
-            links_collection.update_one({"url": url}, {"$set": {"status": new_status}})
-            return JsonResponse({"success": True, "new_status": new_status})
-
-    return JsonResponse({"error": "Link không tồn tại"}, status=400)
-
-
-def delete_link(request):
-    """Xóa link khỏi MongoDB"""
-    if request.method == "POST":
-        url = request.POST.get("url")
-        links_collection.delete_one({"url": url})
-        return JsonResponse({"success": True})
-
+@csrf_exempt
 def add_link(request):
-    """Thêm link mới vào MongoDB"""
+    """Thêm link mới (Lấy thông tin từ backend)"""
     if request.method == "POST":
-        url = request.POST.get("url")
+        data = json.loads(request.body)
+        post_id = data.get("post_id")
 
-        # Kiểm tra link đã tồn tại chưa
-        if links_collection.find_one({"url": url}):
-            return JsonResponse({"error": "Link đã tồn tại!"}, status=400)
+        # Giả lập dữ liệu lấy từ backend
+        new_link = {
+            "time_created": datetime.now().strftime("%H:%M:%S %Y/%m/%d"),
+            "post_id": post_id,
+            "post_name": f"Tiêu đề bài {post_id}",
+            "content": f"Nội dung bài {post_id}",
+            "last_comment_time": "10h",
+            "comment_count": 100,
+            "like_count": 500,
+            "delay": "300ms",
+        }
+        
+        result = links_collection.update_one(
+            {"post_id": post_id},
+            {"$set": new_link}
+        )
+        new_link["_id"] = str(result.inserted_id)
+        return JsonResponse({"success": True, "link": new_link})
 
-        # Thêm link vào database
-        links_collection.insert_one({"url": url, "status": "active"})
-        return JsonResponse({"success": True, "url": url})
+@csrf_exempt
+def edit_link(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post_id = data.get("post_id")
+        new_name = data.get("name")
+        new_last_comment_time = data.get("last_comment_time")  # Lấy thời gian comment cuối
+        new_status = data.get("status")
+        new_comment_count = data.get("comment_count")
+        new_like_count = data.get("like_count")
+        new_delay = data.get("delay")
 
+        if post_id:
+            links_collection.update_one(
+                {"post_id": post_id},
+                {"$set": {
+                    "name": new_name,
+                    "last_comment_time": new_last_comment_time,  # Cập nhật thời gian comment cuối
+                    "status": new_status,
+                    "comment_count": int(new_comment_count),
+                    "like_count": int(new_like_count),
+                    "delay": new_delay
+                }}
+            )
+            return JsonResponse({"success": True})
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+@csrf_exempt
+def delete_link(request):
+    """Xóa link theo post_id"""
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post_id = str(data.get("post_id"))  # Chuyển post_id thành string
+
+        # Kiểm tra nếu link tồn tại
+        link = links_collection.find_one({"post_id": post_id})
+        if not link:
+            return JsonResponse({"success": False, "error": "Link không tồn tại"}, status=400)
+
+        # Xóa link
+        links_collection.delete_one({"post_id": post_id})
+        return JsonResponse({"success": True})
 
 def admin_proxies(request):
     """Render trang quản lý proxy"""
@@ -209,7 +245,9 @@ def add_proxy(request):
         if proxies_collection.find_one({"ip": proxy_data["ip"], "port": proxy_data["port"]}):
             return JsonResponse({"error": "Proxy đã tồn tại!"}, status=400)
 
-        proxies_collection.insert_one(proxy_data)
+        result = proxies_collection.insert_one(proxy_data)
+        proxy_data["_id"] = str(result.inserted_id)
+        
         return JsonResponse({"success": True, "proxy": proxy_data})
 
 @csrf_exempt
@@ -219,7 +257,7 @@ def delete_proxy(request):
         data = json.loads(request.body)
         ip, port = data.get("ip"), data.get("port")
 
-        proxies_collection.delete_one({"ip": ip, "port": port})
+        proxies_collection.delete_one({"ip": ip, "port": str(port)})
         return JsonResponse({"success": True})
 
 @csrf_exempt
@@ -227,9 +265,11 @@ def toggle_proxy(request):
     """Bật/Tắt proxy"""
     if request.method == "POST":
         data = json.loads(request.body)
+        print(data)
         ip, port = data.get("ip"), data.get("port")
 
-        proxy = proxies_collection.find_one({"ip": ip, "port": port})
+        proxy = proxies_collection.find_one({"ip": ip, "port": str(port)})
+        print(proxy)
         if proxy:
             new_status = "inactive" if proxy["status"] == "active" else "active"
             proxies_collection.update_one({"ip": ip, "port": port}, {"$set": {"status": new_status}})

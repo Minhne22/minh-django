@@ -1,5 +1,10 @@
 django
 pymongo
+pymongo[srv]
 aiofiles
 dnspython 
 bcrypt
+motor
+motor[srv]
+gunicorn
+werkzeug
