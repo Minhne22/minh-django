@@ -9,9 +9,22 @@
 </head>
 <!-- Thêm Link -->
 <div class="mb-3">
-    <input type="text" id="post_id" placeholder="Nhập ID Post" class="form-control mb-2">
-    <button id="addLink" class="btn btn-success">➕ Thêm Link</button>
+    <label for="multiLinks">Nhập nhiều links (mỗi dòng một link):</label>
+    <textarea id="multiLinks" class="form-control" rows="5" placeholder="Dán các link vào đây, mỗi dòng một link..."></textarea>
+    <button id="addLinksBtn" class="btn btn-primary mt-2">
+        ➕Thêm Links
+        <span id="addLinksSpinner" class="spinner-border spinner-border-sm" role="status" style="display: none;"></span>
+    </button>
+    
 </div>
+
+<!-- Spinner hiển thị khi đang tải -->
+<div id="loadingSpinner" class="text-center my-3" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 
 <!-- Bảng Links -->
 <table class="table">
@@ -20,11 +33,9 @@
             <th>STT</th>
             <th>Time Created</th>
             <th>ID Post</th>
-            <th>Tên bài</th>
-            <th>Thời gian cmt cuối</th>
+            <th>Tên Bài</th>
+            <th>Thời Gian Cmt Cuối</th>
             <th>Count Cmt</th>
-            <th>Count Like</th>
-            <th>Delay</th>
             <th>Status</th>
             <th>Action</th>
         </tr>
@@ -68,15 +79,6 @@
                     <input type="number" class="form-control" id="editCommentCount">
                 </div>
 
-                <div class="mb-3">
-                    <label for="editLikeCount" class="form-label">Số lượng like</label>
-                    <input type="number" class="form-control" id="editLikeCount">
-                </div>
-
-                <div class="mb-3">
-                    <label for="editDelay" class="form-label">Delay</label>
-                    <input type="text" class="form-control" id="editDelay">
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -97,13 +99,15 @@
     
                     rows += `<tr>
                         <td>${index + 1}</td>
-                        <td>${link.time_created}</td>
+                        <td>${link.created_time}</td>
                         <td>${postLink}</td>
-                        <td title="${link.content}">${link.post_name}</td>
+                        <td>
+                            <span data-bs-toggle="tooltip" title="${link.content}">
+                                ${link.name}
+                            </span>
+                        </td>
                         <td>${link.last_comment_time}</td>
                         <td>${link.comment_count}</td>
-                        <td>${link.like_count}</td>
-                        <td>${link.delay}</td>
                         <td>${link.status}</td>
                         <td>
                             <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">✏️ Edit</button>
@@ -129,7 +133,6 @@
                 $("#editPostName").val(row.find("td:eq(3)").text());
                 $("#editLastCommentTime").val(row.find("td:eq(4)").text());
                 $("#editCommentCount").val(row.find("td:eq(5)").text());
-                $("#editLikeCount").val(row.find("td:eq(6)").text());
                 $("#editDelay").val(row.find("td:eq(7)").text());
                 $("#editStatus").val(row.find("td:eq(8)").text());
     
@@ -140,27 +143,115 @@
         loadLinks();
 
         // Thêm link
-        $("#addLink").click(function () {
-            let post_id = $("#post_id").val();
-            if (!post_id) {
-                alert("Vui lòng nhập ID Post!");
-                return;
+        $(document).ready(function () {
+            $("#addLinksBtn").on("click", function () {
+                let links = $("#multiLinks").val().trim().split("\n").map(link => link.trim()).filter(link => link);
+            
+                if (links.length === 0) {
+                    alert("Vui lòng nhập ít nhất một link!");
+                    return;
+                }
+            
+                $("#addLinksSpinner").show(); // Hiện spinner
+            
+                let tableBody = $("#linkTable");
+                links.forEach((link) => {
+                    let newRow = `<tr data-post-id="">
+                        <td>New</td>
+                        <td>Processing...</td>
+                        <td>${link}</td>
+                        <td>Processing...</td>
+                        <td>Processing...</td>
+                        <td>Processing...</td>
+                        <td>Processing...</td>
+                        <td><span class="badge bg-warning">Processing</span></td>
+                        <td>-</td>
+                    </tr>`;
+                    tableBody.append(newRow);
+                });
+            
+                $.ajax({
+                    url: "{% url 'add_links' %}",
+                    type: "POST",
+                    data: JSON.stringify({ links: links }),
+                    contentType: "application/json",
+                    headers: { "X-CSRFToken": getCSRFToken() },
+                    success: function (response) {
+                        if (response.success) {
+                            reloadData();
+                            $("#multiLinks").val("");
+                        }
+                    },
+                    complete: function () {
+                        $("#addLinksSpinner").hide(); // Ẩn spinner sau khi xử lý xong
+                    },
+                    error: function () {
+                        alert("Lỗi khi thêm links!");
+                    }
+                });
+            });
+            function getCSRFToken() {
+                return document.cookie.split('; ').find(row => row.startsWith('csrftoken'))?.split('=')[1];
             }
-
-            $.post("{% url 'add_link' %}", JSON.stringify({ post_id }), function () {
-                $("#post_id").val("");
-                loadLinks();
-            }, "json");
+        
+            function reloadData() {
+                $("#loadingSpinner").show(); // Hiện spinner
+                $.ajax({
+                    url: "{% url 'get_links' %}",
+                    type: "GET",
+                    success: function (response) {
+                        if (response.success) {
+                            let tableBody = $("#linkTable");
+                            tableBody.empty();
+                            response.links.forEach((link, index) => {
+                                let row = `<tr>
+                                    <td>${index + 1}</td>
+                                    <td>${link.created_time}</td>
+                                    <td><a href="https://www.facebook.com/${link.post_id}" target="_blank">${link.post_id}</a></td>
+                                    <td>
+                                        <span data-bs-toggle="tooltip" title="${link.content}">
+                                            ${link.name}
+                                        </span>
+                                    </td>
+                                    <td>${link.last_comment_time}</td>
+                                    <td>${link.comment_count}</td>
+                                    <td><span class="badge ${link.status === 'public' ? 'bg-success' : 'bg-danger'}">${link.status}</span></td>
+                                    <td>
+                                        <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">Edit</button>
+                                        <button class="btn btn-danger delete-link" data-post-id="${link.post_id}">Delete</button>
+                                    </td>
+                                </tr>`;
+                                tableBody.append(row);
+                            });
+            
+                            $('[data-bs-toggle="tooltip"]').tooltip(); // Cập nhật tooltip
+                        }
+                    },
+                    complete: function () {
+                        $("#loadingSpinner").hide(); // Ẩn spinner sau khi load xong
+                    },
+                    error: function () {
+                        alert("Không thể tải lại dữ liệu!");
+                        $("#loadingSpinner").hide(); // Ẩn spinner nếu có lỗi
+                    }
+                });
+            }
+            
         });
 
         // Xóa link
         $(document).on("click", ".delete-link", function () {
             let post_id = $(this).data("post-id");
-
+        
+            $(this).html('❌ Xóa <span class="spinner-border spinner-border-sm" role="status"></span>');
+        
             $.post("{% url 'delete_link' %}", JSON.stringify({ post_id: post_id }), function () {
-                loadLinks();
-            }, "json");
+                reloadData();
+            }, "json").always(function () {
+                $(this).html('❌ Xóa');
+            });
         });
+        
 
         // Mở modal chỉnh sửa
         $(document).ready(function () {
@@ -174,7 +265,6 @@
                 $("#editLastCommentTime").val(row.find("td:eq(4)").text().trim()); // Lấy thời gian comment cuối
                 $("#editStatus").val(row.find("td:eq(8)").text().trim());
                 $("#editCommentCount").val(row.find("td:eq(5)").text());
-                $("#editLikeCount").val(row.find("td:eq(6)").text());
                 $("#editDelay").val(row.find("td:eq(7)").text());
         
                 editModal.show();
@@ -183,49 +273,40 @@
             $("#saveEdit").on("click", function () {
                 let postId = $("#editPostId").val();
                 let newName = $("#editPostName").val();
-                let newLastCommentTime = $("#editLastCommentTime").val(); // Lấy giá trị mới
+                let newLastCommentTime = $("#editLastCommentTime").val();
                 let newStatus = $("#editStatus").val();
                 let newCommentCount = $("#editCommentCount").val();
-                let newLikeCount = $("#editLikeCount").val();
-                let newDelay = $("#editDelay").val();
-        
+            
+                $("#saveEditSpinner").show(); // Hiện spinner
+            
                 $.ajax({
                     url: "{% url 'edit_link' %}",
                     type: "POST",
                     data: JSON.stringify({
                         post_id: postId,
                         name: newName,
-                        last_comment_time: newLastCommentTime, // Gửi giá trị mới
+                        last_comment_time: newLastCommentTime,
                         status: newStatus,
-                        comment_count: newCommentCount,
-                        like_count: newLikeCount,
-                        delay: newDelay
+                        comment_count: newCommentCount
                     }),
                     contentType: "application/json",
                     headers: { "X-CSRFToken": getCSRFToken() },
                     success: function (response) {
                         if (response.success) {
-                            // Cập nhật trực tiếp dữ liệu trên bảng
-                            let row = $("tr[data-post-id='" + postId + "']");
-                            row.find("td:eq(3)").text(newName);
-                            row.find("td:eq(4)").text(newLastCommentTime);
-                            row.find("td:eq(5)").text(newCommentCount);
-                            row.find("td:eq(6)").text(newLikeCount);
-                            row.find("td:eq(7)").text(newDelay);
-                            row.find("td:eq(8)").text(newStatus);
-                            
-                            // Đóng modal
-                            editModal.hide();
-                            loadLinks()
+                            reloadData();
+                            $("#editModal").modal("hide");
                         } else {
                             alert("Lỗi khi cập nhật!");
                         }
                     },
-                    error: function (error) {
+                    complete: function () {
+                        $("#saveEditSpinner").hide(); // Ẩn spinner sau khi xử lý xong
+                    },
+                    error: function () {
                         alert("Lỗi khi gửi dữ liệu!");
                     }
                 });
-            });
+            });            
         
             function getCSRFToken() {
                 return document.cookie.split('; ')

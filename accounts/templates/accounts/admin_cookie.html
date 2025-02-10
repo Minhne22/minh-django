@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Cookies</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <h3>Quản lý Cookies</h3>
+    <textarea id="cookiesInput" rows="5" placeholder="Nhập cookies, mỗi dòng một giá trị..."></textarea>
+    <button id="addCookiesBtn">Thêm Cookies</button>
+    <button id="deleteAllCookiesBtn">Xóa Tất Cả</button>
+
+    <h3>Danh sách Cookies</h3>
+    <ul id="cookieList"></ul>
+
+    <script>
+        function loadCookies() {
+            $.get("{% url 'get_tokens' %}", function(data) {
+                $("#cookieList").empty();
+                data.cookies.forEach(cookie => {
+                    $("#cookieList").append(`<li>${cookie} <button onclick="deleteCookie('${cookie}')">Xóa</button></li>`);
+                });
+            });
+        }
+
+        $("#addCookiesBtn").click(function() {
+            let cookies = $("#cookiesInput").val().trim().split("\n").map(c => c.trim()).filter(c => c);
+            $.post("{% url 'get_cookies' %}", JSON.stringify({ cookies }), function() {
+                $("#cookiesInput").val("");
+                loadCookies();
+            }, "json");
+        });
+
+        function deleteCookie(cookie) {
+            $.post("{% url 'delete_cookie' %}", JSON.stringify({ cookie }), loadCookies, "json");
+        }
+
+        $("#deleteAllCookiesBtn").click(function() {
+            $.post("{% url 'delete_all_cookies' %}", {}, loadCookies, "json");
+        });
+
+        $(document).ready(loadCookies);
+    </script>
+</body>
+</html>

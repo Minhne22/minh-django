@@ -1,2 +1,46 @@
-<h3>🔑 Quản lý Cookie/Token</h3>
-<p>Danh sách cookie và token sẽ hiển thị ở đây.</p>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Convert Token</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <h3>Convert Cookie ➝ Token</h3>
+    <textarea id="tokensInput" rows="5" placeholder="Nhập cookies để convert..."></textarea>
+    <button id="convertTokensBtn">Convert</button>
+    <button id="deleteAllTokensBtn">Xóa Tất Cả</button>
+
+    <h3>Danh sách Tokens</h3>
+    <ul id="tokenList"></ul>
+
+    <script>
+        function loadTokens() {
+            $.get("{% url 'get_tokens' %}", function(data) {
+                $("#tokenList").empty();
+                data.tokens.forEach(token => {
+                    $("#tokenList").append(`<li>${token} <button onclick="deleteToken('${token}')">Xóa</button></li>`);
+                });
+            });
+        }
+
+        $("#convertTokensBtn").click(function() {
+            let cookies = $("#tokensInput").val().trim().split("\n").map(c => c.trim()).filter(c => c);
+            $.post("{% url 'convert_tokens' %}", JSON.stringify({ cookies }), function() {
+                $("#tokensInput").val("");
+                loadTokens();
+            }, "json");
+        });
+
+        function deleteToken(token) {
+            $.post("{% url 'delete_token' %}", JSON.stringify({ token }), loadTokens, "json");
+        }
+
+        $("#deleteAllTokensBtn").click(function() {
+            $.post("{% url 'delete_all_tokens' %}", {}, loadTokens, "json");
+        });
+
+        $(document).ready(loadTokens);
+    </script>
+</body>
+</html>
