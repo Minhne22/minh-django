@@ -42,6 +42,7 @@ store_collection = settings.client['store']['admin']
 fb_detail = settings.client['fb_cmt_manage']
 links_collection = fb_detail['facebook_links']
 proxies_collection = fb_detail['proxies']
+comments_collection = fb_detail['facebook_comments']
 
 # Function Facebook
 def get_link_detail(url, proxy={}, token=''):
@@ -79,7 +80,7 @@ def get_link_detail(url, proxy={}, token=''):
         response = session.get(url).text
         post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
             else response.split("'fbid': '")[1].split('\'')[0]
-        title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
+        title = response.split('__isActor')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
         content = response.split('CometFeedStoryDefaultMessageRenderingStrategy')[1].split('"text":"')[1].split('"')[0]
         comment_count = response.split('"total_count":')[1].split('}')[0]
         created_time = response.split('"publish_time":')[1].split(',')[0]
@@ -91,11 +92,13 @@ def get_link_detail(url, proxy={}, token=''):
                 'content': content,
                 'comment_count': comment_count,
                 'status': 'public',
-                'created_time': timestamp_to_str(int(created_time))
+                'created_time': timestamp_to_str(int(created_time)),
+                'origin_url': url
             }
         }
     
     except IndexError:
+        token = store_collection.find_one({"_id": "tokens"})['tokens'][0]
         with open('token_logs.txt', 'a+', encoding='utf8') as f:
             f.write(response + '\n')
         post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
@@ -120,15 +123,18 @@ def get_link_detail(url, proxy={}, token=''):
                         'fields': 'id,from.fields(name),description,comments.summary(1),created_time'
                     }
                 ).json()
+                print(response)
                 return {
                     'success': True,
                     'data': {
                         'post_id': post_id,
                         'title': response['from']['name'],
-                        'content': response['description'],
+                        'content': response['description'].encode('unicode_escape').decode('utf-8'),
                         'comment_count': response['comments'].get('count', 0),
                         'status': 'private',
-                        'created_time': convert_to_utc7(response['created_time'])
+                        'created_time': convert_to_utc7(response['created_time']),
+                    'origin_url': url
+                        
                     }
                 }
             else:
@@ -142,7 +148,9 @@ def get_link_detail(url, proxy={}, token=''):
                 'content': response['message'],
                 'comment_count': response['comments'].get('count', 0),
                 'status': 'private',
-                'created_time': convert_to_utc7(response['created_time'])
+                'created_time': convert_to_utc7(response['created_time']),
+                'origin_url': url
+                
             }
         }
     
@@ -390,6 +398,10 @@ def add_user(request):
 def get_links(request):
     """Lấy danh sách link"""
     links = list(links_collection.find({}, {"_id": 0}))
+    links = [
+        {**link, "content": bytes(link['content'], "utf-8").decode("unicode_escape")}
+        for link in links
+    ]
     print(links)
     return JsonResponse({"links": links})
 
@@ -406,6 +418,7 @@ def add_links(request):
             if link.isnumeric():
                 link = f'https://facebook.com/{link}'
             print(link)
+            
             result = get_link_detail(link)
             if result['success']:
                 result = result['data']
@@ -418,7 +431,11 @@ def add_links(request):
                     "status": result['status'],
                     "content": result['content']
                 }
-                links_collection.insert_one(new_link)
+                # links_collection.insert_one(new_link)
+                links_collection.update_one(
+                    {"post_id": new_link['post_id']},
+                    {"$set": new_link}
+                )
                 new_link['_id'] = str(new_link['_id'])
                 inserted_links.append(new_link)
         
@@ -652,3 +669,9 @@ def delete_all_tokens(request):
     store_collection.update_one({"_id": "tokens"}, {"$set": {"tokens": []}})
     return JsonResponse({"success": True, "message": "Đã xóa tất cả tokens!"})
 
+def comment_list(request):
+    comments = list(comments_collection.find({}, {"_id": 0}))  # Lấy tất cả comment, không lấy ObjectId
+    return JsonResponse({"comments": comments})
+
+def comment_page(request):
+    return render(request, "comments.html")

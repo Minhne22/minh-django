@@ -1,2 +1,53 @@
-<h3>💬 Quản lý Comments</h3>
-<p>Danh sách comment sẽ hiển thị ở đây.</p>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Comment</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+
+<div class="container mt-4">
+    <h3>📢 Quản lý Bình Luận</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Post ID</th>
+                <th>Nội dung</th>
+                <th>Tác giả</th>
+                <th>Thời gian</th>
+                <th>Author ID</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody id="commentTable"></tbody>
+    </table>
+</div>
+
+<script>
+    function loadComments() {
+        $.get("/api/comments/", function (data) {
+            let rows = "";
+            data.comments.forEach((comment) => {
+                rows += `<tr>
+                    <td>${comment.post_id}</td>
+                    <td>${comment.text}</td>
+                    <td>${comment.name}</td>
+                    <td>${comment.time}</td>
+                    <td>${comment.author_id}</td>
+                    <td>${comment.phone}</td>
+                </tr>`;
+            });
+            $("#commentTable").html(rows);
+        });
+    }
+
+    $(document).ready(function () {
+        loadComments();
+    });
+</script>
+
+</body>
+</html>

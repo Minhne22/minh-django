@@ -1,38 +1,257 @@
-import requests
-def getUID(url):
-        
-    headers = {
-            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-            "accept-language": "vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5",
-            "cache-control": "max-age=0",
-            "cookie": "datr=nSR2Z_oJHz-4IM1RO18kh-7-; sb=nSR2Z3jWL2LzGxQFb8Hh5zmI; dpr=1.25; ps_l=1; ps_n=1; fr=0tNBmTCvSwJfOacCc..Bneanz..AAA.0.0.Bneaq3.AWWizVfr1ZQ; wd=816x703",
-            "dpr": "1.25",
-            "priority": "u=0, i",
-            "sec-ch-prefers-color-scheme": "light",
-            "sec-ch-ua": '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
-            "sec-ch-ua-full-version-list": '"Google Chrome";v="131.0.6778.205", "Chromium";v="131.0.6778.205", "Not_A Brand";v="24.0.0.0"',
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-model": "",
-            "sec-ch-ua-platform": "Windows",
-            "sec-ch-ua-platform-version": "8.0.0",
-            "sec-fetch-dest": "document",
-            "sec-fetch-mode": "navigate",
-            "sec-fetch-site": "none",
-            "sec-fetch-user": "?1",
-            "upgrade-insecure-requests": "1",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
-            "viewport-width": "816"
-        }
-    proxies = {
-        "http": "http://tuanclonefb.com11399:qh8iw@103.79.141.175:11399",
-        "https": "http://tuanclonefb.com11399:qh8iw@103.79.141.175:11399",
-    }
-    response = requests.get(url,headers=headers,proxies=proxies)
-    return response
+import httpx
+import aiofiles
+import asyncio
+from pymongo import MongoClient
+import datetime
+import random
+import threading
+import os
 
-name = 'Trần Anh Khoa'
-uid1 = 'pfbid0tz9Fy5S76V3znKnxg9JTb7P498t2GH47ckXqAQoJ9QFSnRNEt91bvV98zDmGfqDfl'
-uid = getUID(f"https://www.facebook.com/people/{name}/{uid1}").url
-uid = getUID(uid).text
-uid = uid.split("fb://profile/")[1].split('"')[0]
-print(uid)
+time_delay = 5
+
+client = MongoClient("mongodb+srv://minhne2203:cCdkU1nRpPsQ07Q8@cluster0.twcco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+if not os.path.exists('./uid.cache'):
+    open('./uid.cache', 'w+').close()
+uid_cache = open('./uid.cache', encoding='utf8').read()
+
+
+db = client["fb_cmt_manage"]
+
+proxy_collection = db["proxies"]
+link_collection = db["facebook_links"]
+comment_collection = db["facebook_comments"]
+token_collection = db["tokens"]
+
+async def get_comment_func(link_post: str, proxy={}, credential={}):
+    global uid_cache
+    # Config Session
+    ipport = f'{proxy["ip"]}:{proxy["port"]}' if not proxy['username'] else f'{proxy["username"]}:{proxy["password"]}@{proxy["ip"]}:{proxy["port"]}'
+    # proxy = {
+    #     'http': f'http://{ipport}',
+    #     'https': f'http://{ipport}'
+    # }
+    
+    headers = {
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'accept-language': 'en-US,en;q=0.9',
+        'cookie': 'datr=W06SZ_48TKb0XgBDj5NmAmV4; sb=W06SZweBwrhWi9P0gH85_X0b; dpr=1.5; wd=819x551',
+        'dpr': '1.5',
+        'priority': 'u=0, i',
+        'sec-ch-prefers-color-scheme': 'light',
+        'sec-ch-ua': '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+        'sec-ch-ua-full-version-list': '"Not A(Brand";v="8.0.0.0", "Chromium";v="132.0.6834.110", "Google Chrome";v="132.0.6834.110"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-model': '""',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-ch-ua-platform-version': '"19.0.0"',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'none',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+        'viewport-width': '819',
+    }
+    
+    session = httpx.AsyncClient(proxy=f'http://{ipport}', headers=headers)
+
+    
+    # cookies = {
+    #     'datr': 'W06SZ_48TKb0XgBDj5NmAmV4',
+    #     'sb': 'W06SZweBwrhWi9P0gH85_X0b',
+    #     'dpr': '1.5',
+    #     'wd': '819x551',
+    # }
+    
+    # session.cookies.update(cookies)
+    try:
+        if link_post.isdigit():
+            link_post = f'https://facebook.com/{link_post}'
+        response = await session.get(
+            link_post
+        )
+        
+        response = response.text
+        
+        post_id = response.split('"parent_feedback":{"id":"')[1].split('"')[0] if '"parent_feedback":{"id":"' in response \
+            else response.split("'parent_feedback': {'id': '")[1].split('\'')[0]
+        pid = response.split('"post_id":"')[1].split('"')[0] if '"post_id":"' in response\
+            else response.split("'post_id': '")[1].split('\'')[0]
+        
+        
+        lsd = response.split('"LSD",[],{"token":"')[1].split('"')[0] if '"LSD",[],{"token":"' in response else \
+                response.split("['LSD', [], {'token': '")[1].split('\'')[0]
+        
+        data = {
+            'av': '0',
+            '__aaid': '0',
+            '__user': '0',
+            '__a': '1',
+            '__req': 's',
+            '__hs': '',
+            'dpr': '1',
+            '__ccg': 'GOOD',
+            '__rev': '',
+            '__s': '',
+            '__hsi': '',
+            '__dyn': '',
+            '__csr': '',
+            '__comet_req': '15',
+            'lsd': lsd,
+            'jazoest': '2914',
+            '__spin_r': '',
+            '__spin_b': '',
+            '__spin_t': '',
+            'fb_api_caller_class': 'RelayModern',
+            'fb_api_req_friendly_name': 'CommentListComponentsRootQuery',
+            'variables': '{"commentsIntentToken":"RECENT_ACTIVITY_INTENT_V1","feedLocation":"TAHOE","feedbackSource":2,"focusCommentID":null,"scale":1,"useDefaultActor":false,"id":"' + post_id + '","__relay_internal__pv__IsWorkUserrelayprovider":false}',
+            'server_timestamps': 'true',
+            'doc_id': '8894656107282580',
+        }
+        
+        response = await session.post(
+            'https://www.facebook.com/api/graphql/',
+            data=data
+        )
+        
+        response = response.json()
+        
+        # with open('./main.json', 'w+', encoding='utf8') as f:
+        #     f.write(json.dumps(response))
+        
+        comment = response['data']['node']['comment_rendering_instance_for_feed_location']['comments']['edges'][0]
+        info = comment['node']
+        try: 
+            data = {
+                'post_id': pid,
+                'text': info['body']['text'],
+                'name': info['author']['name'],
+                'time': info['comment_action_links'][0]['comment']['created_time'],
+                'author_id': info['discoverable_identity_badges_web'][0]['serialized'].split('actor_id')[1].split(':')[1].split(',')[0]
+            }
+        
+        except IndexError:
+            link_pro5 = str(info['author']['id'])
+            if link_pro5.isnumeric():
+                uid = link_pro5
+            else:
+                if link_pro5 in uid_cache:
+                    uid = uid_cache.split(f'{link_pro5}|')[1].split('\n')[0]
+                else:
+                    data = {
+                        'link': f'https://www.facebook.com/{link_pro5}',
+                    }
+                    while True:
+                        response = await session.post('https://id.traodoisub.com/api.php', data=data)
+                        response = response.json()
+                        if 'id' not in response:
+                            await asyncio.sleep(3)
+                            print('Get lai ID')
+                        else:
+                            print('Done')
+                            break
+                            
+                    uid = response['id']
+                    uid_cache += f'{link_pro5}|{uid}\n'
+                    with open('./uid.cache', 'w+', encoding='utf8') as f:
+                        f.write(uid_cache)
+            
+            
+            data = {
+                'post_id': pid,
+                'text': info['body']['text'],
+                'name': info['author']['name'],
+                'time': info['comment_action_links'][0]['comment']['created_time'],
+                'author_id': uid
+            }
+        
+        await session.aclose()
+        
+        return data
+    
+    except IndexError:
+        with open('main.txt', 'w+', encoding='utf8') as f:
+            f.write(response)
+        post_id = response.split('"story_token":"')[1].split('"')[0] if '"story_token":"' in response\
+            else response.split("'story_token': '")[1].split('\'')[0]
+        if '"group_id":"' in response:
+            grid = response.split('"group_id":"')[1].split('"')[0] if '"group_id":"' in response\
+                else response.split("'group_id': '")[1].split('\'')[0]
+            pid = f'{grid}_{post_id}'
+        else:
+            pid = post_id
+        cookie, token = credential['cookie'], credential['token']
+        async with httpx.AsyncClient(proxy=f'http://{ipport}', headers={
+                    'cookie': cookie
+                }) as client:
+            response = await client.get(
+                f'https://graph.facebook.com/{pid}',
+                params={
+                    'access_token': token,
+                    'order': 'reverse_chronological',
+                    'fields': 'created_time,message,id,from'
+                }
+            )
+            
+            response = response.json()['data'][0]
+        
+        return {
+                'post_id': post_id,
+                'text': response['message'],
+                'name': response['from']['name'],
+                'time': response['created_time'].split('+')[0].replace('T', ' '),
+                'author_id': response['from']['id']
+            }
+        
+    except Exception as e:
+        async with aiofiles.open('logs.txt', 'a+', encoding='utf8') as f:
+            now = datetime.datetime.now()
+            # Định dạng thời gian thành chuỗi
+            formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
+            await f.write(f'[{formatted_time}] - {e}\n')
+        return None
+
+
+async def don_luong(link):
+    print('ok')
+    try:
+        data = await get_comment_func(link, random.choice(proxies), random.choice(credentials) if credentials else '')
+        print(data)
+        if data:
+            filter_condition = {"post_id": data["post_id"]}
+            comment_collection.update_one(filter_condition, {"$set": data}, upsert=True)
+    except Exception as e:
+        print(e)
+        async with aiofiles.open('logs.txt', 'a+', encoding='utf8') as f:
+            now = datetime.datetime.now()
+            # Định dạng thời gian thành chuỗi
+            formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
+            await f.write(f'[{formatted_time}] - {e}\n')
+
+async def quan_ly_luong():
+    while True:
+        global proxies, links, credentials
+        tokens = list(token_collection.find())
+        proxies = list(proxy_collection.find())
+        links = list(link_collection.find())
+        credentials = [
+            x for x in tokens for x in tokens if x['status'] == 'live'
+        ]
+        tasks = []
+        print(len(links))
+        for url in links:
+            # print(url)
+            # Tạo và thêm các công việc vào danh sách tasks
+            tasks.append(don_luong(url['post_id']))
+        
+        # Chờ tất cả các công việc trong tasks hoàn thành
+        await asyncio.gather(*tasks)
+        await asyncio.sleep(time_delay)
+                
+def start_background_task():
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.create_task(quan_ly_luong())
+    loop.run_forever()
+
+start_background_task()

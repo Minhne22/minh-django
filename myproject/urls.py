@@ -22,7 +22,7 @@ from accounts.views import login_view, logout_view, register_view, manage_users,
         admin_proxies, get_proxies, add_proxy, delete_proxy, toggle_proxy
 from accounts.views import add_cookies, get_cookies, delete_cookie, delete_all_cookies
 from accounts.views import convert_tokens, get_tokens, delete_token, convert_cookie_to_token, delete_all_tokens
-
+from accounts.views import comment_list, comment_page
 
 urlpatterns = [
     path('', user_dashboard, name='home'),
@@ -60,5 +60,7 @@ urlpatterns = [
     path("admin-dashboard/api/delete_token/", delete_token, name="delete_token"),
     path("admin-dashboard/api/delete_all_tokens/", delete_all_tokens, name="delete_all_tokens"),
     path("admin-dashboard/api/delete_all_cookies/", delete_all_cookies, name="delete_all_cookies"),
+    path("admin-dashboard/api/comment_list/", comment_list, name="comment_list"),
+    path("admin-dashboard/api/comment_page/", comment_page, name="comment_page"),
     # path("convert-cookie/", convert_cookie_to_token, name="convert_cookie_to_token"),
 ]
