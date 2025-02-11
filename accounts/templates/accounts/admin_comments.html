@@ -28,7 +28,7 @@
 
 <script>
     function loadComments() {
-        $.get("/api/comments/", function (data) {
+        $.get("{% url 'comment_list' %}", function (data) {
             let rows = "";
             data.comments.forEach((comment) => {
                 rows += `<tr>

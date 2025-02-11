@@ -429,14 +429,15 @@ def add_links(request):
                     "last_comment_time": 'Proccessing',
                     "comment_count": result['comment_count'],
                     "status": result['status'],
-                    "content": result['content']
+                    "content": result['content'],
+                    'origin_url': result['origin_url']
                 }
                 # links_collection.insert_one(new_link)
-                links_collection.update_one(
+                print(links_collection.update_one(
                     {"post_id": new_link['post_id']},
-                    {"$set": new_link}
-                )
-                new_link['_id'] = str(new_link['_id'])
+                    {"$set": new_link}, upsert=True
+                ))
+                # new_link['_id'] = str(new_link['_id'])
                 inserted_links.append(new_link)
         
         print(inserted_links)
@@ -672,6 +673,3 @@ def delete_all_tokens(request):
 def comment_list(request):
     comments = list(comments_collection.find({}, {"_id": 0}))  # Lấy tất cả comment, không lấy ObjectId
     return JsonResponse({"comments": comments})
-
-def comment_page(request):
-    return render(request, "comments.html")

@@ -131,6 +131,7 @@ async def get_no_cookie(link_post, proxy=''):
             }
             
             async with session.post('https://www.facebook.com/api/graphql/', data=data) as response:
+                print(response.content)
                 response = await response.json()
             
             comment = response['data']['node']['comment_rendering_instance_for_feed_location']['comments']['edges'][0]
@@ -186,6 +187,7 @@ async def don_luong(link, proxy):
                 "author_id": data["author_id"],
                 "text": data["text"]
             }
+            data['origin_url'] = link
             comments_collection.update_one(filter_condition, {"$set": data}, upsert=True)
     except Exception as e:
         async with aiofiles.open('logs.txt', 'a+', encoding='utf8') as f:

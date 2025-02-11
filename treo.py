@@ -65,29 +65,21 @@ async def get_no_cookie(link_post, proxy=''):
     
     print(ipport)
     headers = {
-        'accept': '*/*',
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         'accept-language': 'en-US,en;q=0.9',
-        'content-type': 'application/x-www-form-urlencoded',
-        'cookie': 'datr=6S6rZ5IQrMtHuaXZ_-KVi7r8; sb=6S6rZ-2aG-29dBs6Q-6Ep9FW; dpr=1.5; wd=935x612',
-        'origin': 'https://www.facebook.com',
-        'priority': 'u=1, i',
-        'referer': 'https://www.facebook.com/100085020425798/videos/1464735244237949/',
-        'sec-ch-prefers-color-scheme': 'light',
+        'priority': 'u=0, i',
         'sec-ch-ua': '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
-        'sec-ch-ua-full-version-list': '"Not A(Brand";v="8.0.0.0", "Chromium";v="132.0.6834.160", "Google Chrome";v="132.0.6834.160"',
         'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-model': '""',
         'sec-ch-ua-platform': '"Windows"',
-        'sec-ch-ua-platform-version': '"19.0.0"',
-        'sec-fetch-dest': 'empty',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-site': 'same-origin',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'none',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
-        # 'x-asbd-id': '129477',
-        # 'x-fb-lsd': 'AVrmtdx-RxI',
     }
     
-    session = httpx.AsyncClient(proxy=f'http://{ipport}', headers=headers, follow_redirects=True)
+    session = httpx.AsyncClient(proxy=f'http://{ipport}', headers=headers, follow_redirects=False)
     
     # Get Data
     
@@ -172,7 +164,7 @@ async def get_no_cookie(link_post, proxy=''):
             if link_pro5.isnumeric():
                 uid = link_pro5
             else:
-                uid = await get_uid_num(link_pro5)
+                uid = await get_uid_num(link_pro5, session)
             
             uid_cache += f'{link_pro5}|{uid}\n'
             with open('./uid.cache', 'w+', encoding='utf8') as f:
@@ -203,6 +195,7 @@ async def don_luong(link, proxy):
         if data:
             filter_condition = {"post_id": data["post_id"]}
             comments_collection.update_one(filter_condition, {"$set": data}, upsert=True)
+            links_collection.update_one({"post_id": data["post_id"]}, {"$set": {"last_comment_time": data['time']}}, upsert=True)
     except Exception as e:
         async with aiofiles.open('logs.txt', 'a+', encoding='utf8') as f:
             now = datetime.datetime.now()
@@ -227,7 +220,7 @@ async def quan_ly_luong():
         for url in links:
             # print(url)
             # Tạo và thêm các công việc vào danh sách tasks
-            tasks.append(don_luong(url['post_id'], random.choice(proxies)))
+            tasks.append(don_luong(url['origin_url'], random.choice(proxies)))
         
         # Chờ tất cả các công việc trong tasks hoàn thành
         await asyncio.gather(*tasks)

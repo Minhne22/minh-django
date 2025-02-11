@@ -95,8 +95,8 @@
             $.get("{% url 'get_links' %}", function (data) {
                 let rows = "";
                 data.links.forEach((link, index) => {
-                    let postLink = `<a href="https://www.facebook.com/${link.post_id}" target="_blank">${link.post_id}</a>`;
-    
+                    let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
+                    let formattedLastCommentTime = formatTimeDiff(link.last_comment_time);
                     rows += `<tr>
                         <td>${index + 1}</td>
                         <td>${link.created_time}</td>
@@ -106,7 +106,7 @@
                                 ${link.name}
                             </span>
                         </td>
-                        <td>${link.last_comment_time}</td>
+                        <td>${formattedLastCommentTime}</td>
                         <td>${link.comment_count}</td>
                         <td>${link.status}</td>
                         <td>
@@ -313,6 +313,16 @@
                     .find(row => row.startsWith('csrftoken'))
                     ?.split('=')[1];
             }
-        });        
+        });
+
     });
+    function formatTimeDiff(timestamp) {
+        if (!isNaN(timestamp)) {
+            let currentTime = Math.floor(Date.now() / 1000);  // Lấy thời gian hiện tại (UNIX timestamp)
+            let diffSeconds = currentTime - parseInt(timestamp);
+            let diffHours = Math.floor(diffSeconds / 3600);  // Chuyển thành giờ
+            return diffHours + "h trước";
+        }
+        return timestamp;  // Nếu không phải số, giữ nguyên
+    }
 </script>
