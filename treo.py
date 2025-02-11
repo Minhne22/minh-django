@@ -7,11 +7,11 @@ import datetime
 import random
 import aiohttp
 
-cache_path = './cache.txt'
+cache_path = './uid.cache'
 if not os.path.exists(cache_path):
     open(cache_path, 'w+', encoding='utf8').close()
 
-cache = [x for x in open(cache_path, encoding='utf8').read().split('\n') if x]
+uid_cache = open(cache_path, encoding='utf8').read()
 
 # MongoDB Setup
 MONGODB_URI = 'mongodb+srv://minhne2203:cCdkU1nRpPsQ07Q8@cluster0.twcco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
@@ -92,8 +92,8 @@ async def get_no_cookie(link_post, proxy=''):
             link_post
         )
         print(response.url)
-        with open('response.html', 'w+', encoding='utf8') as f:
-            f.write(response.text)
+        # with open('response.html', 'w+', encoding='utf8') as f:
+        #     f.write(response.text)
         
         response = response.text
         print(len(response))
@@ -193,9 +193,10 @@ async def don_luong(link, proxy):
         data = await get_no_cookie(link, proxy=proxy)
         print(data)
         if data:
+            data['origin_url'] = link
             filter_condition = {"post_id": data["post_id"]}
             comments_collection.update_one(filter_condition, {"$set": data}, upsert=True)
-            links_collection.update_one({"post_id": data["post_id"]}, {"$set": {"last_comment_time": data['time']}}, upsert=True)
+            links_collection.update_one({"post_id": data["post_id"]}, {"$set": {"last_comment_time": data['time']}})
     except Exception as e:
         async with aiofiles.open('logs.txt', 'a+', encoding='utf8') as f:
             now = datetime.datetime.now()

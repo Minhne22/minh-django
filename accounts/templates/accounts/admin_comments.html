@@ -31,8 +31,9 @@
         $.get("{% url 'comment_list' %}", function (data) {
             let rows = "";
             data.comments.forEach((comment) => {
+                var postLink = `<a href="${comment.origin_url}" target="_blank">${comment.post_id}</a>`;
                 rows += `<tr>
-                    <td>${comment.post_id}</td>
+                    <td>${postLink}</td>
                     <td>${comment.text}</td>
                     <td>${comment.name}</td>
                     <td>${comment.time}</td>
