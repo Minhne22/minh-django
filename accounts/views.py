@@ -19,6 +19,7 @@ import uuid
 import re
 from urllib.parse import urlparse, parse_qs, unquote
 import time
+from markupsafe import escape
 
 
 def convert_to_utc7(iso_time: str) -> str:
@@ -43,12 +44,46 @@ def get_timestamp_x_days_later(x):
     target_date = today_midnight + timedelta(days=x)  # Cộng thêm X ngày
     return int(target_date.timestamp())
 
+def check_live_cookie(cookie: str, proxy={}):
+    ipport = f'{proxy["ip"]}:{proxy["port"]}' if not proxy['username'] else f'{proxy["username"]}:{proxy["password"]}@{proxy["ip"]}:{proxy["port"]}'
+    
+    print(ipport)
+    headers = {
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'accept-language': 'en-US,en;q=0.9',
+        'priority': 'u=0, i',
+        'cookie': cookie,
+        'sec-ch-ua': '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"Windows"',
+        'sec-fetch-dest': 'document',
+        'sec-fetch-mode': 'navigate',
+        'sec-fetch-site': 'none',
+        'sec-fetch-user': '?1',
+        'upgrade-insecure-requests': '1',
+        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+    }
+    
+    session = requests.Session()
+    session.headers.update(headers)
+    session.proxies = {'http': f'http://{ipport}', 'https': f'http://{ipport}'}  # Sử dụng proxy
+    try:
+        response = session.get('https://www.facebook.com/').text
+        fb_dtsg = response.split('{"dtsg":{"token":"')[1].split('"')[0]
+        return {
+            'success': True
+        }
+    except Exception as e:
+        return {
+            'success': False
+        }
+    
 users_collection = settings.users_collection
-store_collection = settings.client['store']['admin']
 fb_detail = settings.client['fb_cmt_manage']
 links_collection = fb_detail['facebook_links']
 proxies_collection = fb_detail['proxies']
 comments_collection = fb_detail['facebook_comments']
+store_collection = settings.client['store']
 
 # Function Facebook
 def get_link_detail(url, proxy={}, token=''):
@@ -86,7 +121,8 @@ def get_link_detail(url, proxy={}, token=''):
         response = session.get(url).text
         post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
             else response.split("'fbid': '")[1].split('\'')[0]
-        title = response.split('__isActor')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
+        print(post_id)
+        title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
         content = response.split('CometFeedStoryDefaultMessageRenderingStrategy')[1].split('"text":"')[1].split('","delight_ranges"')[0]
         comment_count = response.split('"total_count":')[1].split('}')[0]
         created_time = response.split('"publish_time":')[1].split(',')[0]
@@ -119,6 +155,8 @@ def get_link_detail(url, proxy={}, token=''):
             }
         ).json()
         
+        # print(response)
+        
         if 'error' in response:
             error_code = response['error']['code']
             if error_code == 100:
@@ -129,8 +167,8 @@ def get_link_detail(url, proxy={}, token=''):
                         'fields': 'id,from.fields(name),description,comments.summary(1),created_time'
                     }
                 ).json()
-                print(response)
-                return {
+                # print(response)
+                data = {
                     'success': True,
                     'data': {
                         'post_id': post_id,
@@ -139,10 +177,12 @@ def get_link_detail(url, proxy={}, token=''):
                         'comment_count': response['comments'].get('count', 0),
                         'status': 'private',
                         'created_time': convert_to_utc7(response['created_time']),
-                    'origin_url': url
+                        'origin_url': url
                         
                     }
                 }
+                print(data)
+                return data
             else:
                 with open('token_logs.txt', 'a+', encoding='utf8') as f:
                     f.write(str(response) + '\n')
@@ -296,6 +336,9 @@ def login_view(request):
             request.session["user_id"] = str(user["_id"])
             request.session["username"] = user["username"]
             request.session["role"] = user.get("role", "user")  # Nếu không có role, mặc định là user
+            request.session.set_expiry(date)
+            today_midnight = datetime.combine(datetime.today(), datetime.min.time())  # 0h hôm nay
+            request.session['days_remaining'] = (datetime.fromtimestamp(date)  - today_midnight).days
 
             # Trả về JSON để frontend redirect đúng
             return JsonResponse({"status": "success", "role": request.session["role"]}, status=200)
@@ -325,11 +368,15 @@ def register_view(request):
     return JsonResponse({"status": "error", "message": "Phương thức không hợp lệ"}, status=405)
 
 # @login_required
-def admin_dashboard(request):
-    print("SESSION:", request.session.items())
-    if request.session.get("role") != "admin":
-        return redirect("login")  # Chỉ admin mới vào được
-    return render(request, "accounts/admin_dashboard.html")
+# def admin_dashboard(request):
+#     print("SESSION:", request.session.items())
+#     today_midnight = datetime.combine(datetime.today(), datetime.min.time())  # 0h hôm nay
+#     user = users_collection.find_one({"username": request.session.get("username")})
+#     request.session['days_remaining'] = (datetime.fromtimestamp((user.get('days_remaining', time.time()))  - today_midnight)).days
+#     print(request.session['days_remaining'])
+#     if request.session.get("role") != "admin":
+#         return redirect("login")  # Chỉ admin mới vào được
+#     return render(request, "accounts/admin_dashboard.html")
 
 # @login_required
 def user_dashboard(request):
@@ -347,12 +394,23 @@ def dashboard_tokens(request):
     return render(request, "accounts/dashboard_tokens.html")
 
 def admin_dashboard(request):
+    today_midnight = datetime.combine(datetime.today(), datetime.min.time())  # 0h hôm nay
+    if not request.session.get('days_remaining'):
+        user = users_collection.find_one({"username": request.session.get("username")})
+        request.session['days_remaining'] = (datetime.fromtimestamp((user.get('days_remaining', time.time()))) - today_midnight).days
+    print(request.session['days_remaining'])
     if request.session.get("role") != "admin":
         return redirect("login")  # Chỉ admin mới truy cập được
     return render(request, "accounts/admin_dashboard.html")
 
-def admin_links(request):
+# def admin_links(request):
+#     return render(request, "accounts/admin_links.html")
+
+def admin_links_on(request):
     return render(request, "accounts/admin_links.html")
+
+def admin_links_off(request):
+    return render(request, "accounts/admin_links_off.html")
 
 def admin_comments(request):
     return render(request, "accounts/admin_comments.html")
@@ -454,14 +512,22 @@ def add_user(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
-def get_links(request):
+def get_links_on(request):
     """Lấy danh sách link"""
-    links = list(links_collection.find({}, {"_id": 0}))
+    links = list(links_collection.find({"active": "on"}, {"_id": 0}))
     links = [
-        {**link, "content": link['content'].encode().decode('unicode_escape')}
-        for link in links
+        {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links
     ]
-    print(links)
+    # print(links)
+    return JsonResponse({"links": links})
+
+def get_links_off(request):
+    """Lấy danh sách link"""
+    links = list(links_collection.find({}, {"_id": 0, "active": "off"}))
+    links = [
+        {**link, "content": link['content'].encode().decode('unicode_escape')} for link in links
+    ]
+    # print(links)
     return JsonResponse({"links": links})
 
 @csrf_exempt
@@ -489,7 +555,8 @@ def add_links(request):
                     "comment_count": result['comment_count'],
                     "status": result['status'],
                     "content": result['content'],
-                    'origin_url': result['origin_url']
+                    'origin_url': result['origin_url'],
+                    'active': 'on'
                 }
                 # links_collection.insert_one(new_link)
                 print(links_collection.update_one(
@@ -737,5 +804,5 @@ def get_user_limit(request):
     username = request.session.get("username")
     user = users_collection.find_one({"username": username}, {"_id": 0})
     limit_on = user.get("limit_on", 0)
-    user['limit_on'] = limit_on  # Chuyển timestamp thành string
+    user['limit_on'] = limit_on 
     return JsonResponse(user)

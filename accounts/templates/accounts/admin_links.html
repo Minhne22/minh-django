@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h3>🔗 Quản lý Links</h3>
+        <h3>🔗 Quản lý Links On🟢</h3>
 
         <!-- Box hiển thị số links đã có / limit_on -->
         <div class="alert alert-info" role="alert">
@@ -98,14 +98,14 @@
         <script>
             $(document).ready(function () {
                 function loadLinks() {
-                    $.get("{% url 'get_links' %}", function (data) {
+                    $.get("{% url 'get_links_on' %}", function (data) {
                         let rows = "";
                         data.links.forEach((link, index) => {
                             let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
-                            let formattedLastCommentTime = formatTimeDiff(link.last_comment_time);
+                            let formattedLastCommentTime = formatDate(link.last_comment_time);
                             rows += `<tr>
                                 <td>${index + 1}</td>
-                                <td>${link.created_time}</td>
+                                <td>${formatDate(link.created_time)}</td>
                                 <td>${postLink}</td>
                                 <td>
                                     <span data-bs-toggle="tooltip" title="${link.content}">
@@ -211,7 +211,7 @@
                 function reloadData() {
                     $("#loadingSpinner").show(); // Hiện spinner
                     $.ajax({
-                        url: "{% url 'get_links' %}",
+                        url: "{% url 'get_links_on' %}",
                         type: "GET",
                         success: function (response) {
                             if (response.success) {
@@ -220,14 +220,14 @@
                                 response.links.forEach((link, index) => {
                                     let row = `<tr>
                                         <td>${index + 1}</td>
-                                        <td>${link.created_time}</td>
+                                        <td>${formatDate(link.created_time)}</td>
                                         <td><a href="https://www.facebook.com/${link.post_id}" target="_blank">${link.post_id}</a></td>
                                         <td>
                                             <span data-bs-toggle="tooltip" title="${link.content}">
                                                 ${link.name}
                                             </span>
                                         </td>
-                                        <td>${link.last_comment_time}</td>
+                                        <td>${formatDate(link.last_comment_time)}</td>
                                         <td>${link.comment_count}</td>
                                         <td><span class="badge ${link.status === 'public' ? 'bg-success' : 'bg-danger'}">${link.status}</span></td>
                                         <td>
@@ -326,14 +326,15 @@
                 }
             });
 
-            function formatTimeDiff(timestamp) {
+            function formatDate(timestamp) {
                 if (!isNaN(timestamp)) {
-                    let currentTime = Math.floor(Date.now() / 1000);  // Lấy thời gian hiện tại (UNIX timestamp)
-                    let diffSeconds = currentTime - parseInt(timestamp);
-                    let diffHours = Math.floor(diffSeconds / 3600);  // Chuyển thành giờ
-                    return diffHours + "h trước";
+                    let date = new Date(timestamp * 1000);  // Convert UNIX timestamp to JavaScript Date object
+                    let day = date.getDate().toString().padStart(2, '0');
+                    let month = (date.getMonth() + 1).toString().padStart(2, '0');  // Months are zero-based
+                    let year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
                 }
-                return timestamp;  // Nếu không phải số, giữ nguyên
+                return timestamp;  // If not a number, return the original value
             }
         </script>
     </div>

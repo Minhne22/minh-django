@@ -16,9 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from accounts.views import admin_dashboard, user_dashboard, admin_comments, admin_links, admin_tokens, dashboard_comments, dashboard_links, dashboard_tokens, admin_cookie
+from accounts.views import admin_dashboard, user_dashboard, admin_comments, admin_links_on, admin_links_off, admin_tokens, dashboard_comments, dashboard_links, dashboard_tokens, admin_cookie
 from accounts.views import login_view, logout_view, register_view, manage_users, delete_user, change_role, add_user, \
-    get_links, delete_link, add_links, edit_link, \
+    get_links_on, get_links_off, delete_link, add_links, edit_link, \
         admin_proxies, get_proxies, add_proxy, delete_proxy, toggle_proxy, \
             edit_limit, change_pass
 from accounts.views import add_cookies, get_cookies, delete_cookie, delete_all_cookies
@@ -33,7 +33,8 @@ urlpatterns = [
     path("register/", register_view, name="register"),
     path("admin-dashboard/", admin_dashboard, name="admin_dashboard"),
     path("admin-dashboard/cookie/", admin_cookie, name="admin_cookie"),
-    path("admin-dashboard/links/", admin_links, name="admin_links"),
+    path("admin-dashboard/links-on/", admin_links_on, name="admin_links_on"),
+    path("admin-dashboard/links-off/", admin_links_off, name="admin_links_off"),
     path("admin-dashboard/comments/", admin_comments, name="admin_comments"),
     path("admin-dashboard/tokens/", admin_tokens, name="admin_tokens"),
     path("dashboard/", user_dashboard, name="user_dashboard"),
@@ -46,7 +47,8 @@ urlpatterns = [
     path("admin-dashboard/edit-limit/<str:username>/", edit_limit, name="edit_limit"),
     path("admin-dashboard/change-pass/<str:username>/", change_pass, name="change_pass"),
     path("admin-dashboard/add-user/", add_user, name="add_user"),
-    path("admin-dashboard/get_links/", get_links, name="get_links"),
+    path("admin-dashboard/get_links_on/", get_links_on, name="get_links_on"),
+    path("admin-dashboard/get_links_off/", get_links_off, name="get_links_off"),
     path("admin-dashboard/delete_link/", delete_link, name="delete_link"),
     path("admin-dashboard/add_links/", add_links, name="add_links"),
     path("admin-dashboard/proxies/", admin_proxies, name="admin_proxies"),

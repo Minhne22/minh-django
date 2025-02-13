@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Links</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h3>🔗 Quản lý Links Off 🔴</h3>
+
+        <!-- Box hiển thị số links đã có / limit_on -->
+        <div class="alert alert-info" role="alert">
+            <span id="linksCount">0</span> / <span id="limitOn">0</span> Links
+        </div>
+
+        <!-- Thêm Link -->
+        <div class="mb-3">
+            <label for="multiLinks">Nhập nhiều links (mỗi dòng một link):</label>
+            <textarea id="multiLinks" class="form-control" rows="5" placeholder="Dán các link vào đây, mỗi dòng một link..."></textarea>
+            <button id="addLinksBtn" class="btn btn-primary mt-2">
+                ➕Thêm Links
+                <span id="addLinksSpinner" class="spinner-border spinner-border-sm" role="status" style="display: none;"></span>
+            </button>
+        </div>
+
+        <!-- Spinner hiển thị khi đang tải -->
+        <div id="loadingSpinner" class="text-center my-3" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Bảng Links -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Time Created</th>
+                    <th>ID Post</th>
+                    <th>Tên Bài</th>
+                    <th>Thời Gian Cmt Cuối</th>
+                    <th>Count Cmt</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="linkTable"></tbody>
+        </table>
+
+        <!-- Modal Chỉnh sửa -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Chỉnh sửa Link</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="editPostId">
+
+                        <div class="mb-3">
+                            <label for="editPostName" class="form-label">Tên bài</label>
+                            <input type="text" class="form-control" id="editPostName">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editLastCommentTime" class="form-label">Thời gian comment cuối</label>
+                            <input type="text" class="form-control" id="editLastCommentTime">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editStatus" class="form-label">Trạng thái</label>
+                            <select class="form-select" id="editStatus">
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                                <option value="die">Die</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="editCommentCount" class="form-label">Số lượng comment</label>
+                            <input type="number" class="form-control" id="editCommentCount">
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        <button type="button" class="btn btn-primary" id="saveEdit">Lưu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                function loadLinks() {
+                    $.get("{% url 'get_links_off' %}", function (data) {
+                        let rows = "";
+                        data.links.forEach((link, index) => {
+                            let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
+                            let formattedLastCommentTime = formatDate(link.last_comment_time);
+                            rows += `<tr>
+                                <td>${index + 1}</td>
+                                <td>${formatDate(link.created_time)}</td>
+                                <td>${postLink}</td>
+                                <td>
+                                    <span data-bs-toggle="tooltip" title="${link.content}">
+                                        ${link.name}
+                                    </span>
+                                </td>
+                                <td>${formattedLastCommentTime}</td>
+                                <td>${link.comment_count}</td>
+                                <td>${link.status}</td>
+                                <td>
+                                    <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">✏️ Edit</button>
+                                    <button class="btn btn-danger delete-link" data-post-id="${link.post_id}">❌ Xóa</button>
+                                </td>
+                            </tr>`;
+                        });
+                        $("#linkTable").html(rows);
+                        updateLinksCount(data.links.length);
+                    }).done(function () {
+                        // BIND lại sự kiện click sau khi load data
+                        bindEvents();
+                    });
+                }
+
+                function bindEvents() {
+                    // Mở modal chỉnh sửa
+                    $(".edit-link").off("click").on("click", function () {
+                        let post_id = $(this).data("post-id");
+
+                        // Lấy thông tin từ bảng
+                        let row = $(this).closest("tr");
+                        $("#editPostId").val(post_id);
+                        $("#editPostName").val(row.find("td:eq(3)").text());
+                        $("#editLastCommentTime").val(row.find("td:eq(4)").text());
+                        $("#editCommentCount").val(row.find("td:eq(5)").text());
+                        $("#editDelay").val(row.find("td:eq(7)").text());
+                        $("#editStatus").val(row.find("td:eq(8)").text());
+
+                        $("#editModal").modal("show");
+                    });
+                }
+
+                function updateLinksCount(count) {
+                    $("#linksCount").text(count);
+                    $.get("{% url 'get_user_limit' %}", function (data) {
+                        $("#limitOn").text(data.limit_on);
+                    });
+                }
+
+                loadLinks();
+
+                // Thêm link
+                $("#addLinksBtn").on("click", function () {
+                    let links = $("#multiLinks").val().trim().split("\n").map(link => link.trim()).filter(link => link);
+
+                    if (links.length === 0) {
+                        alert("Vui lòng nhập ít nhất một link!");
+                        return;
+                    }
+
+                    $("#addLinksSpinner").show(); // Hiện spinner
+
+                    let tableBody = $("#linkTable");
+                    links.forEach((link) => {
+                        let newRow = `<tr data-post-id="">
+                            <td>New</td>
+                            <td>Processing...</td>
+                            <td>${link}</td>
+                            <td>Processing...</td>
+                            <td>Processing...</td>
+                            <td>Processing...</td>
+                            <td>Processing...</td>
+                            <td><span class="badge bg-warning">Processing</span></td>
+                            <td>-</td>
+                        </tr>`;
+                        tableBody.append(newRow);
+                    });
+
+                    $.ajax({
+                        url: "{% url 'add_links' %}",
+                        type: "POST",
+                        data: JSON.stringify({ links: links }),
+                        contentType: "application/json",
+                        headers: { "X-CSRFToken": getCSRFToken() },
+                        success: function (response) {
+                            if (response.success) {
+                                reloadData();
+                                $("#multiLinks").val("");
+                            }
+                        },
+                        complete: function () {
+                            $("#addLinksSpinner").hide(); // Ẩn spinner sau khi xử lý xong
+                        },
+                        error: function () {
+                            alert("Lỗi khi thêm links!");
+                        }
+                    });
+                });
+
+                function getCSRFToken() {
+                    return document.cookie.split('; ').find(row => row.startsWith('csrftoken'))?.split('=')[1];
+                }
+
+                function reloadData() {
+                    $("#loadingSpinner").show(); // Hiện spinner
+                    $.ajax({
+                        url: "{% url 'get_links_off' %}",
+                        type: "GET",
+                        success: function (response) {
+                            if (response.success) {
+                                let tableBody = $("#linkTable");
+                                tableBody.empty();
+                                response.links.forEach((link, index) => {
+                                    let row = `<tr>
+                                        <td>${index + 1}</td>
+                                        <td>${formatDate(link.created_time)}</td>
+                                        <td><a href="https://www.facebook.com/${link.post_id}" target="_blank">${link.post_id}</a></td>
+                                        <td>
+                                            <span data-bs-toggle="tooltip" title="${link.content}">
+                                                ${link.name}
+                                            </span>
+                                        </td>
+                                        <td>${formatDate(link.last_comment_time)}</td>
+                                        <td>${link.comment_count}</td>
+                                        <td><span class="badge ${link.status === 'public' ? 'bg-success' : 'bg-danger'}">${link.status}</span></td>
+                                        <td>
+                                            <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">Edit</button>
+                                            <button class="btn btn-danger delete-link" data-post-id="${link.post_id}">Delete</button>
+                                        </td>
+                                    </tr>`;
+                                    tableBody.append(row);
+                                });
+
+                                $('[data-bs-toggle="tooltip"]').tooltip(); // Cập nhật tooltip
+                                updateLinksCount(response.links.length);
+                            }
+                        },
+                        complete: function () {
+                            $("#loadingSpinner").hide(); // Ẩn spinner sau khi load xong
+                        },
+                        error: function () {
+                            alert("Không thể tải lại dữ liệu!");
+                            $("#loadingSpinner").hide(); // Ẩn spinner nếu có lỗi
+                        }
+                    });
+                }
+
+                // Xóa link
+                $(document).on("click", ".delete-link", function () {
+                    let post_id = $(this).data("post-id");
+
+                    $(this).html('❌ Xóa <span class="spinner-border spinner-border-sm" role="status"></span>');
+
+                    $.post("{% url 'delete_link' %}", JSON.stringify({ post_id: post_id }), function () {
+                        reloadData();
+                    }, "json").always(function () {
+                        $(this).html('❌ Xóa');
+                    });
+                });
+
+                // Mở modal chỉnh sửa
+                let editModal = new bootstrap.Modal(document.getElementById("editModal"));
+
+                $(".edit-link").on("click", function () {
+                    let row = $(this).closest("tr");
+
+                    $("#editPostId").val($(this).data("post-id"));
+                    $("#editPostName").val(row.find("td:eq(3)").text());
+                    $("#editLastCommentTime").val(row.find("td:eq(4)").text().trim()); // Lấy thời gian comment cuối
+                    $("#editStatus").val(row.find("td:eq(8)").text().trim());
+                    $("#editCommentCount").val(row.find("td:eq(5)").text());
+                    $("#editDelay").val(row.find("td:eq(7)").text());
+
+                    editModal.show();
+                });
+
+                $("#saveEdit").on("click", function () {
+                    let postId = $("#editPostId").val();
+                    let newName = $("#editPostName").val();
+                    let newLastCommentTime = $("#editLastCommentTime").val();
+                    let newStatus = $("#editStatus").val();
+                    let newCommentCount = $("#editCommentCount").val();
+
+                    $("#saveEditSpinner").show(); // Hiện spinner
+
+                    $.ajax({
+                        url: "{% url 'edit_link' %}",
+                        type: "POST",
+                        data: JSON.stringify({
+                            post_id: postId,
+                            name: newName,
+                            last_comment_time: newLastCommentTime,
+                            status: newStatus,
+                            comment_count: newCommentCount
+                        }),
+                        contentType: "application/json",
+                        headers: { "X-CSRFToken": getCSRFToken() },
+                        success: function (response) {
+                            if (response.success) {
+                                reloadData();
+                                $("#editModal").modal("hide");
+                            } else {
+                                alert("Lỗi khi cập nhật!");
+                            }
+                        },
+                        complete: function () {
+                            $("#saveEditSpinner").hide(); // Ẩn spinner sau khi xử lý xong
+                        },
+                        error: function () {
+                            alert("Lỗi khi gửi dữ liệu!");
+                        }
+                    });
+                });
+
+                function getCSRFToken() {
+                    return document.cookie.split('; ')
+                        .find(row => row.startsWith('csrftoken'))
+                        ?.split('=')[1];
+                }
+            });
+
+            function formatDate(timestamp) {
+                if (!isNaN(timestamp)) {
+                    let date = new Date(timestamp * 1000);  // Convert UNIX timestamp to JavaScript Date object
+                    let day = date.getDate().toString().padStart(2, '0');
+                    let month = (date.getMonth() + 1).toString().padStart(2, '0');  // Months are zero-based
+                    let year = date.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+                return timestamp;  // If not a number, return the original value
+            }
+        </script>
+    </div>
+</body>
+</html>

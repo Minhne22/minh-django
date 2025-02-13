@@ -6,33 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
-        body { display: flex; }
-        #sidebar { width: 250px; height: 100vh; background: #212529; padding: 20px; color: white; }
-        #sidebar a { color: white; display: block; padding: 10px; text-decoration: none; }
-        #sidebar a:hover { background: #495057; }
+        body { display: flex; flex-direction: column; }
+        #navbar { width: 100%; background: #212529; padding: 10px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        #navbar .left { display: flex; align-items: center; }
+        #navbar .right { display: flex; align-items: center; }
+        #navbar a { color: white; padding: 10px; text-decoration: none; }
+        #navbar a:hover { background: #495057; }
         #content { flex-grow: 1; padding: 20px; }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div id="sidebar">
-        <h4>Admin Panel</h4>
-        <a href="#" data-page="users">👤 Manage Users</a>
-        <a href="#" data-page="links">🔗 Manage Links</a>
-        <a href="#" data-page="comments">💬 Manage Comments</a>
-        <a href="#" data-page="cookie">🔑 Manage Cookie</a>
-        <a href="#" data-page="tokens">🔑 Manage Token</a>
-        <a href="#" data-page="proxies">🖧 Manage Proxies</a>
-        <a href="{% url 'logout' %}" class="text-danger" id="logout-btn">🚪 Logout</a>
+    <!-- Navbar -->
+    <div id="navbar">
+        <div class="left">
+            <a>FBUID</a>
+        </div>
+        <div class="right">
+            <a href="#" data-page="users"><i class="bi bi-person"></i> Users</a>
+            <a href="#" data-page="links-on"><i class="bi bi-link-45deg"></i> Links On</a>
+            <a href="#" data-page="links-off"><i class="bi bi-link-45deg"></i> Links Off</a>
+            <a href="#" data-page="comments"><i class="bi bi-chat-dots"></i> Comments</a>
+            <a href="#" data-page="cookie"><i class="bi bi-key"></i> Cookie</a>
+            <a href="#" data-page="tokens"><i class="bi bi-shield-lock"></i> Token</a>
+            <a href="#" data-page="proxies"><i class="bi bi-hdd-network"></i> Proxies</a>
+            <a><i class="bi bi-person-circle"></i> {{ request.session.username }}</a>
+            <a><i class="bi bi-calendar"></i> Còn lại: {{ request.session.days_remaining }} ngày</a>
+            <a href="{% url 'logout' %}" class="text-danger" id="logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
     </div>
 
     <!-- Content -->
     <div id="content">
-        <h2>Welcome, Admin {{ request.session.username }}</h2>
         <div id="dashboard-content">
-            <p>Chọn một mục từ sidebar để xem nội dung.</p>
+            <h2>Welcome, {{ request.session.username }}</h2>
+            <p>Chọn một mục từ navbar để xem nội dung.</p>
         </div>
     </div>
 
@@ -44,7 +54,7 @@
             });
         });
         $(document).ready(function() {
-            $("#sidebar a").click(function(e) {
+            $("#navbar a").click(function(e) {
                 e.preventDefault();
                 let page = $(this).data("page");
                 if (page) {
