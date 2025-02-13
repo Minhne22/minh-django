@@ -59,9 +59,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts.middleware.SessionTimeoutMiddleware'
 ]
 
 ROOT_URLCONF = 'myproject.urls'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 TEMPLATES = [
     {
@@ -81,7 +83,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
-
+SESSION_COOKIE_AGE = 6 * 60 * 60  # 6 hours
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 

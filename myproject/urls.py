@@ -19,10 +19,11 @@ from django.urls import path
 from accounts.views import admin_dashboard, user_dashboard, admin_comments, admin_links, admin_tokens, dashboard_comments, dashboard_links, dashboard_tokens, admin_cookie
 from accounts.views import login_view, logout_view, register_view, manage_users, delete_user, change_role, add_user, \
     get_links, delete_link, add_links, edit_link, \
-        admin_proxies, get_proxies, add_proxy, delete_proxy, toggle_proxy
+        admin_proxies, get_proxies, add_proxy, delete_proxy, toggle_proxy, \
+            edit_limit, change_pass
 from accounts.views import add_cookies, get_cookies, delete_cookie, delete_all_cookies
-from accounts.views import convert_tokens, get_tokens, delete_token, convert_cookie_to_token, delete_all_tokens
-from accounts.views import comment_list
+from accounts.views import convert_tokens, get_tokens, delete_token, delete_all_tokens
+from accounts.views import comment_list, get_user_limit
 
 urlpatterns = [
     path('', user_dashboard, name='home'),
@@ -42,6 +43,8 @@ urlpatterns = [
     path("admin-dashboard/users/", manage_users, name="manage_users"),
     path("admin-dashboard/delete-user/<str:username>/", delete_user, name="delete_user"),
     path("admin-dashboard/change-role/<str:username>/", change_role, name="change_role"),
+    path("admin-dashboard/edit-limit/<str:username>/", edit_limit, name="edit_limit"),
+    path("admin-dashboard/change-pass/<str:username>/", change_pass, name="change_pass"),
     path("admin-dashboard/add-user/", add_user, name="add_user"),
     path("admin-dashboard/get_links/", get_links, name="get_links"),
     path("admin-dashboard/delete_link/", delete_link, name="delete_link"),
@@ -60,6 +63,7 @@ urlpatterns = [
     path("admin-dashboard/api/delete_token/", delete_token, name="delete_token"),
     path("admin-dashboard/api/delete_all_tokens/", delete_all_tokens, name="delete_all_tokens"),
     path("admin-dashboard/api/delete_all_cookies/", delete_all_cookies, name="delete_all_cookies"),
-    path("admin-dashboard/api/comment_list/", comment_list, name="comment_list")
+    path("admin-dashboard/api/comment_list/", comment_list, name="comment_list"),
+    path("admin-dashboard/api/get_user_limit/", get_user_limit, name="get_user_limit"),
     # path("convert-cookie/", convert_cookie_to_token, name="convert_cookie_to_token"),
 ]

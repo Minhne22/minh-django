@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Log in | K.com</Title>    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+      <meta name="ulp-version" content="1.29.1">
+    
+    
+    
+    <meta name="robots" content="noindex, nofollow">
+    
+    
+    <link rel="stylesheet" href="https://cdn.auth0.com/ulp/react-components/1.106.1/css/main.cdn.min.css">
+    <style id="custom-styles-container">
+      
+        
+
+
+
+
+        
+          :root, .af-custom-form-container .af-form {
+    --primary-color: #3b2b2f;
+  }
+        
+      
+
+        
+          :root, .af-custom-form-container .af-form {
+    --button-font-color: #ffffff;
+  }
+        
+      
+
+        
+          :root {
+    --secondary-button-border-color: #c9cace;
+    --social-button-border-color: #c9cace;
+    --radio-button-border-color: #c9cace;
+  }
+        
+      
+
+        
+          :root {
+    --secondary-button-text-color: #1e212a;
+  }
+        
+      
+
+        
+          :root {
+    --link-color: #1e212a;
+  }
+        
+      
+
+        
+          :root {
+    --title-font-color: #aa8066;
+  }
+        
+      
+
+        
+          :root {
+    --font-default-color: #1e212a;
+  }
+        
+      
+
+        
+          :root {
+    --widget-background-color: #ffffff;
+  }
+        
+      
+
+        
+          :root {
+    --box-border-color: #c9cace;
+  }
+        
+      
+
+        
+          :root {
+    --font-light-color: #65676e;
+  }
+        
+      
+
+        
+          :root {
+    --input-text-color: #000000;
+  }
+        
+      
+
+        
+          :root {
+    --input-border-color: #c9cace;
+    --border-default-color: #c9cace;
+  }
+        
+      
+
+        
+          :root {
+    --input-background-color: #ffffff;
+  }
+        
+      
+
+        
+          :root {
+    --icon-default-color: #65676e;
+  }
+        
+      
+
+        
+          :root {
+    --error-color: #d03c38;
+    --error-text-color: #ffffff;
+  }
+        
+      
+
+        
+          :root {
+    --success-color: #13a688;
+  }
+        
+      
+
+        
+          :root {
+    --base-focus-color: #3B2B2F;
+    --transparency-focus-color: rgba(59,43,47, 0.15);
+  }
+        
+      
+
+        
+          :root {
+    --base-hover-color: #000000;
+    --transparency-hover-color: rgba(0,0,0, var(--hover-transparency-value));
+  }
+        
+      
+
+        
+      
+
+
+
+
+        
+          @font-face {
+    font-family: 'ULP Custom';
+    font-style: normal;
+    font-weight: var(--font-default-weight);
+    src: local('ULP Custom'), url('https://www.keurig.com/maintenance/font/mo-5423476/260903aa-66f6-4578-8f4e-aed460e46563.woff') format('woff');
+  }
+
+  body {
+    --font-family: 'ULP Custom', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, sans-serif;
+  }
+        
+      
+
+        
+          html, :root, .af-custom-form-container .af-form {
+    font-size: 14px;
+    --default-font-size: 14px;
+  }
+        
+      
+
+        
+          body {
+    --title-font-size: 1.5rem;
+    --title-font-weight: var(--font-bold-weight);
+  }
+        
+      
+
+        
+          .cb1378234 {
+    font-size: 1rem;
+    font-weight: var(--font-default-weight);
+  }
+        
+      
+
+        
+          .c6215c8ff {
+    font-size: 1rem;
+    font-weight: var(--font-default-weight);
+  }
+  .ulp-passkey-benefit-heading {
+    font-size: 1.15rem;
+  }
+        
+      
+
+        
+          .cca57afd8, .c65b1399d {
+    font-size: 1rem;
+    font-weight: var(--font-bold-weight);
+  }
+        
+      
+
+        
+          body {
+    --ulp-label-font-size: 1rem;
+    --ulp-label-font-weight: var(--font-default-weight);
+  }
+        
+      
+
+        
+          .ccd9b9eb0, .cdf6f7df0, [id^='ulp-container-'] a {
+    font-size: 1rem;
+    font-weight: var(--font-bold-weight) !important;
+  }
+        
+      
+
+        
+          .cdf6f7df0, .ccd9b9eb0 {
+      text-decoration: underline;
+    }
+        
+      
+
+
+
+
+        
+          :root {
+    --button-border-width: 1px;
+    --social-button-border-width: 1px;
+    --radio-border-width: 1px;
+  }
+        
+      
+
+        
+          body {
+    --button-border-radius: 9999px;
+    --radio-border-radius: 9999px;
+  }
+        
+      
+
+        
+          :root {
+    --input-border-width: 1px;
+  }
+        
+      
+
+        
+          body {
+    --input-border-radius: 9999px;
+  }
+
+  .af-custom-form-container .af-form {
+    --border-radius: 24px;
+  }
+        
+      
+
+        
+          :root {
+    --border-radius-outer: 5px;
+  }
+        
+      
+
+        
+          :root {
+    --box-border-width: 0px;
+  }
+        
+      
+
+        
+          body {
+    --shadow-component-outer: none;
+  }
+        
+      
+
+
+
+
+        
+          
+      .c67411d03 {
+        display: none;
+      }
+
+      body {
+        --header-title-spacing: 0;
+      }
+    
+        
+      
+
+        
+          
+    .c67411d03 {
+      content: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2mk0WJ0TGc0t8xHb2GMqcmMyEl6cbONXw0A&usqp=CAU');
+    }
+  
+        
+      
+
+        
+          body {
+    --logo-height: 28px;
+  }
+  .c67411d03 {
+    height: var(--logo-height);
+  }
+  
+        
+      
+
+        
+          
+    body {
+      --header-alignment: center;
+    }
+  
+        
+      
+
+        
+          
+        
+      
+
+
+
+
+        
+          .c1feb18c7 {
+    --page-background-alignment: center;
+  }
+        
+      
+
+        
+          body {
+    --page-background-color: #ffffff;
+  }
+        
+      
+
+        
+          
+        
+      
+
+
+
+
+      
+    </style>
+    <style>
+    /* By default, hide features for javascript-disabled browsing */
+    /* We use !important to override any css with higher specificity */
+    /* It is also overriden by the styles in <noscript> in the header file */
+    .no-js {
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      height: 1px;
+      overflow: hidden;
+      position: absolute;
+      white-space: nowrap;
+      width: 1px;
+    }
+  </style>
+  <noscript>
+    <style>
+      /* We use !important to override the default for js enabled */
+      /* If the display should be other than block, it should be defined specifically here */
+      .js-required { display: none !important; }
+      .no-js {
+        clip: auto;
+        clip-path: none;
+        height: auto;
+        overflow: auto;
+        position: static;
+        white-space: normal;
+        width: var(--prompt-width);
+      }
+    </style>
+  </noscript>
+    
+<style>
+
+        @font-face{
+            font-family: "MarkOT-Bold";
+            src: url("https://www.keurig.com/maintenance/font/mo-5423411/8706c0b6-b423-44f7-ae1a-dd0aabd8a542.eot?#iefix");
+            src: url("https://www.keurig.com/maintenance/font/mo-5423411/8706c0b6-b423-44f7-ae1a-dd0aabd8a542.eot?#iefix")format("embedded-opentype"),
+                url("https://www.keurig.com/maintenance/font/mo-5423411/4fe94f2e-7892-4785-9663-0350a7adf8c0.woff")format("woff"),
+                url("https://www.keurig.com/maintenance/font/mo-5423411/41c8162d-c2a6-49b0-8139-8bebab187588.woff2")format("woff2"),
+                url("https://www.keurig.com/maintenance/font/mo-5423411/3a7daddb-0a78-4734-a699-6fe08d0e8b99.ttf")format("truetype");
+            font-weight:normal;
+            font-style:normal;
+            font-display:swap;
+        }
+
+        @font-face{
+            font-family: "MarkOT-Medium";
+            src: url("https://www.keurig.com/maintenance/font/mo-5423441/fbdcf9c3-5ae6-4d9a-a599-3764f7c806be.eot?#iefix");
+            src: url("https://www.keurig.com/maintenance/font/mo-5423441/fbdcf9c3-5ae6-4d9a-a599-3764f7c806be.eot?#iefix")format("embedded-opentype"),
+                url("https://www.keurig.com/maintenance/font/mo-5423441/37554929-783d-48b4-9346-54af9bdaa5c7.woff")format("woff"),
+                url("https://www.keurig.com/maintenance/font/mo-5423441/bca028ce-c27d-4e7d-aa28-f173d521ad14.woff2")format("woff2"),
+                url("https://www.keurig.com/maintenance/font/mo-5423441/48f92810-bb37-4032-9967-4fc12c9a022c.ttf")format("truetype");
+            font-weight:normal;
+            font-style:normal;
+            font-display:swap;
+        }
+
+        @font-face{
+            font-family: "MarkOT-Regular";
+            src: url("https://www.keurig.com/maintenance/font/mo-5423476/85892bf5-3ec3-4b41-962d-b9c2d3dab2ad.eot?#iefix");
+            src: url("https://www.keurig.com/maintenance/font/mo-5423441/85892bf5-3ec3-4b41-962d-b9c2d3dab2ad.eot?#iefix")format("embedded-opentype"),
+                url("https://www.keurig.com/maintenance/font/mo-5423476/260903aa-66f6-4578-8f4e-aed460e46563.woff")format("woff"),
+                url("https://www.keurig.com/maintenance/font/mo-5423476/3b985398-c848-456f-8878-6a5c2a72b82a.woff2")format("woff2"),
+                url("https://www.keurig.com/maintenance/font/mo-5423476/aee5511e-bc73-45e1-9963-0ff9e501ba59.ttf")format("truetype");
+            font-weight:normal;
+            font-style:normal;
+            font-display:swap;
+        }
+
+        .perks-checkbox-container {
+            flex-direction: column;
+        }
+
+        .perks-modal-container {
+            background-color: #030405a9;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+            z-index: 999;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+        .perks-loyalty-label {
+            height: 23px;
+        }
+        .perks-loyalty-label img {
+            position: relative;
+            top: -9px;
+        }
+        .perks-checkbox-container .label-desc {
+            font-family: MarkOT-Regular;
+            margin-left: 27px;
+            color: #000;
+            font-size: 12px;
+            font-weight: 450;
+            max-width: 200px;
+            line-height: 16px;
+        }
+
+        .perks-details-text {
+            font-family: MarkOT-Regular;
+            border: none;
+            background: none;
+            padding: 0;
+            text-decoration: underline;
+            color: #000;
+            font-size: 12px;
+            font-weight: 450;
+            line-height: 16px;
+            letter-spacing: .5px;
+        }
+
+        .perks-modal-content {
+            text-align: center;
+            background-color: #e7ceb5;
+            padding: 40px 100px;
+            width: calc(100% - 20px);
+            max-width: 820px;
+            border-radius: 8px;
+            vertical-align: middle;
+            display: inline-block;
+            position: relative;
+            @media screen and (max-width: 768px) {
+                padding: 40px 20px;
+            }
+        }
+        
+        .perks-modal-logo {
+            max-width: 288px;
+            @media screen and (max-width: 768px) {
+                max-width: 237px;
+            }
+        }
+
+        .perks-modal-heading {
+            font-family: MarkOT-Bold;
+            color: #E5431E;
+            font-size: 30px;
+            line-height: normal;
+            margin-bottom: 0;
+            font-weight: 700;
+            margin-bottom: 20px;
+            @media screen and (max-width: 768px) {
+                font-size: 24px;
+            }
+        }
+
+        .perks-modal-desc {
+            font-family: MarkOT-Medium;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: normal;
+            margin: 0;
+            padding: 0;
+            word-spacing: 1px;
+            a { 
+                padding: 0;
+                font-family: MarkOT-Medium;
+                color: #333;
+                font-size: 16px;
+                font-weight: 500 !important;
+                text-decoration: underline;
+            }
+        }
+
+        .perks-modal-content .tooltip-close {
+            width: 20px;
+            height: 20px;
+        }
+        .perks-modal-content .tooltip-close::before, .perks-modal-content .tooltip-close::after {
+            width: 20px;
+            height: 3px;
+        }
+
+	.details-text{
+	cursor: pointer;
+    	color: rgb(77, 77, 77);
+    	font-size: 0.75rem;
+    	font-weight: 300;
+    	line-height: 18px;
+    	text-decoration: underline;
+    	display: inline;
+	font-size: 14px;
+	}
+    .details-container{
+      display: inline;
+    }
+    .tooltip-icon{
+      display: inline;
+    }
+
+	.loyalty-label{
+    	display: flex;
+    	-webkit-box-align: center;
+    	align-items: center;
+    	line-height: 18px;
+    	width: 240px;
+    	font-size: 14px;
+    	position: relative;
+    	padding: 2px 0px 0px 30px;
+    	margin-bottom: 0px;
+    	cursor: pointer;
+	user-select:text;
+	}
+	label.loyalty-label:before {
+   	 margin-top: 20px;
+	}
+	input[type=checkbox]+label.loyalty-label:after {
+    	border: 2px solid rgb(47, 64, 83);
+    	display: block;
+    	left: 3px;
+    	top: 20px !important;
+    	width: 15px;
+    	height: 15px;
+    	border-style: solid;
+    	border-color: #fff;
+    	border-image: initial;
+    	border-width: 0px 2px 2px 0px;
+    	content: "";
+    	position: absolute;
+	}
+
+
+	.ulp-ca-loyalty{
+	position: absolute;
+    	opacity: 0;
+    	cursor: pointer;
+    	height: 0px;
+    	width: 0px;
+	box-sizing: border-box;
+    	padding: 0;
+	overflow:visible;
+	}
+	.popover-main {
+	position: absolute; 
+	inset: auto auto 0px 0px; 
+	margin: 0px;
+	}
+	.popover-text{
+	width: 290px;
+    	z-index: 1000;
+    	border-radius: 3px;
+    	background-color: rgb(255, 255, 255);
+    	box-shadow: rgba(104, 103, 107, 0.6) 0px 2px 10px 0px;
+    	color: rgb(0, 0, 0);
+	transition: opacity 0.3s ease 0s;
+    	border: none;
+	}
+	.popover{
+	display: block;
+	max-width: 276px;
+	font-style: normal;
+    	font-weight: 400;
+    	line-height: 1.5;
+    	text-align: start;
+    text-decoration: none;
+    text-shadow: none;
+    text-transform: none;
+    letter-spacing: normal;
+    word-break: normal;
+    word-spacing: normal;
+    white-space: normal;
+    line-break: auto;
+    font-size: .875rem;
+    word-wrap: break-word;
+	background-clip: padding-box;
+}
+.arrow-main{
+position: absolute; 
+left: 0px; 
+transform: translate3d(130px, 0px, 0px);
+}
+.popover-text .arrow{ 
+	margin: 0px;
+}
+.popover-text>.arrow {
+    bottom: calc(-0.5rem - 1px);
+}
+.popover-text>.arrow::before {
+    bottom: 0;
+    border-width: 0.5rem 0.5rem 0;
+    border-top-color: rgba(0,0,0,.25);
+}
+.popover-text>.arrow:after {
+    bottom: 1px;
+    border-width: 0.5rem 0.5rem 0;
+    border-top-color: #fff;
+}
+
+.popover-text .arrow::after {
+    border-bottom-color: rgb(236, 233, 228);
+}
+.popover .arrow {
+	margin: 0px;
+    width: 1rem;
+    height: 0.5rem;
+	display: block;
+}
+.popover .arrow:after, .popover .arrow:before {
+    position: absolute;
+    display: block;
+    content: "";
+   border-left-color: transparent;
+    border-right-color: transparent;
+    border-style: solid;
+}
+popover-top>.arrow {
+    bottom: calc(-0.5rem - 1px);
+}
+.popover-header {
+    padding: 0px;
+	margin-bottom: 0;
+    font-size: 1rem;
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #ebebeb;
+    border-top-left-radius: calc(0.3rem - 1px);
+    border-top-right-radius: calc(0.3rem - 1px);
+}
+.popover-header-text {
+    padding: 12px 20px 14px;
+    background-color: rgb(236, 233, 228);
+    color: rgb(0, 0, 0);
+    font-size: 0.75rem;
+    line-height: 15px;
+    font-weight: bold;
+    position: relative;
+}
+.close-icon-place{
+width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+}
+.popover-text .popover-body{
+    border: none;
+    padding: 0px;
+	color: #212529;
+}
+.popover-content-container{
+    padding: 15px 20px 20px;
+    text-align: left;
+    color: rgb(0, 0, 0);
+    font-size: 0.75rem;
+    line-height: 15px;
+}
+.loyalty-registration-details {
+    cursor: pointer;
+    text-decoration: underline;
+    color: rgb(0, 0, 0);
+    font-size: 0.75rem !important;
+}
+.close-icon-place::before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background-color: rgb(0, 0, 0);
+    transform-origin: center center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+.close-icon-place::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background-color: rgb(0, 0, 0);
+    transform-origin: center center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+	
+        .terms-and-privacy {
+            text-align: center;
+	    font-size:15px;
+	    align-self:center;
+	    font-weight: 400;
+            line-height: 19px;
+            letter-spacing: 0em;
+         }
+        .terms-and-privacy .link {
+            color: rgb(0, 0, 0);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        
+	.checkbox-login {
+	    padding: 8px 10px;
+	    border-width: 2px;
+	    border-style:solid;
+	    border-color:transparent;
+	    display:flex;
+	}
+	.loyalty-checkbox{
+		    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    margin: 10px 0px 0px;
+    border: 2px solid rgb(15, 125, 181);
+    border-radius: 3px;
+    padding: 6px 13px;
+	}
+
+	.langage-selector {
+	    padding:25px;
+	    text-align:right;
+	    position:absolute;
+	    top:0px;
+	    right:20%;
+	    color: #9B9B9B;
+            font-size: 0.875rem;
+            line-height: 18px;
+		@media screen and (max-width: 768px) {
+			right:0;
+		}
+	}
+	.language {
+	    cursor:pointer;
+	    color:#333333;
+	    margin: 0 10px;
+	}
+	.language-selected {
+	    cursor:pointer;
+	    text-decoration:underline;
+	    pointer-events:none;
+	}
+	.logoheader {
+	    position: relative;
+	    display: flex;
+	    max-width: 75rem;
+    	    margin: 0 auto;
+	    width: 100%;
+	    justify-content: center;
+	}
+	.logocontainer{
+		padding: 20px 0px 0px 0px;
+		text-align: center;
+	}
+	.logoimage {
+
+	    max-height:28px;
+
+	    min-width: 165px;
+	}
+    @media (max-width: 600px) {
+        #container-widget-and-footers-id{
+            flex-direction: column;
+	        align-items: center;
+        }
+        .login-primary-banner {
+            display: none;
+        }
+    }
+#container-widget-and-footers-id{
+	display: flex;
+    -webkit-box-pack: center;
+   justify-content: center;
+	margin-right: 25px;
+	margin-left: 25px;
+
+    }
+	.signup-bottom {
+	    width:304px;
+	    margin: 0 auto;
+	    text-align:center;
+
+
+
+
+	    display:flex;
+	    flex-direction:column;
+	    position:relative;
+	}
+	.signup-bottom-2 {
+	    width:100%;
+	    text-align:center;
+	    display:flex;
+	    flex-direction:column;
+	    position:relative;
+	}
+	.login-primary-banner {
+	    width:100%;
+	    grid-area: right;
+	    align-self: center;
+	    display:flex;
+	    flex-direction:column;
+	    align-items:flex-start;
+	@media screen and (max-width: 768px) {
+display: none;
+}
+	}
+	.login-primary-banner-extra-web {
+    	   align-items:center;
+	   display:grid;
+	   @media screen and (max-width: 768px) {
+		display:none;
+	   }
+	   margin-left: 50px;
+	   width: 290px;
+	   height: 430px;
+	   border-radius: 10px;
+	   background-color: rgb(243, 243, 243);
+	  
+		@media screen and (min-device-width: 799px) and (max-device-width: 851px) { 
+		width: auto;
+		}
+	}
+	
+	.login-primary-banner-hide {
+        display:none;
+	}
+    .benefits-brewer-reg {
+        display: block;
+        max-width: 350px;
+        width: auto;
+        height: auto;
+        margin-left: 0px;
+        @media screen and (max-width: 767px) {
+            margin: auto;
+            margin-top: 30px;
+        }
+    }
+    .brewer-reg-container-widget-and-footers-id {
+        @media screen and (max-width: 767px) {
+            flex-direction: column;
+        }
+    }
+
+    .logoheader-brewer-reg {
+        position: relative;
+        display: flex;
+        margin: 0 auto;
+        width: 100%;
+        padding: 20px;
+        background: #EBE9E4;
+    }
+    .logocontainer-brewer-reg {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        column-gap: 20px;
+    }
+    #link-main-site-id{
+        line-height: 1;
+        height: 22px;
+    }
+    .logoheader-content-brewer-reg {
+        color: #000;
+        font-family: MarkOT-Medium;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        @media screen and (min-width: 768px), screen and (orientation: landscape) {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+    .forms-steps-container {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .forms-steps-svg-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 5px 0px;
+        width: 100%;
+        background: #FFF;
+        box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+        align-self: center;
+        z-index: 2;
+        position: relative;
+        @media screen and (max-width: 768px) {
+            position: sticky;
+            top: 0;
+        }
+        .forms-step-img-wrapper {
+            display: flex;
+            align-items: center;
+            width: 166px;
+            height: 46px
+        }
+        .langage-selector {
+            position: absolute;
+            right: 50px;
+            @media screen and (max-width: 444px) {
+                right: 25px;
+            }
+            padding: 15px 0 0 15px;
+        }
+    }
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+    }
+    .forms-steps-info-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 10px 0px;
+        align-items: center;
+        border-bottom: 1px solid #AA8066;
+        @media screen and (max-width: 767px) {
+            flex-direction: column;
+            column-gap: 10px;
+            padding: 30px 20px 20px;
+            align-items: flex-start;
+        }
+    }
+    .brewer-label {
+        color: #333;
+        font-family: MarkOT-Bold;
+        font-size: 24px;
+        font-style: normal;
+        line-height: 28px;
+        padding-right: 50px;
+    }
+    .brewer-serial-name {
+        color: #000;
+        font-family: MarkOT-Regular;
+        font-size: 16px;
+        font-style: normal;
+        line-height: 22px;
+        padding-right: 15px;
+        @media screen and (max-width: 767px) {
+            padding-bottom: 10px;
+            padding-top: 6.5px;
+        }
+    }
+    .brewer-serial-number {
+        color: #3B2B2F;
+        font-family: MarkOT-Bold;
+        font-size: 16px;
+        font-style: normal;
+        line-height: 22px;
+        text-transform: uppercase;
+    }
+
+	#group-column-id{
+		@media screen and (max-width: 768px) {
+			width: 100%;
+	}
+	.group-column-mobile {
+	    width: 100%;
+	}
+	
+	.guest-continue {
+	    text-decoration:underline;
+	    padding: 20px 0px 0px 0px;
+	    font-size: 15px;
+	    font-weight: 700;
+	    line-height: 21px;
+	    letter-spacing: 0px;
+	    text-align: center;
+	    color: #2D2926;
+
+	}
+	#loginPrimaryBannerContent{
+		max-width: inherit;
+    		height: inherit;
+    		margin: auto;
+	}
+	.widget-dynamic-container{
+		justify-content: flex-start;
+		min-height:auto;
+	}
+	.widget-dynamic-container h1{
+		color:#3B2B2f;
+		font-size: 48px;
+		font-weight: 400;
+		line-height: 61px;
+		letter-spacing: 0.6370368003845215px;
+		text-align: center;
+
+		@media screen and (max-width: 768px) {
+		font-size: 20px;
+		font-weight: 700;
+		line-height: 25px;
+		letter-spacing: 0px;
+		color: #83604E;
+
+		}
+	}
+	.reset-password-assistance{
+		text-align: center;
+    		margin: 0 auto;
+    		display: flex;
+    		position: relative;
+    		flex-direction: column;
+    		width: 327px;
+		font-size: 15px;
+		font-weight: 700;
+		line-height: 21px;
+		letter-spacing: 0px;
+		text-align: center;
+		color: ##2D2926;
+	}
+	.info{
+		font-weight: 400;
+	}
+	.info a {
+		color: #0F7DB5;
+		text-decoration: underline;
+	}
+	.popup-wrapper {
+    width: 290px;
+    z-index: 1000;
+    border-radius: 3px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: rgba(104, 103, 107, 0.6) 0px 2px 10px 0px;
+    color: rgb(0, 0, 0);
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    transition: opacity 0.3s ease 0s;
+    border: none;
+}
+button:not(:disabled) {
+    cursor: pointer;
+}
+.tooltip-close {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+}
+.popover-body {
+    border: none;
+    padding: 0px;
+	color: #212529;
+}
+.popover-body-container{
+padding: 15px 20px 20px;
+    text-align: left;
+    color: rgb(0, 0, 0);
+    font-size: 0.75rem;
+    line-height: 15px;
+}
+    </style>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.optimizely.com/js/20188537154.js"></script>
+  <script >bazadebezolkohpepadr="2024055082"</script><script type="text/javascript" src="https://login.keurig.com/akam/13/78a4a22e"  defer></script></head>
+  <body class="_widget-auto-layout">
+
+        <div class="logoheader">
+            <div class="logocontainer">
+                <a href="#" id="link-main-site-id" aria-label="Keurig Logo">
+                    <title id="keurigLogoTitle">Keurig logo linked to keurig.com</title>
+                
+                    <svg viewBox="0 0 141 24" xmlns="http://www.w3.org/2000/svg" class="display-image logoimage"><path d="M27.425.583H43.69v4.753H33.344v4.1h9.553v4.8h-9.553v4.498h10.345v4.753H27.425V.583Zm36.536 15.471c0 1.818-1.002 2.82-3.914 2.82-2.913 0-3.868-1.025-3.868-2.82V.583h-5.896v16.124c0 3.611 2.214 7.223 9.787 7.223 7.62 0 9.833-3.612 9.833-7.223V.583h-5.895v15.471h-.047Zm40.124 7.433h5.896V.583h-5.896v22.904Zm26.074-11.324v6.431a20.205 20.205 0 0 1-3.518.303c-3.03 0-3.612-1.048-3.612-3.006V7.992c0-2.12 1.025-2.82 3.519-2.82 2.423 0 5.08.257 7.875.653l.536-4.94c-2.912-.582-5.639-.792-8.295-.792-6.734 0-9.553 2.284-9.553 7.13v9.53c0 4.59 2.563 7.13 9.39 7.13 3.03 0 6.291-.396 9.087-1.188V12.117h-5.429v.046ZM3.8 8.435a3.595 3.595 0 0 0-3.59 3.612c0 1.98 1.608 3.611 3.59 3.611a3.595 3.595 0 0 0 3.587-3.611 3.595 3.595 0 0 0-3.588-3.612m0-8.295A3.595 3.595 0 0 0 .21 3.75c0 1.981 1.607 3.612 3.588 3.612a3.595 3.595 0 0 0 3.588-3.612A3.595 3.595 0 0 0 3.798.14m0 16.59A3.595 3.595 0 0 0 .21 20.342c0 1.98 1.607 3.611 3.588 3.611a3.595 3.595 0 0 0 3.588-3.611 3.595 3.595 0 0 0-3.588-3.612M21.833.583h-6.64L8.457 12.047l6.734 11.464h6.618l-6.944-11.464L21.833.583ZM93.32 15.82l4.637 7.666H91.34l-3.682-6.477h-4.52v6.477h-5.895V.583h10.835c6.174 0 8.155 2.423 8.155 6.617v3.216c-.023 2.586-.722 4.1-2.913 5.405Zm-2.819-8.365c0-1.491-.7-2.12-2.47-2.12h-4.893v7.014h4.753c1.888 0 2.61-.7 2.61-2.237V7.456Zm48-7.2c-.839 0-1.515.676-1.515 1.538 0 .839.676 1.538 1.515 1.538.839 0 1.515-.699 1.515-1.538A1.502 1.502 0 0 0 138.5.256m0 2.866a1.333 1.333 0 0 1-1.328-1.351c0-.746.606-1.328 1.328-1.328.722 0 1.328.606 1.328 1.328 0 .746-.582 1.351-1.328 1.351m.093-1.141h-.35v.489h-.209V1.025h.56c.302 0 .442.14.442.373v.21c0 .163-.047.256-.21.326l.396.513h-.256l-.373-.466Zm0-.77h-.35v.583h.35c.163 0 .233-.07.233-.186v-.21c0-.14-.07-.186-.233-.186" fill="#000" fill-rule="nonzero"></path></svg>
+                
+                </a>
+            </div>
+        </div>
+    
+
+  <div id="container-widget-and-footers-id">
+    <div id="group-column-id"><main class="_widget login-id">
+  <section class="c643eb2e5 _prompt-box-outer cbdf597ee">
+    <div class="cbff8cb2b c75b61491">
+      
+    
+      
+    
+      <div class="c56c8776e">
+        <header class="c4a3b1ebb c3d7b0b67">
+          <div title="keurig" id="custom-prompt-logo" style="width: auto !important; height: 60px !important; position: static !important; margin: auto !important; padding: 0 !important; background-color: transparent !important; background-position: center !important; background-size: contain !important; background-repeat: no-repeat !important"></div>
+        
+          <img class="c67411d03 ca40fe42f" id="prompt-logo-center" src="https://cdn.auth0.com/manhattan/versions/1.3935.0/assets/badge.png" alt="keurig">
+        
+          
+            <h1 class="c34c4ffae ce89da225">Sign In</h1>
+          
+        
+          <div class="cb1378234 c27481b92">
+            <p class="c7cdcc8e5 c69350fc5"> </p>
+          </div>
+        </header>
+      
+        <div class="c6215c8ff ccb0a77ba">
+          
+        
+          
+            <div class="ceb666f5e cb939f702">
+              <div class="c7e6cc6e7">
+                
+              
+                
+                  <form method="POST" class="ce764ad63 _form-login-id" data-form-primary="true">
+                    <input type="hidden" name="state" value="hKFo2SBWc0Izc1NrMWxoZG11NFhQZm8yNzNIQ0g3Q1ZzYnFYSKFur3VuaXZlcnNhbC1sb2dpbqN0aWTZIFZYYUpWRHU2aGw0Vlhyb0ZuV2tVZHk4aDdMcnNmRm12o2NpZNkga3FSd3g5R3pJZmhvYnlQYmFwMkR2ZlNhV1dHU05heXU">
+                  
+                    
+                  
+                    
+                  
+                    
+                  
+                    <div class="ceb666f5e cb939f702">
+                      <div class="c7e6cc6e7">
+                        
+                      
+                        
+                          
+                            <div class="input-wrapper _input-wrapper">
+                              <div class="c32eba800 c41ee3e1b text ce64e66b7" data-action-text="" data-alternate-action-text="">
+                                <label class="c5bc2a72c no-js cd42da99c c714e3eb5" for="username">
+                                  Enter email address
+                                </label>
+                              
+                                <input class="input cec61d1fe c54babdaf" inputMode="email" name="username" id="username" type="text" value="" required autoComplete="email" autoCapitalize="none" spellCheck="false" autoFocus>
+                              
+                                <div class="c5bc2a72c js-required cd42da99c c714e3eb5" data-dynamic-label-for="username" aria-hidden="true">
+                                  Enter email address*
+                                </div>
+                              </div>
+                            
+                              
+                            </div>
+                          
+                        
+                      
+                        
+                      
+                        
+                          
+                            <div data-captcha-provider="recaptcha_v2" data-captcha-sitekey="6Le_g20UAAAAAJEp0i4335yGqhME59k0_i9f23cS" data-captcha-lang="en" class="ulp-captcha-container">
+                              
+                                <div class="ulp-recaptcha ulp-captcha" id="ulp-recaptcha"></div>
+                              
+                            
+                              
+                                <input type="hidden" name="captcha" value="">
+                              
+                            </div>
+                          
+                        
+                      </div>
+                    </div>
+                  
+                    
+                  
+                    <input class="hide" type="password" autoComplete="off" tabindex="-1" aria-hidden="true">
+                  
+                    <input type="hidden" id="js-available" name="js-available" value="false">
+                  
+                    <input type="hidden" id="webauthn-available" name="webauthn-available" value="false">
+                  
+                    <input type="hidden" id="is-brave" name="is-brave" value="false">
+                  
+                    <input type="hidden" id="webauthn-platform-available" name="webauthn-platform-available" value="false">
+                  
+                    
+                  
+                    <div class="c574b8c0d">
+                      
+                        <button type="submit" name="action" value="default" class="cca57afd8 cd3e7712e ce210c6b1 c90872909 _button-login-id" data-action-button-primary="true">CONTINUE</button>
+                      
+                    </div>
+                  </form>
+                
+              </div>
+            </div>
+          
+        
+          
+        
+          
+            <div class="ulp-alternate-action  _alternate-action __s16nu9">
+              <p class="c7cdcc8e5 c69350fc5 c11ebb09b">Don&#39;t have an account?
+                <a class="cdf6f7df0 cd0a55bf0" href="/u/signup/identifier?state=hKFo2SBWc0Izc1NrMWxoZG11NFhQZm8yNzNIQ0g3Q1ZzYnFYSKFur3VuaXZlcnNhbC1sb2dpbqN0aWTZIFZYYUpWRHU2aGw0Vlhyb0ZuV2tVZHk4aDdMcnNmRm12o2NpZNkga3FSd3g5R3pJZmhvYnlQYmFwMkR2ZlNhV1dHU05heXU&amp;ui_locales=en">Create an account</a>
+              </p>
+            </div>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        </div>
+      </div>
+    </div>
+  
+    
+  </section>
+</main>
+<script id="client-scripts">
+window.ulpFlags = {"enable_ulp_wcag_compliance":false};!function(){var e,t,E,A,C,S,F,T,n,r,a={exports:function(e,t){return"object"==typeof e.ulpFlags&&null!==e.ulpFlags?e.ulpFlags:{}}}.exports(window,document),i=((e={}).exports=function(n,a){var r={},i={};function u(e,t){if(e.classList)return e.classList.add(t);var n=e.className.split(" ");-1===n.indexOf(t)&&(n.push(t),e.className=n.join(" "))}function o(e,t,n,r){return e.addEventListener(t,n,r)}function c(e){return"string"==typeof e}function l(e,t){return c(e)?a.querySelector(e):e.querySelector(t)}function s(e,t){if(e.classList)return e.classList.remove(t);var n=e.className.split(" "),r=n.indexOf(t);-1!==r&&(n.splice(r,1),e.className=n.join(" "))}function f(e,t){return e.getAttribute(t)}function d(e,t,n){return e.setAttribute(t,n)}var e=["text","number","email","password","tel","url"],t="select,textarea,"+e.map(function(e){return'input[type="'+e+'"]'}).join(",");return{addClass:u,toggleClass:function(e,t,n){if(!0===n||!1===n)return r=e,a=t,!0!==n?s(r,a):u(r,a);var r,a;if(e.classList)return e.classList.toggle(t);var i=e.className.split(" "),o=i.indexOf(t);-1!==o?i.splice(o,1):i.push(t),e.className=i.join(" ")},hasClass:function(e,t){return e.classList?e.classList.contains(t):-1!==e.className.split(" ").indexOf(t)},addClickListener:function(e,t){return o(e,"click",t)},addEventListener:o,getAttribute:f,hasAttribute:function(e,t){return e.hasAttribute(t)},getElementById:function(e){return a.getElementById(e)},getParent:function(e){return e.parentNode},isString:c,loadScript:function(e,t){var n=a.createElement("script");for(var r in t)r.startsWith("data-")?n.dataset[r.replace("data-","")]=t[r]:n[r]=t[r];n.src=e,a.body.appendChild(n)},removeScript:function(e){a.querySelectorAll('script[src="'+e+'"]').forEach(function(e){e.remove()})},poll:function(e){var i=e.interval||2e3,t=e.url||n.location.href,o=e.condition||function(){return!0},u=e.onSuccess||function(){},c=e.onError||function(){};return setTimeout(function r(){var a=new XMLHttpRequest;return a.open("GET",t),a.setRequestHeader("Accept","application/json"),a.onload=function(){if(200===a.status){var e="application/json"===a.getResponseHeader("Content-Type").split(";")[0]?JSON.parse(a.responseText):a.responseText;return o(e)?u():setTimeout(r,i)}if(429!==a.status)return c({status:a.status,responseText:a.responseText});var t=1e3*Number.parseInt(a.getResponseHeader("X-RateLimit-Reset")),n=t-(new Date).getTime();return setTimeout(r,i<n?n:i)},a.send()},i)},querySelector:l,querySelectorAll:function(e,t){var n=c(e)?a.querySelectorAll(e):e.querySelectorAll(t);return Array.prototype.slice.call(n)},removeClass:s,removeElement:function(e){return e.remove()},setAttribute:d,removeAttribute:function(e,t){return e.removeAttribute(t)},swapAttributes:function(e,t,n){var r=f(e,t),a=f(e,n);d(e,n,r),d(e,t,a)},setGlobalFlag:function(e,t){r[e]=!!t},getGlobalFlag:function(e){return!!r[e]},setSubmittedForm:function(e,t){i[e]=t},getSubmittedForm:function(e){return i[e]},preventFormSubmit:function(e){e.stopPropagation(),e.preventDefault()},matchMedia:function(e){return"function"!=typeof n.matchMedia&&n.matchMedia(e).matches},dispatchEvent:function(e,t,n){var r;"function"!=typeof Event?(r=a.createEvent("Event")).initCustomEvent(t,n,!1):r=new Event(t,{bubbles:n}),e.dispatchEvent(r)},timeoutPromise:function(e,a){return new Promise(function(t,n){var r=setTimeout(function(){n(new Error("timeoutPromise: promise timed out"))},e);a.then(function(e){clearTimeout(r),t(e)},function(e){clearTimeout(r),n(e)})})},createMutationObserver:function(e){return"undefined"==typeof MutationObserver?null:new MutationObserver(e)},consoleWarn:function(){(console.warn||console.log).apply(console,arguments)},getConfigJson:function(e){try{var t=l(e);if(!t)return null;var n=t.value;return n?JSON.parse(n):null}catch(e){return null}},getCSSVariable:function(e){return getComputedStyle(a.documentElement).getPropertyValue(e)},removeAndTrimString:function(e,t){var n=new RegExp(t,"g"),r=e.replace(n,"");return r=r.replace(/\s+/g,"  ").trim()},setTimeout:setTimeout,globalWindow:n,SUPPORTED_INPUT_TYPES:e,ELEMENT_TYPE_SELECTOR:t,RUN_INIT:!0}},e.exports)(window,document),o=function(){var e={};function v(e){if(!("string"==typeof e||e instanceof String)){var t=typeof e;throw null===e?t="null":"object"===t&&(t=e.constructor.name),new TypeError("Expected a string but received a "+t)}}function m(e,t){var n,r;v(e),r="object"==typeof t?(n=t.min||0,t.max):(n=t,arguments[2]);var a=encodeURI(e).split(/%..|./).length-1;return n<=a&&(void 0===r||a<=r)}function h(e,t){for(var n in void 0===e&&(e={}),t)void 0===e[n]&&(e[n]=t[n]);return e}var g={require_tld:!0,allow_underscores:!1,allow_trailing_dot:!1,allow_numeric_tld:!1,allow_wildcard:!1,ignore_max_length:!1},t="(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])",n="("+t+"[.]){3}"+t,r=new RegExp("^"+n+"$"),a="(?:[0-9a-fA-F]{1,4})",i=new RegExp("^((?:"+a+":){7}(?:"+a+"|:)|(?:"+a+":){6}(?:"+n+"|:"+a+"|:)|(?:"+a+":){5}(?::"+n+"|(:"+a+"){1,2}|:)|(?:"+a+":){4}(?:(:"+a+"){0,1}:"+n+"|(:"+a+"){1,3}|:)|(?:"+a+":){3}(?:(:"+a+"){0,2}:"+n+"|(:"+a+"){1,4}|:)|(?:"+a+":){2}(?:(:"+a+"){0,3}:"+n+"|(:"+a+"){1,5}|:)|(?:"+a+":){1}(?:(:"+a+"){0,4}:"+n+"|(:"+a+"){1,6}|:)|(?::((?::"+a+"){0,5}:"+n+"|(?::"+a+"){1,7}|:)))(%[0-9a-zA-Z-.:]{1,})?$");function b(e,t){return void 0===t&&(t=""),v(e),(t=String(t))?"4"===t?r.test(e):"6"===t&&i.test(e):b(e,4)||b(e,6)}var w={allow_display_name:!1,allow_underscores:!1,require_display_name:!1,allow_utf8_local_part:!0,require_tld:!0,blacklisted_chars:"",ignore_max_length:!1,host_blacklist:[],host_whitelist:[]},y=/^([^\x00-\x1F\x7F-\x9F\cX]+)</i,_=/^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~]+$/i,x=/^[a-z\d]+$/,E=/^([\s\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e]|(\\[\x01-\x09\x0b\x0c\x0d-\x7f]))*$/i,A=/^[a-z\d!#\$%&'\*\+\-\/=\?\^_`{\|}~\u00A1-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+$/i,C=/^([\s\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|(\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*$/i,S=254;function o(e,t){if(v(e),(t=h(t,w)).require_display_name||t.allow_display_name){var n=e.match(y);if(n){var r=n[1];if(e=e.replace(r,"").replace(/(^<|>$)/g,""),r.endsWith(" ")&&(r=r.slice(0,-1)),!function(e){var t=e.replace(/^"(.+)"$/,"$1");if(!t.trim())return!1;if(/[\.";<>]/.test(t)){if(t===e)return!1;if(t.split('"').length!==t.split('\\"').length)return!1}return!0}(r))return!1}else if(t.require_display_name)return!1}if(!t.ignore_max_length&&e.length>S)return!1;var a=e.split("@"),i=a.pop(),o=i.toLowerCase();if(t.host_blacklist.includes(o))return!1;if(0<t.host_whitelist.length&&!t.host_whitelist.includes(o))return!1;var u=a.join("@");if(t.domain_specific_validation&&("gmail.com"===o||"googlemail.com"===o)){var c=(u=u.toLowerCase()).split("+")[0];if(!m(c.replace(/\./g,""),{min:6,max:30}))return!1;for(var l=c.split("."),s=0;s<l.length;s++)if(!x.test(l[s]))return!1}if(!(!1!==t.ignore_max_length||m(u,{max:64})&&m(i,{max:254})))return!1;if(!function(e,t){v(e),(t=h(t,g)).allow_trailing_dot&&"."===e[e.length-1]&&(e=e.substring(0,e.length-1)),!0===t.allow_wildcard&&0===e.indexOf("*.")&&(e=e.substring(2));var n=e.split("."),r=n[n.length-1];if(t.require_tld){if(n.length<2)return!1;if(!t.allow_numeric_tld&&!/^([a-z\u00A1-\u00A8\u00AA-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{2,}|xn[a-z0-9-]{2,})$/i.test(r))return!1;if(/\s/.test(r))return!1}return!(!t.allow_numeric_tld&&/^\d+$/.test(r))&&n.every(function(e){return!(63<e.length&&!t.ignore_max_length||!/^[a-z_\u00a1-\uffff0-9-]+$/i.test(e)||/[\uff01-\uff5e]/.test(e)||/^-|-$/.test(e)||!t.allow_underscores&&/_/.test(e))})}(i,{require_tld:t.require_tld,ignore_max_length:t.ignore_max_length,allow_underscores:t.allow_underscores})){if(!t.allow_ip_domain)return!1;if(!b(i)){if(!i.startsWith("[")||!i.endsWith("]"))return!1;var f=i.slice(1,-1);if(0===f.length||!b(f))return!1}}if('"'===u[0])return u=u.slice(1,u.length-1),t.allow_utf8_local_part?C.test(u):E.test(u);for(var d=t.allow_utf8_local_part?A:_,p=(l=u.split("."),0);p<l.length;p++)if(!d.test(l[p]))return!1;return!t.blacklisted_chars||-1===u.search(new RegExp("["+t.blacklisted_chars+"]+","g"))}return e.exports=function(e,t){return{ulpRequiredFunction:function(e,t){return!t||!!e.value},ulpEmailValidationFunction:function(e,t){return!t||!e.value||!!o(e.value)},ulpPatternCheckFunction:function(e,t){return!t||!e.value||function(e){if("password"===e.name)return!0;var t=e.getAttribute("pattern");return!t||null!==e.value.match(t)}(e)}}},e.exports}()(window,document),u={exports:function(e,t){for(var i="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_",s=new Uint8Array(256),o=0;o<i.length;o++)s[i.charCodeAt(o)]=o;function u(e){var t,n=new Uint8Array(e),r=n.length,a="";for(t=0;t<r;t+=3)a+=i[n[t]>>2],a+=i[(3&n[t])<<4|n[t+1]>>4],a+=i[(15&n[t+1])<<2|n[t+2]>>6],a+=i[63&n[t+2]];return r%3==2?a=a.substring(0,a.length-1):r%3==1&&(a=a.substring(0,a.length-2)),a}function n(){return navigator&&navigator.credentials&&"undefined"!=typeof PublicKeyCredential}return{base64URLEncode:u,base64URLDecode:function(e){var t,n,r,a,i,o=.75*e.length,u=e.length,c=0,l=new Uint8Array(o);for(t=0;t<u;t+=4)n=s[e.charCodeAt(t)],r=s[e.charCodeAt(t+1)],a=s[e.charCodeAt(t+2)],i=s[e.charCodeAt(t+3)],l[c++]=n<<2|r>>4,l[c++]=(15&r)<<4|a>>2,l[c++]=(3&a)<<6|63&i;return l.buffer},publicKeyCredentialToJSON:function e(t){if(t instanceof Array){var n=[];for(o=0;o<t.length;o+=1)n.push(e(t[o]));return n}if(t instanceof ArrayBuffer)return u(t);if(t instanceof Object){var r={};for(var a in t)r[a]=e(t[a]);return r}return t},str2ab:function(e){for(var t=new ArrayBuffer(e.length),n=new Uint8Array(t),r=0,a=e.length;r<a;r++)n[r]=e.charCodeAt(r);return t},isWebAuthnAvailable:n,isWebauthnPlatformAuthenticatorAvailableAsync:function(e){return n()?e(1e3,PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()):Promise.resolve(!1)}}}}.exports(window,document);({exports:function(e,r,a,t){var n=e(".ce5e87644"),i=e("#alert-trigger"),o=e(".cd95f969a"),u=e(".cb319d001"),c=!1;i&&u&&n&&t(n,function(e){var t=e.target===i,n=u.contains(e.target);return t&&!c?(r(o,"show"),void(c=!0)):t&&c||c&&!n?(a(o,"show"),void(c=!1)):void 0})}}).exports(i.querySelector,i.addClass,i.removeClass,i.addClickListener),(E="recaptcha_v2",A="recaptcha_enterprise",C="hcaptcha",S="friendly_captcha",F="arkose",T="auth0_v2",(t={}).exports=function(i,o,a,u,c,l,s){var f=500,d=3,p=0,v=a("div[data-captcha-sitekey]"),t=a("div[data-captcha-sitekey] input");function m(){switch(b()){case E:return window.grecaptcha;case A:return window.grecaptcha.enterprise;case C:return window.hcaptcha;case S:return window.friendlyChallenge;case F:return window.arkose;case T:return window.turnstile}}function h(){return a(function(){switch(b()){case E:case A:return"#ulp-recaptcha";case C:return"#ulp-hcaptcha";case S:return"#ulp-friendly-captcha";case F:return"#ulp-arkose";case T:return"#ulp-auth0-v2-captcha"}}())}function g(){return v.getAttribute("data-captcha-lang")}function b(){return v.getAttribute("data-captcha-provider")}function w(){return v.getAttribute("data-captcha-sitekey")}function y(){return a('form[data-form-primary="true"]')}function _(e){return t.value=e}function x(){var e=m(),t=l("--ulp-captcha-widget-theme")||"light";if(b()===S){"dark"===t&&u(a(".frc-captcha"),"dark");var n=new e.WidgetInstance(h(),{sitekey:w(),language:g(),doneCallback:function(e){_(e)}})}else{var r={sitekey:w(),theme:t,"expired-callback":function(){_(""),u(v,"c4708f481"),e.reset(n)},callback:function(e){_(e),c(v,"c4708f481")}};b()===T&&(r.language=g(),r.retry="never",r["response-field"]=!1,r["error-callback"]=function(e){return fetch("https://www.cloudflarestatus.com/api/v2/summary.json").then(function(e){return e.json()}).then(function(e){for(var t=0;t<e.components.length;t++){var n=e.components[t];if("Turnstile"===n.name)return"operational"===n.status}return!1}).catch(function(e){return!1}).then(function(e){e&&p<d?(_(""),u(v,"c4708f481"),m().reset(n),p++):(_("BYPASS_CAPTCHA"),c(v,"c4708f481"))}),!0}),n=e.render(h(),r)}}v&&function(){var e="captchaCallback_"+Math.floor(1000001*Math.random()),t=b(),n={async:!0,defer:!0},r=function(e,t,n,r){switch(b()){case E:return"https://www.recaptcha.net/recaptcha/api.js?render=explicit&hl="+e+"&onload="+t;case A:return"https://www.recaptcha.net/recaptcha/enterprise.js?render=explicit&hl="+e+"&onload="+t;case C:return"https://js.hcaptcha.com/1/api.js?render=explicit&hl="+e+"&onload="+t;case S:return"https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.14/widget.min.js";case F:return"https://"+n+".arkoselabs.com/v2/"+r+"/api.js";case T:return"https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload="+t}}(g(),e,v.getAttribute("data-captcha-client-subdomain"),w());if(t===F||t===T){n["data-callback"]=e,n.onerror=function(){if(p<d)return o(r),i(r,n),void p++;o(r),_("BYPASS_CAPTCHA")};var a=function(e){var t,n;t=e,n=function(e){setTimeout(function(){t.run()},f),e.preventDefault()},y().addEventListener("submit",n),t.setConfig({onCompleted:function(e){_(e.token),y().submit()},onError:function(e){return fetch("https://status.arkoselabs.com/api/v2/status.json").then(function(e){return e.json()}).then(function(e){var t=e.status.indicator;return"none"===t}).catch(function(e){return!1}).then(function(e){if(e&&p<d)return t.reset(),new Promise(function(e){setTimeout(function(){e(t.run())},f),p++});_("BYPASS_CAPTCHA"),y().removeEventListener("submit",n)})}})};t===T&&(a=function(){x()}),window[e]=a}else window[e]=function(){delete window[e],x()},t===S&&(u(h(),"frc-captcha"),s(h(),"data-sitekey",w()),n.onload=window[e]);i(r,n)}()},t.exports)(i.loadScript,i.removeScript,i.querySelector,i.addClass,i.removeClass,i.getCSSVariable,i.setAttribute),((n={}).exports=function(r,e,a,i,o,u,c,l,n,s,t){if(!t.enable_ulp_wcag_compliance){if(r("body._simple-labels"))return e(".c5bc2a72c.no-js").forEach(function(e){o(e,"no-js")}),void e(".c5bc2a72c.js-required").forEach(function(e){i(e,"hide")});e(".c32eba800:not(.ce2efb040):not(disabled)").forEach(function(e){i(e,"cf2740c04");var t,n=r(e,".input");n.value&&i(e,"c819cc4a7"),a(e,"change",f),a(n,"blur",f),a(n,"animationstart",d),t=n,c(function(){t.value&&l(t,"change",!0)},100)})}function f(e){var t=e.target,n=u(t);t.value||s(t,"data-autofilled")?i(n,"c819cc4a7"):o(n,"c819cc4a7")}function d(e){var t=e.target;"onAutoFillStart"===e.animationName&&(n(t,"data-autofilled",!0),l(e.target,"change",!0),a(t,"keyup",p,{once:!0}))}function p(e){var t=e.target;n(t,"data-autofilled","")}},n.exports)(i.querySelector,i.querySelectorAll,i.addEventListener,i.addClass,i.removeClass,i.getParent,i.setTimeout,i.dispatchEvent,i.setAttribute,i.getAttribute,a),{exports:function(e,t,r,a,i,o,u,c){function n(e){var t=r("submitted"),n=i("submittedForm");a("submitted",!0),o("submittedForm",e.currentTarget),t&&n&&n===e.currentTarget?u(e):"apple"===c(e.target,"data-provider")&&setTimeout(function(){a("submitted",!1)},2e3)}var l=e("form");l&&l.forEach(function(e){t(e,"submit",n)})}}.exports(i.querySelectorAll,i.addEventListener,i.getGlobalFlag,i.setGlobalFlag,i.getSubmittedForm,i.setSubmittedForm,i.preventFormSubmit,i.getAttribute),{exports:function(t,e,n){var r=t("form._form-detect-browser-capabilities"),a=t("main.login-id"),i=t("main.signup-with-passkeys"),o=t("div#passkey-detect-browser-capabilities");if(r||a||i||o){var u=e.isWebAuthnAvailable();t("#webauthn-available").value=u?"true":"false",t("#js-available").value="true",navigator.brave?navigator.brave.isBrave().then(function(e){t("#is-brave").value=e,c()}):c()}function c(){u?e.isWebauthnPlatformAuthenticatorAvailableAsync(n).then(function(e){t("#webauthn-platform-available").value=e?"true":"false",r&&r.submit()}).catch(function(e){t("#webauthn-platform-available").value="false",r&&r.submit()}):(t("#webauthn-platform-available").value="false",r&&r.submit())}}}.exports(i.querySelector,u,i.timeoutPromise),function(){var e={};function u(e,n,r,t,a,i){var o="user-initiated-passkey-challenge",u=n("#allow-passkeys");if(u&&u.value){var c=a("#passkey-config-json");if(c){var l=n(".passkey-begin-button"),s=r.isWebauthnPlatformAuthenticatorAvailableAsync(t),f=n("#username"),d=c,p=new AbortController;d.publicKey.challenge=r.base64URLDecode(d.publicKey.challenge),l&&e(l,function(e){l.disabled=!0,p.abort(o),navigator.credentials.get(d).then(function(e){var t=g(e);s.then(function(e){t.isUserVerifyingPlatformAuthenticatorAvailable=e,h(JSON.stringify(t)),v()})}).catch(function(e){m(e)})}),window.PublicKeyCredential&&window.PublicKeyCredential.isConditionalMediationAvailable&&window.PublicKeyCredential.isConditionalMediationAvailable().then(function(e){if(e){var t=Object.assign({},d,{mediation:"conditional",signal:p.signal});navigator.credentials.get(t).then(function(e){f.blur();var t=g(e);s.then(function(e){t.isUserVerifyingPlatformAuthenticatorAvailable=e,h(JSON.stringify(t)),v()})}).catch(function(e){e!==o&&"AbortError"!==e.name&&i("autofill UI error",e)})}}).catch(function(){})}}function v(){n("form._form-passkey-challenge").submit()}function m(e){var t;n("#action").value="showError::"+(t=e,JSON.stringify({name:t.name,message:t.message,stack:t.stack})),n("form._form-passkey-challenge").submit()}function h(e){n("#passkey").value=e}function g(e){var t={id:e.id,rawId:r.base64URLEncode(e.rawId),type:e.type,response:{clientDataJSON:r.base64URLEncode(e.response.clientDataJSON),authenticatorData:r.base64URLEncode(e.response.authenticatorData),signature:r.base64URLEncode(e.response.signature),userHandle:e.response.userHandle?r.base64URLEncode(e.response.userHandle):null}};return e.authenticatorAttachment&&(t.authenticatorAttachment=e.authenticatorAttachment),t}}return e.exports=function(e,t,n,r,a,i,o){return e(window,"load",function(e){u(t,n,r,a,i,o)}),{configurePasskeys:u}},e.exports}()(i.addEventListener,i.addClickListener,i.querySelector,u,i.timeoutPromise,i.getConfigJson,i.consoleWarn),{exports:function(t,e,n){var r=e(".passkey-hidden-ui"),a=navigator.userAgent.toLowerCase(),i=!!window.safari||a.match(/safari/)&&!a.match(/chrome/)&&!a.match(/chromium/);!r||r.length<=0||(i?r.forEach(function(e){t(e,"passkey-hidden-ui")}):window.PublicKeyCredential&&window.PublicKeyCredential.isConditionalMediationAvailable&&window.PublicKeyCredential.isConditionalMediationAvailable().then(function(e){e?r.forEach(function(e){n(e)}):r.forEach(function(e){t(e,"passkey-hidden-ui")})}).catch(function(e){r.forEach(function(e){t(e,"passkey-hidden-ui")})}))}}.exports(i.removeClass,i.querySelectorAll,i.removeElement),{exports:function(n,e,r,a,i,o,u,c,l,t,s,f){if(f.enable_ulp_wcag_compliance){var d=e("[id^='ulp-container-']");if(d&&d.length){var p=t(_);if(p)for(var v=0;v<d.length;v++)p.observe(d[v],{childList:!0,subtree:!0})}_()}function m(e){var t=e.target,n=o(t);t.value||c(t,"data-autofilled")?a(n,"c819cc4a7"):i(n,"c819cc4a7")}function h(e){var t=e.target,n=o(t);a(n,"focus"),y(t,n)}function g(e){var t=e.target,n=o(t);i(n,"focus"),m(e),y(t,n)}function b(e){var t=e.target;l(t,"data-autofilled","")}function w(e){var t=e.target;"onAutoFillStart"===e.animationName&&(l(t,"data-autofilled",!0),dispatchEvent(e.target,"change",!0),r(t,"keyup",b,{once:!0}))}function y(e,t){e.value?a(t,"c819cc4a7"):i(t,"c819cc4a7")}function _(){e(".ulp-field").forEach(function(e){if(!u(e,"cf2740c04")){var t=n(e,s);t&&(a(e,"cf2740c04"),y(t,e),setTimeout(function(){y(t,e)},50),t===document.activeElement&&a(e,"focus"),r(t,"change",m),r(t,"focus",h),r(t,"blur",g),r(t,"animationstart",w))}})}}}.exports(i.querySelector,i.querySelectorAll,i.addEventListener,i.addClass,i.removeClass,i.getParent,i.hasClass,i.getAttribute,i.setAttribute,i.createMutationObserver,i.ELEMENT_TYPE_SELECTOR,a),{exports:function(n,e,r,a,i,o,u,t,c,l){if(!l.enable_ulp_wcag_compliance){var s=e("[id^='ulp-container-']");if(s&&s.length){var f=t(g);if(f)for(var d=0;d<s.length;d++)f.observe(s[d],{childList:!0,subtree:!0});g()}}function p(e){var t=e.target,n=o(t);t.value?a(n,"c819cc4a7"):i(n,"c819cc4a7")}function v(e){var t=e.target,n=o(t);a(n,"focus"),h(t,n)}function m(e){var t=e.target,n=o(t);i(n,"focus"),h(t,n)}function h(e,t){e.value?a(t,"c819cc4a7"):i(t,"c819cc4a7")}function g(){e("[id^='ulp-container-'] .ulp-field").forEach(function(e){if(!u(e,"cf2740c04")){var t=n(e,c);t&&(a(e,"cf2740c04"),h(t,e),setTimeout(function(){h(t,e)},50),t===document.activeElement&&a(e,"focus"),r(t,"change",p),r(t,"focus",v),r(t,"blur",m))}})}}}.exports(i.querySelector,i.querySelectorAll,i.addEventListener,i.addClass,i.removeClass,i.getParent,i.hasClass,i.createMutationObserver,i.ELEMENT_TYPE_SELECTOR,a),{exports:function(r,o,a,i,u,c,l,s,f,d,p,v,t,m,h,e,n,g){if(g.enable_ulp_wcag_compliance){var b=!1,w=e+',input[type="checkbox"]';return F(),[w,y,_,x,E,A,C,S,F]}function y(e){var t=u(e,"data-ulp-validation-function"),n=i(e);return{functionName:t,element:r(n,w),parent:n}}function _(e){var a=[],i=[];return o(e,"[data-ulp-validation-function]").forEach(function(e){var t=y(e),n=[];if(t.element){if("input"===t.element.tagName.toLowerCase()){var r=u(t.element,"type");"checkbox"!==r&&-1===h.indexOf(r)&&n.push("Unsupported input type: "+r)}}else n.push("Could not find element");v[t.functionName]||n.push("Could not find function with name: "+t.functionName),n.length?i=i.concat(n):a.push(e)}),i.length&&t(i.join("\r\n")),a}function x(e,t,n){var r=y(e),a=(0,v[r.functionName])(r.element,t,n);a?s(e,"ulp-validator-error")&&(d(e,"ulp-validator-error"),l(e,"data-is-error")):s(e,"ulp-validator-error")||(f(e,"ulp-validator-error"),c(e,"data-is-error",!0));var i=o(r.parent,".ulp-validator-error");return p(r.parent,"ulp-error",!!i.length),a}function E(t){var n=y(t),e=(u(t,"data-ulp-validation-event-listeners")||"").replace(/\s/g,"").split(",").filter(function(e){return!!e});e.length&&e.forEach(function(e){a(n.element,e,function(){x(t,b,e)})})}function A(e,t,n){b=!0;var r=n.filter(function(e){return!x(e,b,"submit")});if(!r.length)return t.submitter&&"default"==u(t.submitter,"value")&&c(t.submitter,"disabled",!0),void e.submit();m(t);var a=y(r[0]);a.element.focus({preventScroll:!0}),a.parent.scrollIntoView({behavior:"smooth"})}function C(){var t=r('form[data-form-primary="true"]'),n=_(t);0!==n.length&&(n.forEach(function(e){E(e)}),a(t,"submit",function(e){A(t,e,n)}))}function S(){if(n)for(var e in n)n.hasOwnProperty(e)&&(v[e]=n[e])}function F(){var e=r("form[data-disable-html-validations]");e&&(S(),c(e,"novalidate",""),C())}}}.exports(i.querySelector,i.querySelectorAll,i.addEventListener,i.getParent,i.getAttribute,i.setAttribute,i.removeAttribute,i.hasClass,i.addClass,i.removeClass,i.toggleClass,i.globalWindow,i.consoleWarn,i.preventFormSubmit,i.SUPPORTED_INPUT_TYPES,i.ELEMENT_TYPE_SELECTOR,o,a),{exports:function(r,o,a,i,u,c,l,t,s,f,e,n){if(!n.enable_ulp_wcag_compliance){var d=!1,p=e+',input[type="checkbox"]';return y(),[p,v,m,h,g,b,w,y]}function v(e){var t=u(e,"data-ulp-validation-function"),n=i(e);return{functionName:t,element:r(n,p),parent:n}}function m(e){var a=[],i=[];return o(e,"[data-ulp-validation-function]").forEach(function(e){var t=v(e),n=[];if(t.element){if("input"===t.element.tagName.toLowerCase()){var r=u(t.element,"type");"checkbox"!==r&&-1===f.indexOf(r)&&n.push("Unsupported input type: "+r)}}else n.push("Could not find element");l[t.functionName]||n.push("Could not find function with name: "+t.functionName),n.length?i=i.concat(n):a.push(e)}),i.length&&t(i.join("\r\n")),a}function h(e,t,n){var r=v(e),a=(0,l[r.functionName])(r.element,t,n);c(e,"ulp-validator-error",!a);var i=o(r.parent,".ulp-validator-error");return c(r.parent,"ulp-error",!!i.length),a}function g(t){var n=v(t),e=(u(t,"data-ulp-validation-event-listeners")||"").replace(/\s/g,"").split(",").filter(function(e){return!!e});e.length&&e.forEach(function(e){a(n.element,e,function(){h(t,d,e)})})}function b(e,t,n){d=!0;var r=n.filter(function(e){return!h(e,d,"submit")});if(r.length){s(t);var a=v(r[0]);a.element.focus({preventScroll:!0}),a.parent.scrollIntoView({behavior:"smooth"})}else e.submit()}function w(){var t=r('form[data-form-primary="true"]'),n=m(t);0!==n.length&&(n.forEach(function(e){g(e)}),a(t,"submit",function(e){b(t,e,n)}))}function y(){var e=o("[id^='ulp-container-']");e&&e.length&&w()}}}.exports(i.querySelector,i.querySelectorAll,i.addEventListener,i.getParent,i.getAttribute,i.toggleClass,i.globalWindow,i.consoleWarn,i.preventFormSubmit,i.SUPPORTED_INPUT_TYPES,i.ELEMENT_TYPE_SELECTOR,a),{exports:function(e,t,n){function r(n){t(n,"click",function(e){e.preventDefault();var t=document.createElement("input");t.name="action",t.type="hidden",t.value=n.value,n.form.appendChild(t),n.form.submit(),n.form.removeChild(t)})}function a(){e('form button[type="submit"][formnovalidate]').forEach(function(e){r(e)})}return n&&a(),[a,r]}}.exports(i.querySelectorAll,i.addEventListener,i.RUN_INIT),((r={}).exports=function(o,e,u,c,l,s,t,f,n){if(n.enable_ulp_wcag_compliance){var r=e('[class*="aria-error-check"]');if(r&&r.length){var a=t(function(e){e&&e.length&&e.map(function(e){if(e.target&&u(e.target,"aria-error-check")){var t=o('[id="'+c(e.target,"data-ulp-validation-target")+'"');if(t){var n=c(t,"aria-describedby");c(e.target,"data-is-error")?(r=t,a=n,i=e.target.id,a&&-1!==a.search(i)||l(r,"aria-describedby",a?a+" "+i:i),l(r,"aria-invalid",!0)):function(e,t,n){if(t){var r=f(t,n);r.length?l(e,"aria-describedby",r):(s(e,"aria-invalid"),s(e,"aria-describedby"))}else s(e,"aria-invalid"),s(e,"aria-describedby")}(t,n,e.target.id)}}var r,a,i})});a&&r.map(function(e){a.observe(e,{attributes:!0,attributeFilter:["class","data-is-error"]})})}}},r.exports)(i.querySelector,i.querySelectorAll,i.hasClass,i.getAttribute,i.setAttribute,i.removeAttribute,i.createMutationObserver,i.removeAndTrimString,a)}();
+</script>
+<div id="signup-terms-privacy-id" class="signup-bottom"></div>
+    	<div id="reset-password-assistance-id" class="reset-password-assistance"></div>
+    </div>
+    <div id="login-primary-banner-id" class="login-primary-banner"></div>
+  </div>
+   <div id="signup-footer-id"></div>
+  <noscript><img src="https://login.keurig.com/akam/13/pixel_78a4a22e?a=dD1mMmUwZjk2NmY3YzM5ZWZhMDEwYjJiYzRhYzA0NzE3ZmUzZDM4YzJmJmpzPW9mZg==" style="visibility: hidden; position: absolute; left: -999px; top: -999px;" /></noscript></body>
+
+
+  <script>
+
+
+
+
+
+
+    var extraMobileTemsPolicy='';
+
+
+
+
+
+
+    // bottom terms / privacy that would end up in the footer. The styling will be applied later in the script depending on Mobile or Desktop View
+    var footerContent='<ul id="terms-and-privacy-footer"><li><p class="copyright">© 2025 Keurig Green Mountain Inc.';
+    
+
+    
+
+    
+        footerContent+='-All Rights Reserved</p></li><li><ul id="inner-list-id"><li><a class="link" target="_blank" rel="noreferrer" href="https://www.keurig.com/content/terms-and-conditions'+extraMobileTemsPolicy+'">Terms of Use</a></li><li class="list"><p class="dot">.</p><a class="link" target="_blank" rel="noreferrer" href="https://www.keurig.com/content/privacy-policy'+extraMobileTemsPolicy+'">Privacy Policy</a></li><li class="list"><p class="dot">.</p><a class="link" target="_blank" rel="noreferrer" href="https://www.keurigdrpepper.com/content/dam/keurig-brand-sites/kdp/files/disclosures/Modern%20Slavery%20Statement%202018_Final_Signed.pdf">Modern Slavery Act';
+    
+    footerContent+='</a></li></ul></li></ul>';
+
+    // Building the CMS content URL if we need to fetch some content to display
+    var urlCMSContent='';
+
+	
+
+    // overide Kcom en
+    urlCMSContent = 'https://www.keurig.com/rest/v2/usb2c/cms/components?componentIds=loginPrimaryBannerContent&lang=en';
+	
+	
+
+    
+	// overide for main element generated by Auth0
+    	var mainElement=document.getElementsByTagName('main');
+	var section = mainElement[0].getElementsByTagName('section')[0].getElementsByTagName('div')[0].getElementsByTagName('div')[0];
+	//section.classList.add("widget-dynamic-container");
+
+	
+    	mainElement[0].style.padding='0px';
+    	mainElement[0].style.minHeight='unset';
+	
+
+	//var style = document.createElement('style');
+	//style.type = 'text/css';
+	//style.innerHTML = '.banner-content { border-radius:10px;margin: 0px!important;height:inherit!important;}';
+//	style.innerHTML = '.banner-content { border-radius:10px;margin: 0px!important;height:inherit!important;} .banner-content h6 {font-size:1rem;font-weight: bold;margin-left: 1.5625rem;margin-bottom: 0.75rem;} .banner-content ul {padding-inline-start: 40px;list-style: disc;} .banner-content li {font-size: 0.75rem;font-weight: 300;line-height: 1rem;list-style: disc;}';
+	//document.getElementsByTagName('head')[0].appendChild(style);
+
+    if (urlCMSContent != '')
+    {
+        fetch(urlCMSContent)
+            .then((response) => response.json())
+            .then((data) => { 
+                var jqueryType = typeof($);
+                
+                    document.getElementById("login-primary-banner-id").innerHTML= data.component[0].content;
+                	
+            });
+
+        document.getElementById("login-primary-banner-id").classList.add("login-primary-banner-extra-web");
+    }
+    else
+    {
+        document.getElementById("login-primary-banner-id").classList.add("login-primary-banner-hide");
+    }    
+
+    var style1 = document.createElement('style');
+	style1.type = 'text/css';
+	style1.innerHTML = '.signup-footer-web {width:100%;min-height: 60px;margin: 30px 0px;text-align:center;padding: 0px;font-style:italic;'+'border-top:1px solid rgb(195,195,195); @media screen and (max-width: 768px) {margin: 60px auto;border: 0px; width: 84%;font-style:normal;}} .signup-footer-web .link {cursor: pointer;font-size:12px; @media screen and (max-width: 768px) {text-decoration: underline;}}  .left-float-list-large ul {position: relative;list-style: none;margin: 5px 5px 0px;line-height: 15px;padding-left: 0px;@media screen and (max-width: 768px) {margin: 0 auto;}} .left-float-list-large > li { margin-left:12px; }.left-float-list-large li { position: relative;display: inline-block;padding-bottom:0px;@media screen and (max-width: 768px){margin-left:0px;}} .left-float-list-large li .copyright{margin-left: 10px;margin-right: 20px; @media screen and (max-width: 768px) {width:66%; margin: 0 auto;font-size:12px;}} .left-float-list-large li p{font-size: 12px;color: rgb(45, 42, 38);font-weight: 400;line-height: 15px;margin-top: 0px;margin-bottom: 1rem;letter-spacing: 0.5px;} .left-float-list-large li.list .dot {color: rgb(45, 42, 38);font-size: 1.5rem;top: -3px; display: inline; padding: 0px 2px; position: relative;} .left-float-list{@media screen and (max-width: 768px) {padding-top: 0px;margin-top: 0px;line-height:0px;font-weight:bold;}} .left-float-list ul {@media screen and (max-width: 768px) {font-weight:bold;}} .left-float-list li {display:inline;padding:0px 2px;}';
+
+    document.getElementsByTagName('head')[0].appendChild(style1);	
+
+    document.getElementById("signup-footer-id").innerHTML= footerContent;
+    document.getElementById("terms-and-privacy-footer").classList.add("left-float-list-large");
+    if (document.getElementById("inner-list-id") != null)
+        document.getElementById("inner-list-id").classList.add("left-float-list");
+    document.getElementById("signup-footer-id").classList.add("signup-footer-web");
+		
+    if (document.getElementById('popover-basic') != null)
+        document.getElementById('popover-basic').style.display='none';
+		
+	document.getElementById("link-main-site-id").href="https://www.keurig.com";
+
+  </script>
+<script type="text/javascript">
+function displayPopup(e){if(e && e.stopPropagation) e.stopPropagation(); document.getElementById('popover-basic').style.display='block';
+}
+function closePopup(e){
+if(e && e.stopPropagation) e.stopPropagation(); 
+document.getElementById('popover-basic').style.display='none'; 
+
+var check = document.getElementById("ca-loyalty").checked; 
+if(check === true)
+{
+	document.getElementById("ca-loyalty").checked = false;
+}else
+{
+	document.getElementById("ca-loyalty").checked = true;
+}
+}
+</script>
+
+<script type="text/javascript">
+    function displayPerksPopup(e){
+        if(e && e.stopPropagation) e.stopPropagation(); document.getElementById('perks-modal-container').style.display='flex';
+    }
+    function closePerksPopup(e){
+        if(e && e.stopPropagation) e.stopPropagation(); 
+        document.getElementById('perks-modal-container').style.display='none'; 
+    }
+</script>
+
+<script type="text/javascript">  
+    document.getElementById('username').setCustomValidity("");  
+</script>
+
+
+
+<script type="text/javascript">
+    (function(a,b,c,d){
+    a='https://tags.tiqcdn.com/utag/gmcr/keurighybris/prod/utag.js';
+    b=document;c='script';d=b.createElement(c);d.src=a;d.type='text/java'+c;d.async=true;
+    a=b.getElementsByTagName(c)[0];a.parentNode.insertBefore(d,a);
+    })();
+</script>
+
+</html>

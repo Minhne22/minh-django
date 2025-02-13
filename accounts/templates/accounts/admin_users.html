@@ -1,113 +1,261 @@
-<h3>👤 Quản lý Users</h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Users</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h3>👤 Quản lý Users</h3>
 
-<!-- Hiển thị thông báo -->
-<div id="message" class="alert" style="display: none;"></div>
+        <!-- Hiển thị thông báo -->
+        <div id="message" class="alert" style="display: none;"></div>
 
-<!-- Form thêm user -->
-<form id="addUserForm" class="mb-3">
-    {% csrf_token %}
-    <div class="mb-2">
-        <label>Username:</label>
-        <input type="text" name="username" class="form-control" required>
-    </div>
-    <div class="mb-2">
-        <label>Password:</label>
-        <input type="password" name="password" class="form-control" required>
-    </div>
-    <div class="mb-2">
-        <label>Role:</label>
-        <select name="role" class="form-control">
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-        </select>
-    </div>
-    <button type="submit" class="btn btn-success">➕ Add User</button>
-</form>
+        <!-- Form thêm user -->
+        <form id="addUserForm" class="mb-3">
+            {% csrf_token %}
+            <div class="mb-2">
+                <label>Username:</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-2">
+                <label>Password:</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <div class="mb-2">
+                <label>Role:</label>
+                <select name="role" class="form-control">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success">➕ Add User</button>
+        </form>
 
-<!-- Hiển thị danh sách user -->
-<table class="table">
-    <thead>
-        <tr>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody id="userTable">
-        {% for user in users %}
-        <tr id="userRow-{{ user.username }}">
-            <td>{{ user.username }}</td>
-            <td id="role-{{ user.username }}">{{ user.role }}</td>
-            <td>
-                <button class="btn btn-warning btn-sm change-role" data-username="{{ user.username }}">🔄 Đổi quyền</button>
-                <button class="btn btn-danger btn-sm delete-user" data-username="{{ user.username }}">❌ Xóa</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        <!-- Hiển thị danh sách user -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Limit On</th>
+                    <th>Limit Off</th>
+                    <th>Số ngày sử dụng</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="userTable">
+                {% for user in users %}
+                <tr id="userRow-{{ user.username }}">
+                    <td>{{ user.username }}</td>
+                    <td id="role-{{ user.username }}">{{ user.role }}</td>
+                    <td id="limit_on-{{ user.username }}">{{ user.limit_on }}</td>
+                    <td id="limit_off-{{ user.username }}">{{ user.limit_off }}</td>
+                    <td id="days_remaining-{{ user.username }}">{{ user.days_remaining }}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm change-role" data-username="{{ user.username }}">🔄 Đổi quyền</button>
+                        <button class="btn btn-danger btn-sm delete-user" data-username="{{ user.username }}">❌ Xóa</button>
+                        <button class="btn btn-info btn-sm edit-limit" data-username="{{ user.username }}" data-toggle="modal" data-target="#editLimitModal">✏️ Edit Limit</button>
+                        <button class="btn btn-primary btn-sm change-pass" data-username="{{ user.username }}" data-toggle="modal" data-target="#changePassModal">🔑 Change Pass</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-<script>
-    $(document).ready(function () {
-        // Xử lý thêm user
-        $("#addUserForm").submit(function (e) {
-            e.preventDefault();
-            $.ajax({
-                url: "{% url 'add_user' %}",
-                type: "POST",
-                data: $(this).serialize(),
-                success: function (response) {
-                    $("#message").removeClass("alert-danger").addClass("alert-success")
-                        .text("User added successfully!").show();
+        <!-- Modal for editing limits -->
+        <div class="modal fade" id="editLimitModal" tabindex="-1" aria-labelledby="editLimitModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editLimitModalLabel">Edit Limits</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editLimitForm">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="limitOn">Limit On:</label>
+                                <input type="number" class="form-control" id="limitOn" name="limit_on" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="limitOff">Limit Off:</label>
+                                <input type="number" class="form-control" id="limitOff" name="limit_off" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="daysDemaining">Số ngày sử dụng:</label>
+                                <input type="number" class="form-control" id="daysDemaining" name="days_remaining" required>
+                            </div>
+                            <input type="hidden" id="editUsername" name="username">
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    let username = $("input[name='username']").val();
-                    let role = $("select[name='role']").val();
-                    let newRow = `<tr id="userRow-${username}">
-                        <td>${username}</td>
-                        <td id="role-${username}">${role}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm change-role" data-username="${username}">🔄 Đổi quyền</button>
-                            <button class="btn btn-danger btn-sm delete-user" data-username="${username}">❌ Xóa</button>
-                        </td>
-                    </tr>`;
-                    $("#userTable").append(newRow);
-                    $("#addUserForm")[0].reset();
-                },
-                error: function (xhr) {
-                    $("#message").removeClass("alert-success").addClass("alert-danger")
-                        .text(xhr.responseJSON.error).show();
-                }
+        <!-- Modal for changing password -->
+        <div class="modal fade" id="changePassModal" tabindex="-1" aria-labelledby="changePassModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changePassModalLabel">Change Password</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="changePassForm">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="newPassword">New Password:</label>
+                                <input type="password" class="form-control" id="newPassword" name="password" required>
+                            </div>
+                            <input type="hidden" id="changePassUsername" name="username">
+                            <button type="submit" class="btn btn-primary">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                // Xử lý thêm user
+                $("#addUserForm").submit(function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: "{% url 'add_user' %}",
+                        type: "POST",
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            $("#message").removeClass("alert-danger").addClass("alert-success")
+                                .text("User added successfully!").show();
+
+                            let username = $("input[name='username']").val();
+                            let role = $("select[name='role']").val();
+                            let newRow = `<tr id="userRow-${username}">
+                                <td>${username}</td>
+                                <td id="role-${username}">${role}</td>
+                                <td id="limit_on-${username}">0</td>
+                                <td id="limit_off-${username}">0</td>
+                                <td id="days_remaining-${username}">0</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm change-role" data-username="${username}">🔄 Đổi quyền</button>
+                                    <button class="btn btn-danger btn-sm delete-user" data-username="${username}">❌ Xóa</button>
+                                    <button class="btn btn-info btn-sm edit-limit" data-username="${username}" data-toggle="modal" data-target="#editLimitModal">✏️ Edit Limit</button>
+                                    <button class="btn btn-primary btn-sm change-pass" data-username="${username}" data-toggle="modal" data-target="#changePassModal">🔑 Change Pass</button>
+                                </td>
+                            </tr>`;
+                            $("#userTable").append(newRow);
+                            $("#addUserForm")[0].reset();
+                        },
+                        error: function (xhr) {
+                            $("#message").removeClass("alert-success").addClass("alert-danger")
+                                .text(xhr.responseJSON.error).show();
+                        }
+                    });
+                });
+
+                // Xử lý đổi quyền user
+                $(document).on("click", ".change-role", function () {
+                    let username = $(this).data("username");
+                    $.ajax({
+                        url: `/admin-dashboard/change-role/${username}/`,
+                        type: "GET",
+                        success: function (response) {
+                            $(`#role-${username}`).text(response.new_role);
+                        },
+                        error: function (xhr) {
+                            alert(xhr.responseJSON.error);
+                        }
+                    });
+                });
+
+                // Xử lý xóa user
+                $(document).on("click", ".delete-user", function () {
+                    let username = $(this).data("username");
+                    $.ajax({
+                        url: `/admin-dashboard/delete-user/${username}/`,
+                        type: "GET",
+                        success: function () {
+                            $(`#userRow-${username}`).remove();
+                        },
+                        error: function (xhr) {
+                            alert(xhr.responseJSON.error);
+                        }
+                    });
+                });
+
+                // Xử lý chỉnh sửa limit
+                $(document).on("click", ".edit-limit", function () {
+                    let username = $(this).data("username");
+                    $("#editUsername").val(username);
+                    $("#limitOn").val($(`#limit_on-${username}`).text());
+                    $("#limitOff").val($(`#limit_off-${username}`).text());
+                    $("#daysDemaining").val($(`#days_remaining-${username}`).text());
+                });
+
+                $("#editLimitForm").submit(function (e) {
+                    e.preventDefault();
+                    let username = $("#editUsername").val();
+                    let newLimitOn = $("#limitOn").val();
+                    let newLimitOff = $("#limitOff").val();
+                    let newdaysDemaining = $("#daysDemaining").val();
+                    $.ajax({
+                        url: `/admin-dashboard/edit-limit/${username}/`,
+                        type: "POST",
+                        data: {
+                            limit_on: newLimitOn,
+                            limit_off: newLimitOff,
+                            days_remaining: newdaysDemaining,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function (response) {
+                            $(`#limit_on-${username}`).text(response.limit_on);
+                            $(`#limit_off-${username}`).text(response.limit_off);
+                            $(`#days_remaining-${username}`).text(response.days_remaining);
+                            $("#editLimitModal").modal('hide');
+                        },
+                        error: function (xhr) {
+                            alert(xhr.responseJSON.error);
+                        }
+                    });
+                });
+
+                // Xử lý đổi mật khẩu
+                $(document).on("click", ".change-pass", function () {
+                    let username = $(this).data("username");
+                    $("#changePassUsername").val(username);
+                });
+
+                $("#changePassForm").submit(function (e) {
+                    e.preventDefault();
+                    let username = $("#changePassUsername").val();
+                    let newPassword = $("#newPassword").val();
+                    $.ajax({
+                        url: `/admin-dashboard/change-pass/${username}/`,
+                        type: "POST",
+                        data: {
+                            password: newPassword,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function () {
+                            $("#changePassModal").modal('hide');
+                        },
+                        error: function (xhr) {
+                            alert(xhr.responseJSON.error);
+                        }
+                    });
+                });
             });
-        });
-
-        // Xử lý đổi quyền user
-        $(document).on("click", ".change-role", function () {
-            let username = $(this).data("username");
-            $.ajax({
-                url: `/admin-dashboard/change-role/${username}/`,
-                type: "GET",
-                success: function (response) {
-                    $(`#role-${username}`).text(response.new_role);
-                },
-                error: function (xhr) {
-                    alert(xhr.responseJSON.error);
-                }
-            });
-        });
-
-        // Xử lý xóa user
-        $(document).on("click", ".delete-user", function () {
-            let username = $(this).data("username");
-            $.ajax({
-                url: `/admin-dashboard/delete-user/${username}/`,
-                type: "GET",
-                success: function () {
-                    $(`#userRow-${username}`).remove();
-                },
-                error: function (xhr) {
-                    alert(xhr.responseJSON.error);
-                }
-            });
-        });
-    });
-</script>
+        </script>
+    </div>
+</body>
+</html>

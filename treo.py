@@ -194,7 +194,11 @@ async def don_luong(link, proxy):
         print(data)
         if data:
             data['origin_url'] = link
-            filter_condition = {"post_id": data["post_id"]}
+            filter_condition = {
+                "post_id": data["post_id"],
+                "author_id": data["author_id"],
+                "text": data["text"]
+            }
             comments_collection.update_one(filter_condition, {"$set": data}, upsert=True)
             links_collection.update_one({"post_id": data["post_id"]}, {"$set": {"last_comment_time": data['time']}})
     except Exception as e:

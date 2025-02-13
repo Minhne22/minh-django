@@ -18,6 +18,7 @@ from .models import Token  # Model lưu tokens
 import uuid
 import re
 from urllib.parse import urlparse, parse_qs, unquote
+import time
 
 
 def convert_to_utc7(iso_time: str) -> str:
@@ -36,6 +37,11 @@ def timestamp_to_str(timestamp: int) -> str:
     
     # Định dạng lại thời gian
     return dt.strftime("%H:%M:%S %Y/%m/%d")
+
+def get_timestamp_x_days_later(x):
+    today_midnight = datetime.combine(datetime.today(), datetime.min.time())  # 0h hôm nay
+    target_date = today_midnight + timedelta(days=x)  # Cộng thêm X ngày
+    return int(target_date.timestamp())
 
 users_collection = settings.users_collection
 store_collection = settings.client['store']['admin']
@@ -81,7 +87,7 @@ def get_link_detail(url, proxy={}, token=''):
         post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
             else response.split("'fbid': '")[1].split('\'')[0]
         title = response.split('__isActor')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
-        content = response.split('CometFeedStoryDefaultMessageRenderingStrategy')[1].split('"text":"')[1].split('"')[0]
+        content = response.split('CometFeedStoryDefaultMessageRenderingStrategy')[1].split('"text":"')[1].split('","delight_ranges"')[0]
         comment_count = response.split('"total_count":')[1].split('}')[0]
         created_time = response.split('"publish_time":')[1].split(',')[0]
         return {
@@ -282,6 +288,10 @@ def login_view(request):
         # print(password)
         # print(generate_password_hash(password))
         if user and check_password_hash(user["password"], password):
+            date = user.get('days_remaining', 0)
+            print(date)
+            if date == 0 or date < int(time.time()):
+                return JsonResponse({"status": "error", "message": "Hết hạn sử dụng"})
             # Lưu session
             request.session["user_id"] = str(user["_id"])
             request.session["username"] = user["username"]
@@ -355,6 +365,11 @@ def admin_cookie(request):
 
 def manage_users(request):
     users = list(users_collection.find({}, {"_id": 0}))  # Lấy danh sách user
+    today_midnight = datetime.combine(datetime.today(), datetime.min.time())  # 0h hôm nay
+    users = [
+        {**user, "days_remaining": (datetime.fromtimestamp(user.get('days_remaining', time.time()))  - today_midnight).days} for user in users
+    ]
+    # days_difference = (today_midnight - datetime.fromtimestamp(users.get('days_remaining', 0))).days  # Tính số ngày
     return render(request, "accounts/admin_users.html", {"users": users})
 
 def change_role(request, username):
@@ -367,6 +382,50 @@ def change_role(request, username):
 
     return JsonResponse({"success": True, "new_role": new_role})
 
+@csrf_exempt
+def edit_limit(request, username):
+    if request.method == "POST":
+        user = users_collection.find_one({"username": username})
+        if not user:
+            return JsonResponse({"error": "User không tồn tại"}, status=400)
+
+        limit_on = request.POST.get("limit_on")
+        limit_off = request.POST.get("limit_off")
+        days_remaining = request.POST.get("days_remaining")
+        
+
+        if not limit_on or not limit_off or not days_remaining:
+            return JsonResponse({"error": "Thiếu thông tin cần thiết"}, status=400)
+
+        users_collection.update_one(
+            {"username": username},
+            {"$set": {"limit_on": int(limit_on), "limit_off": int(limit_off), "days_remaining": get_timestamp_x_days_later(int(days_remaining))}}
+        )
+
+        return JsonResponse({"success": True, "limit_on": limit_on, "limit_off": limit_off, "days_remaining": days_remaining})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+@csrf_exempt
+def change_pass(request, username):
+    if request.method == "POST":
+        user = users_collection.find_one({"username": username})
+        if not user:
+            return JsonResponse({"error": "User không tồn tại"}, status=400)
+
+        new_password = request.POST.get("password")
+        if not new_password:
+            return JsonResponse({"error": "Thiếu mật khẩu mới"}, status=400)
+
+        hashed_password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        users_collection.update_one(
+            {"username": username},
+            {"$set": {"password": hashed_password}}
+        )
+
+        return JsonResponse({"success": True})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 def delete_user(request, username):
     result = users_collection.delete_one({"username": username})
     if result.deleted_count == 0:
@@ -399,7 +458,7 @@ def get_links(request):
     """Lấy danh sách link"""
     links = list(links_collection.find({}, {"_id": 0}))
     links = [
-        {**link, "content": bytes(link['content'], "utf-8").decode("unicode_escape")}
+        {**link, "content": link['content'].encode().decode('unicode_escape')}
         for link in links
     ]
     print(links)
@@ -673,3 +732,10 @@ def delete_all_tokens(request):
 def comment_list(request):
     comments = list(comments_collection.find({}, {"_id": 0}))  # Lấy tất cả comment, không lấy ObjectId
     return JsonResponse({"comments": comments})
+
+def get_user_limit(request):
+    username = request.session.get("username")
+    user = users_collection.find_one({"username": username}, {"_id": 0})
+    limit_on = user.get("limit_on", 0)
+    user['limit_on'] = limit_on  # Chuyển timestamp thành string
+    return JsonResponse(user)
