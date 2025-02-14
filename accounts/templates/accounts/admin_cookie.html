@@ -9,25 +9,19 @@
         body {
             padding: 20px;
         }
-        .cookie-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 5px;
-        }
         .cookie-item button {
             background-color: #dc3545;
             color: white;
             border: none;
-            padding: 5px;
+            padding: 5px 10px;
             border-radius: 5px;
             cursor: pointer;
         }
         .cookie-item button:hover {
             background-color: #c82333;
+        }
+        .table td, .table th {
+            vertical-align: middle;
         }
     </style>
 </head>
@@ -43,7 +37,18 @@
         </div>
 
         <h3>Danh sách Cookies</h3>
-        <div id="cookieList" class="list-group"></div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>User ID</th>
+                    <th>Tên</th>
+                    <th>Cookie</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="cookieList"></tbody>
+        </table>
     </div>
 
     <script>
@@ -51,13 +56,22 @@
             $.get("{% url 'get_cookies' %}", function(data) {
                 $("#cookieList").empty();
                 data.cookies.forEach((cookie, index) => {
+                    let shortCookie = cookie.cookie.length > 20 ? cookie.cookie.substring(0, 20) + '...' : cookie.cookie;
                     $("#cookieList").append(`
-                        <div class="cookie-item list-group-item">
-                            <span>${index + 1}. ${cookie}</span>
-                            <button onclick="deleteCookie('${cookie}')">Xóa</button>
-                        </div>
+                        <tr class="cookie-item">
+                            <td>${index + 1}</td>
+                            <td>${cookie.user_id}</td>
+                            <td>${cookie.name}</td>
+                            <td>
+                                <span data-bs-toggle="tooltip" title="${cookie.cookie}">${shortCookie}</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteCookie('${cookie.cookie}')">Xóa</button>
+                            </td>
+                        </tr>
                     `);
                 });
+                $('[data-bs-toggle="tooltip"]').tooltip();
             });
         }
 

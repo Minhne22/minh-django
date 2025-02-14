@@ -20,6 +20,7 @@ import re
 from urllib.parse import urlparse, parse_qs, unquote
 import time
 from markupsafe import escape
+import random
 
 
 def convert_to_utc7(iso_time: str) -> str:
@@ -44,38 +45,61 @@ def get_timestamp_x_days_later(x):
     target_date = today_midnight + timedelta(days=x)  # Cộng thêm X ngày
     return int(target_date.timestamp())
 
-def check_live_cookie(cookie: str, proxy={}):
-    ipport = f'{proxy["ip"]}:{proxy["port"]}' if not proxy['username'] else f'{proxy["username"]}:{proxy["password"]}@{proxy["ip"]}:{proxy["port"]}'
-    
-    print(ipport)
-    headers = {
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'accept-language': 'en-US,en;q=0.9',
-        'priority': 'u=0, i',
-        'cookie': cookie,
-        'sec-ch-ua': '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-platform': '"Windows"',
-        'sec-fetch-dest': 'document',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-site': 'none',
-        'sec-fetch-user': '?1',
-        'upgrade-insecure-requests': '1',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
-    }
-    
-    session = requests.Session()
-    session.headers.update(headers)
-    session.proxies = {'http': f'http://{ipport}', 'https': f'http://{ipport}'}  # Sử dụng proxy
-    try:
-        response = session.get('https://www.facebook.com/').text
-        fb_dtsg = response.split('{"dtsg":{"token":"')[1].split('"')[0]
-        return {
-            'success': True
+def check_live_cookie(cookie: str, proxy=''):
+    for _ in range(5):
+        ipport = f'{proxy["ip"]}:{proxy["port"]}' if not proxy['username'] else f'{proxy["username"]}:{proxy["password"]}@{proxy["ip"]}:{proxy["port"]}'
+        
+        print(ipport)
+        headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'accept-language': 'en-US,en;q=0.9',
+            'priority': 'u=0, i',
+            'cookie': cookie,
+            'sec-ch-ua': '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'none',
+            'sec-fetch-user': '?1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
         }
-    except Exception as e:
+        
+        session = requests.Session()
+        session.headers.update(headers)
+        session.proxies = {'http': f'http://{ipport}', 'https': f'http://{ipport}'}  # Sử dụng proxy
+        try:
+            response = session.get('https://www.facebook.com/').text
+            fb_dtsg = response.split('["DTSGInitialData",[],{"token":"')[1].split('"')[0]
+            print(fb_dtsg)
+            name = response.split('"NAME":"')[1].split('"')[0].encode().decode('unicode_escape')
+            user_id = response.split('"USER_ID":"')[1].split('"')[0]
+            return {
+                'status': 'active',
+                'name': name,
+                'user_id': user_id,
+            }
+        
+        except (requests.exceptions.ConnectionError, 
+            requests.exceptions.Timeout, 
+            requests.exceptions.RequestException) as e:
+            pass
+        
+        except IndexError:
+            return {
+                'status': 'die'
+            }
+        
+        except Exception as e:
+            print(e)
+            return {
+                'status': 'die'
+            }
+    else:
         return {
-            'success': False
+            'status': 'proxy_die',
+            'proxy_data': proxy
         }
     
 users_collection = settings.users_collection
@@ -83,7 +107,9 @@ fb_detail = settings.client['fb_cmt_manage']
 links_collection = fb_detail['facebook_links']
 proxies_collection = fb_detail['proxies']
 comments_collection = fb_detail['facebook_comments']
-store_collection = settings.client['store']
+store_credentials = settings.client['store']
+cookie_collection = store_credentials['cookies']
+token_collection = store_credentials['tokens']
 
 # Function Facebook
 def get_link_detail(url, proxy={}, token=''):
@@ -140,7 +166,7 @@ def get_link_detail(url, proxy={}, token=''):
         }
     
     except IndexError:
-        token = store_collection.find_one({"_id": "tokens"})['tokens'][0]
+        token = random.choice(list(token_collection.find()))['token']
         with open('token_logs.txt', 'a+', encoding='utf8') as f:
             f.write(response + '\n')
         post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
@@ -517,7 +543,7 @@ def get_links_on(request):
     links = list(links_collection.find({"active": "on"}, {"_id": 0}))
     links = [
         {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links
-    ]
+    ][::-1]
     # print(links)
     return JsonResponse({"links": links})
 
@@ -526,7 +552,7 @@ def get_links_off(request):
     links = list(links_collection.find({}, {"_id": 0, "active": "off"}))
     links = [
         {**link, "content": link['content'].encode().decode('unicode_escape')} for link in links
-    ]
+    ][::-1]
     # print(links)
     return JsonResponse({"links": links})
 
@@ -535,6 +561,13 @@ def add_links(request):
     if request.method == "POST":
         data = json.loads(request.body)
         links = data.get("links", [])
+        username = request.session.get("username")
+        user = users_collection.find_one({"username": username}, {"_id": 0})
+        limit_on = user.get("limit_on", 0)
+        links_available = links_collection.count_documents({"active": "on"})
+        if (links_available + len(links)) > limit_on:
+            return JsonResponse({"success": False, "error": "Vượt quá giới hạn link"}, status=400)
+        
 
         inserted_links = []
         for link in links:
@@ -672,7 +705,8 @@ def toggle_proxy(request):
         print(proxy)
         if proxy:
             new_status = "inactive" if proxy["status"] == "active" else "active"
-            proxies_collection.update_one({"ip": ip, "port": port}, {"$set": {"status": new_status}})
+            print(new_status)
+            proxies_collection.update_one({"ip": ip, "port": str(port)}, {"$set": {"status": new_status}})
             return JsonResponse({"success": True, "new_status": new_status})
 
     return JsonResponse({"error": "Proxy không tồn tại"}, status=400)
@@ -686,12 +720,27 @@ def add_cookies(request):
 
             if not cookies:
                 return JsonResponse({"success": False, "message": "Không có dữ liệu!"}, status=400)
+            
+            proxies = list(proxies_collection.find({"status": "active"}))  # Lấy danh sách proxy đang hoạt động
 
-            store_collection.update_one(
-                {"_id": "cookies"},
-                {"$push": {"cookies": {"$each": cookies}}},
-                upsert=True
-            )
+            for cookie in cookies:
+                print(cookie)
+                
+                while True:
+                    proxy = random.choice(proxies) if proxies else {}
+                    status = check_live_cookie(cookie, proxy)
+                    if status['status'] == 'proxy_die':
+                        proxies_collection.update_one(
+                            {"ip": proxy['ip'], "port": str(proxy['port'])},
+                            {"$set": {"status": "inactive"}}
+                        )
+                    else:
+                        break
+                cookie_collection.update_one(
+                    {"cookie": cookie},
+                    {"$set": {"cookie": cookie, **status}},
+                    upsert=True
+                )
 
             return JsonResponse({"success": True, "message": "Thêm cookies thành công!"})
         except Exception as e:
@@ -700,9 +749,9 @@ def add_cookies(request):
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 def get_cookies(request):
-    data = store_collection.find_one({"_id": "cookies"}) or {}
-    cookies = data.get("cookies", [])
-    return JsonResponse({"success": True, "cookies": cookies})
+    data = list(cookie_collection.find({}, {"_id": 0}))
+    print(data)
+    return JsonResponse({"success": True, "cookies": data})
 
 @csrf_exempt
 def delete_cookie(request):
@@ -714,10 +763,7 @@ def delete_cookie(request):
             if not cookie:
                 return JsonResponse({"success": False, "message": "Cookie không hợp lệ!"}, status=400)
 
-            store_collection.update_one(
-                {"_id": "cookies"},
-                {"$pull": {"cookies": cookie}}
-            )
+            cookie_collection.delete_one({"cookie": cookie})
 
             return JsonResponse({"success": True, "message": "Xóa cookie thành công!"})
         except Exception as e:
@@ -727,7 +773,7 @@ def delete_cookie(request):
 
 @csrf_exempt
 def delete_all_cookies(request):
-    store_collection.update_one({"_id": "cookies"}, {"$set": {"cookies": []}})
+    cookie_collection.delete_many({})
     return JsonResponse({"success": True, "message": "Đã xóa tất cả cookies!"})
 
 
@@ -741,7 +787,7 @@ def convert_tokens(request):
             if not cookies:
                 return JsonResponse({"success": False, "message": "Không có dữ liệu!"}, status=400)
 
-            tokens = []
+            successes = []
             
             # Chuyển đổi token
             
@@ -749,16 +795,12 @@ def convert_tokens(request):
                 token = get_access_token(cookie)
                 if token:
                     access_token = token['data']
-                    tokens.append(access_token)
+                    successes.append({"cookie": cookie, "token": access_token, "status": "active"})
                 
 
-            store_collection.update_one(
-                {"_id": "tokens"},
-                {"$push": {"tokens": {"$each": tokens}}},
-                upsert=True
-            )
+            token_collection.insert_many(successes)
 
-            return JsonResponse({"success": True, "tokens": tokens})
+            return JsonResponse({"success": True, "tokens": successes})
         except Exception as e:
             return JsonResponse({"success": False, "message": str(e)}, status=500)
 
@@ -766,8 +808,7 @@ def convert_tokens(request):
 
 
 def get_tokens(request):
-    data = store_collection.find_one({"_id": "tokens"}) or {}
-    tokens = data.get("tokens", [])
+    tokens = list(token_collection.find({}, {"_id": 0}))
     return JsonResponse({"success": True, "tokens": tokens})
 
 @csrf_exempt
@@ -780,10 +821,7 @@ def delete_token(request):
             if not token:
                 return JsonResponse({"success": False, "message": "Token không hợp lệ!"}, status=400)
 
-            store_collection.update_one(
-                {"_id": "tokens"},
-                {"$pull": {"tokens": token}}
-            )
+            token_collection.delete_one({"token": token})
 
             return JsonResponse({"success": True, "message": "Xóa token thành công!"})
         except Exception as e:
@@ -793,7 +831,7 @@ def delete_token(request):
 
 @csrf_exempt
 def delete_all_tokens(request):
-    store_collection.update_one({"_id": "tokens"}, {"$set": {"tokens": []}})
+    token_collection.delete_many({})
     return JsonResponse({"success": True, "message": "Đã xóa tất cả tokens!"})
 
 def comment_list(request):

@@ -198,8 +198,9 @@
                         complete: function () {
                             $("#addLinksSpinner").hide(); // Ẩn spinner sau khi xử lý xong
                         },
-                        error: function () {
-                            alert("Lỗi khi thêm links!");
+                        error: function (response) {
+                            console.log(response);
+                            alert(response.responseJSON.error);
                         }
                     });
                 });
@@ -307,7 +308,8 @@
                                 reloadData();
                                 $("#editModal").modal("hide");
                             } else {
-                                alert("Lỗi khi cập nhật!");
+                                console.log(response.responseJSON.error);
+                                alert(response.responseJSON.error);
                             }
                         },
                         complete: function () {
