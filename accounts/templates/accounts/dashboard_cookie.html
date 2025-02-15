@@ -44,6 +44,7 @@
                     <th>User ID</th>
                     <th>Tên</th>
                     <th>Cookie</th>
+                    <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
@@ -57,6 +58,7 @@
                 $("#cookieList").empty();
                 data.cookies.forEach((cookie, index) => {
                     let shortCookie = cookie.cookie.length > 20 ? cookie.cookie.substring(0, 20) + '...' : cookie.cookie;
+                    let status = cookie.status === 'active' ? 'Hoạt động 🟢' : 'Không hoạt động 🔴';
                     $("#cookieList").append(`
                         <tr class="cookie-item">
                             <td>${index + 1}</td>
@@ -65,6 +67,7 @@
                             <td>
                                 <span data-bs-toggle="tooltip" title="${cookie.cookie}">${shortCookie}</span>
                             </td>
+                            <td>${status}</td>
                             <td>
                                 <button class="btn btn-danger" onclick="deleteCookie('${cookie.cookie}')">Xóa</button>
                             </td>

@@ -44,6 +44,7 @@
                     <th>Tên Bài</th>
                     <th>Thời Gian Cmt Cuối</th>
                     <th>Count Cmt</th>
+                    <th>Delay</th>
                     <th>Status</th>
                     <th>Action</th>
                 </tr>
@@ -86,6 +87,11 @@
                             <input type="number" class="form-control" id="editCommentCount">
                         </div>
 
+                        <div class="mb-3">
+                            <label for="editDelay" class="form-label">Delay</label>
+                            <input type="text" class="form-control" id="editDelay">
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -114,6 +120,7 @@
                                 </td>
                                 <td>${formattedLastCommentTime}</td>
                                 <td>${link.comment_count}</td>
+                                <td>${link.delay}</td>
                                 <td>${link.status}</td>
                                 <td>
                                     <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">✏️ Edit</button>
@@ -140,8 +147,8 @@
                         $("#editPostName").val(row.find("td:eq(3)").text());
                         $("#editLastCommentTime").val(row.find("td:eq(4)").text());
                         $("#editCommentCount").val(row.find("td:eq(5)").text());
-                        $("#editDelay").val(row.find("td:eq(7)").text());
-                        $("#editStatus").val(row.find("td:eq(8)").text());
+                        $("#editDelay").val(row.find("td:eq(6)").text());
+                        $("#editStatus").val(row.find("td:eq(7)").text());
 
                         $("#editModal").modal("show");
                     });
@@ -173,6 +180,7 @@
                             <td>New</td>
                             <td>Processing...</td>
                             <td>${link}</td>
+                            <td>Processing...</td>
                             <td>Processing...</td>
                             <td>Processing...</td>
                             <td>Processing...</td>
@@ -230,6 +238,7 @@
                                         </td>
                                         <td>${link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time)}</td>
                                         <td>${link.comment_count}</td>
+                                        <td>${link.delay}</td>
                                         <td><span class="badge ${link.status === 'public' ? 'bg-success' : 'bg-danger'}">${link.status}</span></td>
                                         <td>
                                             <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">Edit</button>
@@ -275,9 +284,9 @@
                     $("#editPostId").val($(this).data("post-id"));
                     $("#editPostName").val(row.find("td:eq(3)").text());
                     $("#editLastCommentTime").val(row.find("td:eq(4)").text().trim()); // Lấy thời gian comment cuối
-                    $("#editStatus").val(row.find("td:eq(8)").text().trim());
+                    $("#editStatus").val(row.find("td:eq(7)").text().trim());
                     $("#editCommentCount").val(row.find("td:eq(5)").text());
-                    $("#editDelay").val(row.find("td:eq(7)").text());
+                    $("#editDelay").val(row.find("td:eq(6)").text());
 
                     editModal.show();
                 });
@@ -288,6 +297,7 @@
                     let newLastCommentTime = $("#editLastCommentTime").val();
                     let newStatus = $("#editStatus").val();
                     let newCommentCount = $("#editCommentCount").val();
+                    let newDelay = $("#editDelay").val();
 
                     $("#saveEditSpinner").show(); // Hiện spinner
 
@@ -299,7 +309,8 @@
                             name: newName,
                             last_comment_time: newLastCommentTime,
                             status: newStatus,
-                            comment_count: newCommentCount
+                            comment_count: newCommentCount,
+                            delay: newDelay
                         }),
                         contentType: "application/json",
                         headers: { "X-CSRFToken": getCSRFToken() },

@@ -21,25 +21,8 @@ from urllib.parse import urlparse, parse_qs, unquote
 import time
 from markupsafe import escape
 import random
+from .modules_fb import get_link_detail
 
-
-
-def convert_to_utc7(iso_time: str) -> str:
-    # Chuyển đổi chuỗi ISO thành đối tượng datetime
-    dt = datetime.strptime(iso_time, "%Y-%m-%dT%H:%M:%S%z")
-    
-    # Chuyển sang múi giờ UTC+7
-    dt_utc7 = dt.astimezone(timezone(timedelta(hours=7)))
-    
-    # Định dạng theo yêu cầu
-    return dt_utc7.strftime("%H:%M:%S %Y/%m/%d")
-
-def timestamp_to_str(timestamp: int) -> str:
-    # Chuyển đổi timestamp thành datetime có timezone UTC
-    dt = datetime.fromtimestamp(timestamp, tz=timezone.utc)
-    
-    # Định dạng lại thời gian
-    return dt.strftime("%H:%M:%S %Y/%m/%d")
 
 def get_timestamp_x_days_later(x):
     today_midnight = datetime.combine(datetime.today(), datetime.min.time())  # 0h hôm nay
@@ -124,131 +107,6 @@ users_cookie_db = settings.client['user_cookies']
 user_comments_collection = settings.client['user_comments']
 
 # Function Facebook
-def get_link_detail(url, proxy={}, token=''):
-    session = requests.Session()
-    session.headers.update({
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-        'accept-language': 'en-US,en;q=0.9',
-        'cookie': 'datr=W06SZ_48TKb0XgBDj5NmAmV4; sb=W06SZweBwrhWi9P0gH85_X0b; dpr=1.5; wd=819x551',
-        'dpr': '1.5',
-        'priority': 'u=0, i',
-        'sec-ch-prefers-color-scheme': 'light',
-        'sec-ch-ua': '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
-        'sec-ch-ua-full-version-list': '"Not A(Brand";v="8.0.0.0", "Chromium";v="132.0.6834.110", "Google Chrome";v="132.0.6834.110"',
-        'sec-ch-ua-mobile': '?0',
-        'sec-ch-ua-model': '""',
-        'sec-ch-ua-platform': '"Windows"',
-        'sec-ch-ua-platform-version': '"19.0.0"',
-        'sec-fetch-dest': 'document',
-        'sec-fetch-mode': 'navigate',
-        'sec-fetch-site': 'none',
-        'sec-fetch-user': '?1',
-        'upgrade-insecure-requests': '1',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-        'viewport-width': '819'})
-    if proxy:
-        ipport = f'{proxy["ip"]}:{proxy["port"]}' if not proxy['username'] else f'{proxy["username"]}:{proxy["password"]}@{proxy["ip"]}:{proxy["port"]}'
-        proxy = {
-            'http': f'http://{ipport}',
-            'https': f'http://{ipport}'
-        }
-        session.proxies = proxy
-    
-    try:
-        print(url)
-        response = session.get(url).text
-        post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
-            else response.split("'fbid': '")[1].split('\'')[0]
-        print(post_id)
-        title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
-        content = response.split('CometFeedStoryDefaultMessageRenderingStrategy')[1].split('"text":"')[1].split('","delight_ranges"')[0]
-        comment_count = response.split('"total_count":')[1].split('}')[0]
-        created_time = response.split('"publish_time":')[1].split(',')[0]
-        return {
-            'success': True,
-            'data': {
-                'post_id': post_id,
-                'title': title,
-                'content': content,
-                'comment_count': comment_count,
-                'status': 'public',
-                'created_time': timestamp_to_str(int(created_time)),
-                'origin_url': url
-            }
-        }
-    
-    except IndexError:
-        token = random.choice(list(token_collection.find()))['token']
-        with open('token_logs.txt', 'a+', encoding='utf8') as f:
-            f.write(response + '\n')
-        post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
-            else response.split("'fbid': '")[1].split('\'')[0]
-        
-        # Get detail using access_token
-        response = requests.get(
-            f'https://graph.facebook.com/{post_id}',
-            params={
-                'access_token': token,
-                'fields': 'id,from,message,comments.summary(1),created_time'
-            }
-        ).json()
-        
-        # print(response)
-        
-        if 'error' in response:
-            error_code = response['error']['code']
-            if error_code == 100:
-                response = requests.get(
-                    f'https://graph.facebook.com/v22.0/{post_id}',
-                    params={
-                        'access_token': token,
-                        'fields': 'id,from.fields(name),description,comments.summary(1),created_time'
-                    }
-                ).json()
-                # print(response)
-                data = {
-                    'success': True,
-                    'data': {
-                        'post_id': post_id,
-                        'title': response['from']['name'],
-                        'content': response['description'].encode('unicode_escape').decode('utf-8'),
-                        'comment_count': response['comments'].get('count', 0),
-                        'status': 'private',
-                        'created_time': convert_to_utc7(response['created_time']),
-                        'origin_url': url
-                        
-                    }
-                }
-                print(data)
-                return data
-            else:
-                with open('token_logs.txt', 'a+', encoding='utf8') as f:
-                    f.write(str(response) + '\n')
-        return {
-            'success': True,
-            'data': {
-                'post_id': post_id,
-                'title': response['from']['name'],
-                'content': response['message'],
-                'comment_count': response['comments'].get('count', 0),
-                'status': 'private',
-                'created_time': convert_to_utc7(response['created_time']),
-                'origin_url': url
-                
-            }
-        }
-    
-    except requests.exceptions.ProxyError:
-        return {
-            'success': False,
-            'data': 'Proxy error'
-        }
-        
-    except Exception as e:
-        return {
-            'success': False,
-            'data': str(e)
-        }
 
 def get_access_token(cookie: str, proxy={}):
     cookie = cookie.split('|')[0]
@@ -470,6 +328,8 @@ def admin_cookie(request):
     return render(request, "accounts/admin_cookie.html")
 
 def manage_users(request):
+    if not request.session.get('role') == 'admin':
+        return JsonResponse({"error": "Bạn không có quyền truy cập"}, status=403)
     users = list(users_collection.find({}, {"_id": 0}))  # Lấy danh sách user
     today_midnight = datetime.combine(datetime.today(), datetime.min.time())  # 0h hôm nay
     users = [
@@ -604,13 +464,15 @@ def add_links(request):
 
             inserted_links = []
             for link in links:
-                print(link)
-                print(link.isnumeric())
                 if link.isnumeric():
                     link = f'https://facebook.com/{link}'
                 print(link)
+                proxy = random.choice(list(proxies_collection.find({"status": "active"})))
+                # print(proxy)
+                cookie = random.choice(list(cookie_collection.find({"status": "active"})))['cookie']
+                # print(cookie)
                 
-                result = get_link_detail(link)
+                result = get_link_detail(link, proxy=proxy, cookie=cookie)
                 if result['success']:
                     result = result['data']
                     new_link = {
@@ -622,7 +484,8 @@ def add_links(request):
                         "status": result['status'],
                         "content": result['content'],
                         'origin_url': result['origin_url'],
-                        'active': 'on'
+                        'active': 'on',
+                        'delay': 5
                     }
                     # links_collection.insert_one(new_link)
                     print(links_collection.update_one(
@@ -661,7 +524,8 @@ def add_links(request):
                         "status": result['status'],
                         "content": result['content'],
                         'origin_url': result['origin_url'],
-                        'active': 'on'
+                        'active': 'on',
+                        'delay': 5
                     }
                     # links_collection.insert_one(new_link)
                     print(user_links_collection.update_one(
@@ -684,6 +548,8 @@ def edit_link(request):
             new_last_comment_time = data.get("last_comment_time")  # Lấy thời gian comment cuối
             new_status = data.get("status")
             new_comment_count = data.get("comment_count")
+            delay = data.get("delay")
+            delay = int(delay) if delay else 5
 
             if post_id:
                 links_collection.update_one(
@@ -693,6 +559,7 @@ def edit_link(request):
                         "last_comment_time": new_last_comment_time,  # Cập nhật thời gian comment cuối
                         "status": new_status,
                         "comment_count": int(new_comment_count),
+                        "delay": delay
                     }}
                 )
                 return JsonResponse({"success": True})
