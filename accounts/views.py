@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 # from django.conf import settings
 import myproject.settings as settings
@@ -21,6 +21,7 @@ from urllib.parse import urlparse, parse_qs, unquote
 import time
 from markupsafe import escape
 import random
+
 
 
 def convert_to_utc7(iso_time: str) -> str:
@@ -103,13 +104,24 @@ def check_live_cookie(cookie: str, proxy=''):
         }
     
 users_collection = settings.users_collection
+
 fb_detail = settings.client['fb_cmt_manage']
 links_collection = fb_detail['facebook_links']
 proxies_collection = fb_detail['proxies']
 comments_collection = fb_detail['facebook_comments']
+
 store_credentials = settings.client['store']
 cookie_collection = store_credentials['cookies']
 token_collection = store_credentials['tokens']
+
+# User Database Link
+users_db = settings.client['user_links']
+
+# User Database Cookie
+users_cookie_db = settings.client['user_cookies']
+
+# User Database Comments
+user_comments_collection = settings.client['user_comments']
 
 # Function Facebook
 def get_link_detail(url, proxy={}, token=''):
@@ -408,22 +420,32 @@ def register_view(request):
 def user_dashboard(request):
     if "username" not in request.session:
         return redirect("login")  # Nếu chưa đăng nhập, chuyển về login
+    user = users_collection.find_one({"username": request.session.get("username")})
+    date = user.get('days_remaining', 0)
+    today_midnight = datetime.combine(datetime.today(), datetime.min.time())  # 0h hôm nay
+    request.session['days_remaining'] = (datetime.fromtimestamp(date)  - today_midnight).days
     return render(request, "accounts/dashboard.html")
 
-def dashboard_links(request):
+def dashboard_links_on(request):
     return render(request, "accounts/dashboard_links.html")
+
+def dashboard_links_off(request):
+    return render(request, "accounts/dashboard_links_off.html")
 
 def dashboard_comments(request):
     return render(request, "accounts/dashboard_comments.html")
 
-def dashboard_tokens(request):
-    return render(request, "accounts/dashboard_tokens.html")
+def dashboard_cookie(request):
+    return render(request, "accounts/dashboard_cookie.html")
 
 def admin_dashboard(request):
+    if not request.session.get("username"):
+        return redirect("login") 
+    if request.session.get("role") != "admin":
+        raise Http404("Page not found")
     today_midnight = datetime.combine(datetime.today(), datetime.min.time())  # 0h hôm nay
-    if not request.session.get('days_remaining'):
-        user = users_collection.find_one({"username": request.session.get("username")})
-        request.session['days_remaining'] = (datetime.fromtimestamp((user.get('days_remaining', time.time()))) - today_midnight).days
+    user = users_collection.find_one({"username": request.session.get("username")})
+    request.session['days_remaining'] = (datetime.fromtimestamp((user.get('days_remaining', time.time()))) - today_midnight).days
     print(request.session['days_remaining'])
     if request.session.get("role") != "admin":
         return redirect("login")  # Chỉ admin mới truy cập được
@@ -540,12 +562,22 @@ def add_user(request):
 
 def get_links_on(request):
     """Lấy danh sách link"""
-    links = list(links_collection.find({"active": "on"}, {"_id": 0}))
-    links = [
-        {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links
-    ][::-1]
-    # print(links)
-    return JsonResponse({"links": links})
+    if request.session.get("role") == "admin":
+        links = list(links_collection.find({"active": "on"}, {"_id": 0}))
+        links = [
+            {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links
+        ][::-1]
+        # print(links)
+        return JsonResponse({"links": links})
+    else:
+        username = request.session.get("username")
+        user_links_collection = users_db[username]
+        links = list(user_links_collection.find({}, {"_id": 0}))
+        links = [
+            {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links
+        ][::-1]
+        return JsonResponse({"links": links})
+        
 
 def get_links_off(request):
     """Lấy danh sách link"""
@@ -559,73 +591,136 @@ def get_links_off(request):
 @csrf_exempt
 def add_links(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        links = data.get("links", [])
-        username = request.session.get("username")
-        user = users_collection.find_one({"username": username}, {"_id": 0})
-        limit_on = user.get("limit_on", 0)
-        links_available = links_collection.count_documents({"active": "on"})
-        if (links_available + len(links)) > limit_on:
-            return JsonResponse({"success": False, "error": "Vượt quá giới hạn link"}, status=400)
-        
-
-        inserted_links = []
-        for link in links:
-            print(link)
-            print(link.isnumeric())
-            if link.isnumeric():
-                link = f'https://facebook.com/{link}'
-            print(link)
+        if request.session.get("role") == "admin":
+            data = json.loads(request.body)
+            links = data.get("links", [])
+            username = request.session.get("username")
+            user = users_collection.find_one({"username": username}, {"_id": 0})
+            limit_on = user.get("limit_on", 0)
+            links_available = links_collection.count_documents({"active": "on"})
+            if (links_available + len(links)) > limit_on:
+                return JsonResponse({"success": False, "error": "Vượt quá giới hạn link"}, status=400)
             
-            result = get_link_detail(link)
-            if result['success']:
-                result = result['data']
-                new_link = {
-                    "post_id": result['post_id'],
-                    "created_time": result['created_time'],
-                    "name": result['title'],
-                    "last_comment_time": 'Proccessing',
-                    "comment_count": result['comment_count'],
-                    "status": result['status'],
-                    "content": result['content'],
-                    'origin_url': result['origin_url'],
-                    'active': 'on'
-                }
-                # links_collection.insert_one(new_link)
-                print(links_collection.update_one(
-                    {"post_id": new_link['post_id']},
-                    {"$set": new_link}, upsert=True
-                ))
-                # new_link['_id'] = str(new_link['_id'])
-                inserted_links.append(new_link)
-        
-        print(inserted_links)
 
-        return JsonResponse({"success": True, "links": inserted_links})
+            inserted_links = []
+            for link in links:
+                print(link)
+                print(link.isnumeric())
+                if link.isnumeric():
+                    link = f'https://facebook.com/{link}'
+                print(link)
+                
+                result = get_link_detail(link)
+                if result['success']:
+                    result = result['data']
+                    new_link = {
+                        "post_id": result['post_id'],
+                        "created_time": result['created_time'],
+                        "name": result['title'],
+                        "last_comment_time": 'Proccessing',
+                        "comment_count": result['comment_count'],
+                        "status": result['status'],
+                        "content": result['content'],
+                        'origin_url': result['origin_url'],
+                        'active': 'on'
+                    }
+                    # links_collection.insert_one(new_link)
+                    print(links_collection.update_one(
+                        {"post_id": new_link['post_id']},
+                        {"$set": new_link}, upsert=True
+                    ))
+                    # new_link['_id'] = str(new_link['_id'])
+                    inserted_links.append(new_link)
+            
+            print(inserted_links)
+
+            return JsonResponse({"success": True, "links": inserted_links})
+        else:
+            username = request.session.get("username")
+            user_links_collection = users_db[username]
+            data = json.loads(request.body)
+            links = data.get("links", [])
+            user = users_collection.find_one({"username": username}, {"_id": 0})
+            limit_on = user.get("limit_on", 0)
+            links_available = user_links_collection.count_documents({})
+            if (links_available + len(links)) > limit_on:
+                return JsonResponse({"success": False, "error": "Vượt quá giới hạn link"}, status=400)
+            inserted_links = []
+            for link in links:
+                if link.isnumeric():
+                    link = f'https://facebook.com/{link}'
+                result = get_link_detail(link)
+                if result['success']:
+                    result = result['data']
+                    new_link = {
+                        "post_id": result['post_id'],
+                        "created_time": result['created_time'],
+                        "name": result['title'],
+                        "last_comment_time": 'Proccessing',
+                        "comment_count": result['comment_count'],
+                        "status": result['status'],
+                        "content": result['content'],
+                        'origin_url': result['origin_url'],
+                        'active': 'on'
+                    }
+                    # links_collection.insert_one(new_link)
+                    print(user_links_collection.update_one(
+                        {"post_id": new_link['post_id']},
+                        {"$set": new_link}, upsert=True
+                    ))
+                    # new_link['_id'] = str(new_link['_id'])
+                    inserted_links.append(new_link)
+            return JsonResponse({"success": True, "links": inserted_links})
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
 @csrf_exempt
 def edit_link(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        post_id = data.get("post_id")
-        new_name = data.get("name")
-        new_last_comment_time = data.get("last_comment_time")  # Lấy thời gian comment cuối
-        new_status = data.get("status")
-        new_comment_count = data.get("comment_count")
+        if request.session.get("role") == "admin":
+            data = json.loads(request.body)
+            post_id = data.get("post_id")
+            new_name = data.get("name")
+            new_last_comment_time = data.get("last_comment_time")  # Lấy thời gian comment cuối
+            new_status = data.get("status")
+            new_comment_count = data.get("comment_count")
 
-        if post_id:
-            links_collection.update_one(
-                {"post_id": post_id},
-                {"$set": {
-                    "name": new_name,
-                    "last_comment_time": new_last_comment_time,  # Cập nhật thời gian comment cuối
-                    "status": new_status,
-                    "comment_count": int(new_comment_count),
-                }}
-            )
-            return JsonResponse({"success": True})
+            if post_id:
+                links_collection.update_one(
+                    {"post_id": post_id},
+                    {"$set": {
+                        "name": new_name,
+                        "last_comment_time": new_last_comment_time,  # Cập nhật thời gian comment cuối
+                        "status": new_status,
+                        "comment_count": int(new_comment_count),
+                    }}
+                )
+                return JsonResponse({"success": True})
+            else:
+                return JsonResponse({"success": False, "error": "Không tìm thấy link"}, status=400)
+        else:
+            username = request.session.get("username")
+            user_links_collection = users_db[username]
+            data = json.loads(request.body)
+            post_id = data.get("post_id")
+            new_name = data.get("name")
+            new_last_comment_time = data.get("last_comment_time")
+            new_status = data.get("status")
+            new_comment_count = data.get("comment_count")
+            
+            if post_id:
+                user_links_collection.update_one(
+                    {"post_id": post_id},
+                    {"$set": {
+                        "name": new_name,
+                        "last_comment_time": new_last_comment_time,
+                        "status": new_status,
+                        "comment_count": int(new_comment_count),
+                    }}
+                )
+                return JsonResponse({"success": True})
+            else:
+                return JsonResponse({"success": False, "error": "Không tìm thấy link"}, status=400)
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
@@ -633,17 +728,28 @@ def edit_link(request):
 def delete_link(request):
     """Xóa link theo post_id"""
     if request.method == "POST":
-        data = json.loads(request.body)
-        post_id = str(data.get("post_id"))  # Chuyển post_id thành string
+        if request.session.get("role") == "admin":
+            data = json.loads(request.body)
+            post_id = str(data.get("post_id"))  # Chuyển post_id thành string
 
-        # Kiểm tra nếu link tồn tại
-        link = links_collection.find_one({"post_id": post_id})
-        if not link:
-            return JsonResponse({"success": False, "error": "Link không tồn tại"}, status=400)
+            # Kiểm tra nếu link tồn tại
+            link = links_collection.find_one({"post_id": post_id})
+            if not link:
+                return JsonResponse({"success": False, "error": "Link không tồn tại"}, status=400)
 
-        # Xóa link
-        links_collection.delete_one({"post_id": post_id})
-        return JsonResponse({"success": True})
+            # Xóa link
+            links_collection.delete_one({"post_id": post_id})
+            return JsonResponse({"success": True})
+        else:
+            username = request.session.get("username")
+            user_links_collection = users_db[username]
+            data = json.loads(request.body)
+            post_id = str(data.get("post_id"))
+            link = user_links_collection.find_one({"post_id": post_id})
+            if not link:
+                return JsonResponse({"success": False, "error": "Link không tồn tại"}, status=400)
+            user_links_collection.delete_one({"post_id": post_id})
+            return JsonResponse({"success": True})
 
 def admin_proxies(request):
     """Render trang quản lý proxy"""
@@ -749,32 +855,56 @@ def add_cookies(request):
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 def get_cookies(request):
-    data = list(cookie_collection.find({}, {"_id": 0}))
-    print(data)
-    return JsonResponse({"success": True, "cookies": data})
+    if request.session.get("role") == "admin":
+        data = list(cookie_collection.find({}, {"_id": 0}))
+        print(data)
+        return JsonResponse({"success": True, "cookies": data})
+    else:
+        username = request.session.get("username")
+        user_cookies_collection = users_db[username]
+        data = list(user_cookies_collection.find({}, {"_id": 0}))
+        return JsonResponse({"success": True, "cookies": data})
+
+    
 
 @csrf_exempt
 def delete_cookie(request):
     if request.method == "POST":
-        try:
+        if request.session.get("role") == "admin":
+            try:
+                data = json.loads(request.body)
+                cookie = data.get("cookie")
+
+                if not cookie:
+                    return JsonResponse({"success": False, "message": "Cookie không hợp lệ!"}, status=400)
+
+                cookie_collection.delete_one({"cookie": cookie})
+
+                return JsonResponse({"success": True, "message": "Xóa cookie thành công!"})
+            except Exception as e:
+                return JsonResponse({"success": False, "message": str(e)}, status=500)
+        else:
+            username = request.session.get("username")
+            user_cookies_collection = users_db[username]
             data = json.loads(request.body)
             cookie = data.get("cookie")
-
             if not cookie:
                 return JsonResponse({"success": False, "message": "Cookie không hợp lệ!"}, status=400)
-
-            cookie_collection.delete_one({"cookie": cookie})
-
+            user_cookies_collection.delete_one({"cookie": cookie})
             return JsonResponse({"success": True, "message": "Xóa cookie thành công!"})
-        except Exception as e:
-            return JsonResponse({"success": False, "message": str(e)}, status=500)
 
     return JsonResponse({"success": False, "message": "Invalid request"}, status=400)
 
 @csrf_exempt
 def delete_all_cookies(request):
-    cookie_collection.delete_many({})
-    return JsonResponse({"success": True, "message": "Đã xóa tất cả cookies!"})
+    if request.session.get("role") == "admin":
+        cookie_collection.delete_many({})
+        return JsonResponse({"success": True, "message": "Đã xóa tất cả cookies!"})
+    else:
+        username = request.session.get("username")
+        user_cookies_collection = users_db[username]
+        user_cookies_collection.delete_many({})
+        return JsonResponse({"success": True, "message": "Đã xóa tất cả cookies!"})
 
 
 @csrf_exempt
@@ -799,6 +929,9 @@ def convert_tokens(request):
                 
 
             token_collection.insert_many(successes)
+            successes = [
+                {**success, "_id": str(success['_id'])} for success in successes
+            ]
 
             return JsonResponse({"success": True, "tokens": successes})
         except Exception as e:
@@ -835,12 +968,33 @@ def delete_all_tokens(request):
     return JsonResponse({"success": True, "message": "Đã xóa tất cả tokens!"})
 
 def comment_list(request):
-    comments = list(comments_collection.find({}, {"_id": 0}))  # Lấy tất cả comment, không lấy ObjectId
-    return JsonResponse({"comments": comments})
+    if request.session.get("role") == "admin":
+        start_time = request.GET.get("start_date")
+        start_time = datetime.strptime(start_time, "%d-%m-%Y")
+        start_time = datetime(start_time.year, start_time.month, start_time.day, 0, 0, 0).timestamp()
+        end_time = request.GET.get("end_date")
+        end_time = datetime.strptime(end_time, "%d-%m-%Y")
+        end_time = datetime(end_time.year, end_time.month, end_time.day, 23, 59, 59).timestamp()
+        print(start_time, end_time)
+        query = {"time": {"$gte": start_time, "$lt": end_time}}    
+        comments = list(comments_collection.find(query, {"_id": 0}).sort('time', -1))  # Lấy tất cả comment, không lấy ObjectId
+        return JsonResponse({"comments": comments})
+    else:
+        username = request.session.get("username")
+        user_comments_collection = users_db[username]
+        start_time = request.GET.get("start_date")
+        start_time = datetime.strptime(start_time, "%d-%m-%Y")
+        start_time = datetime(start_time.year, start_time.month, start_time.day, 0, 0, 0).timestamp()
+        end_time = request.GET.get("end_date")
+        end_time = datetime.strptime(end_time, "%d-%m-%Y")
+        end_time = datetime(end_time.year, end_time.month, end_time.day, 23, 59, 59).timestamp()
+        query = {"time": {"$gte": start_time, "$lt": end_time}}
+        comments = list(user_comments_collection.find(query, {"_id": 0}).sort('time', -1))
+        return JsonResponse({"comments": comments})
 
 def get_user_limit(request):
     username = request.session.get("username")
     user = users_collection.find_one({"username": username}, {"_id": 0})
     limit_on = user.get("limit_on", 0)
     user['limit_on'] = limit_on 
-    return JsonResponse(user)
+    return JsonResponse({'limit_on': limit_on})

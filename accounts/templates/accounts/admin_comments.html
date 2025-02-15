@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Comment On</title>
+    <title>Comment</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <style>
@@ -15,7 +15,16 @@
 <body>
 
 <div class="container mt-4">
-    <h3>📢 Quản lý Bình Luận ON 🟢</h3>
+    <h3>📢 Bình Luận</h3>
+    <div class="mb-3">
+        <label for="startDate" class="form-label">Từ ngày:</label>
+        <input type="date" id="startDate" class="form-control" value="">
+    </div>
+    <div class="mb-3">
+        <label for="endDate" class="form-label">Đến ngày:</label>
+        <input type="date" id="endDate" class="form-control" value="">
+    </div>
+    <button id="filterBtn" class="btn btn-primary mb-3">Lọc</button>
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -23,7 +32,6 @@
                 <th>Thời gian</th>
                 <th>Author ID</th>
                 <th>Tác giả</th>
-                <th>Info</th>
                 <th>ID Post</th>
                 <th>Tên bài</th>
                 <th>Nội dung</th>
@@ -35,19 +43,19 @@
 </div>
 
 <script>
-    function loadComments() {
-        $.get("{% url 'comment_list' %}", function (data) {
+    function loadComments(startDate, endDate) {
+        $.get("{% url 'comment_list' %}", { start_date: startDate, end_date: endDate }, function (data) {
             let rows = "";
+            let totalComments = data.comments.length;
             data.comments.forEach((comment, index) => {
                 var postLink = `<a href="${comment.origin_url}" target="_blank">${comment.post_id}</a>`;
                 var authorLink = `<a href="https://facebook.com/${comment.author_id}" target="_blank">${comment.author_id}</a>`;
                 let formattedTime = formatDate(comment.time);
                 rows += `<tr>
-                    <td>${index + 1}</td>
+                    <td>${totalComments - index}</td>
                     <td>${formattedTime}</td>
                     <td>${authorLink}</td>
-                    <td>${comment.name}</td>
-                    <td>${comment.info}</td>
+                    <td><span data-bs-toggle="tooltip" title="${comment.info}">${comment.name}</span></td>
                     <td>${postLink}</td>
                     <td>${comment.content}</td>
                     <td>${comment.text}</td>
@@ -55,6 +63,7 @@
                 </tr>`;
             });
             $("#commentTable").html(rows);
+            $('[data-bs-toggle="tooltip"]').tooltip();
         });
     }
 
@@ -67,13 +76,28 @@
             let hours = date.getHours().toString().padStart(2, '0');
             let minutes = date.getMinutes().toString().padStart(2, '0');
             let seconds = date.getSeconds().toString().padStart(2, '0');
-            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
         }
         return timestamp;  // If not a number, return the original value
     }
 
+    function parseDate(input) {
+        let parts = input.split('-');
+        return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+
     $(document).ready(function () {
-        loadComments();
+        let today = new Date().toISOString().split('T')[0];
+        let formattedToday = today.split('-').reverse().join('-');
+        $("#startDate").val(today);
+        $("#endDate").val(today);
+        loadComments(parseDate(formattedToday), parseDate(formattedToday));
+
+        $("#filterBtn").on("click", function () {
+            let startDate = parseDate($("#startDate").val());
+            let endDate = parseDate($("#endDate").val());
+            loadComments(startDate, endDate);
+        });
     });
 </script>
 

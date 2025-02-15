@@ -1,132 +1,120 @@
-[2025-02-05 21:25:10] - list index out of range
-[2025-02-05 21:25:15] - list index out of range
-[2025-02-05 21:25:21] - list index out of range
-[2025-02-05 21:25:28] - list index out of range
-[2025-02-05 21:25:34] - list index out of range
-[2025-02-05 21:25:40] - list index out of range
-[2025-02-06 20:19:04] - list index out of range
-[2025-02-06 20:19:09] - list index out of range
-[2025-02-06 20:19:14] - list index out of range
-[2025-02-06 20:20:23] - 'user'
-[2025-02-06 20:20:28] - 'user'
-[2025-02-06 20:21:10] - 'user'
-[2025-02-06 20:21:15] - 'user'
-[2025-02-06 20:21:20] - 'user'
-[2025-02-06 20:22:19] - Request URL is missing an 'http://' or 'https://' protocol.
-[2025-02-06 20:22:25] - Request URL is missing an 'http://' or 'https://' protocol.
-[2025-02-06 20:24:01] - list index out of range
-[2025-02-06 20:24:10] - list index out of range
-[2025-02-06 20:24:16] - list index out of range
-[2025-02-06 20:24:22] - list index out of range
-[2025-02-06 20:24:28] - list index out of range
-[2025-02-06 20:24:33] - list index out of range
-[2025-02-06 20:24:39] - list index out of range
-[2025-02-06 20:24:44] - list index out of range
-[2025-02-06 20:24:55] - 
-[2025-02-06 20:25:00] - list index out of range
-[2025-02-06 20:25:06] - list index out of range
-[2025-02-06 20:25:12] - list index out of range
-[2025-02-06 20:25:17] - list index out of range
-[2025-02-06 20:25:23] - list index out of range
-[2025-02-06 20:25:30] - list index out of range
-[2025-02-06 20:25:36] - list index out of range
-[2025-02-06 20:25:41] - list index out of range
-[2025-02-06 20:25:47] - list index out of range
-[2025-02-06 20:25:52] - list index out of range
-[2025-02-06 20:25:58] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:38] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:07:44] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:20] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:08:26] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 18:09:57] - list index out of range
-[2025-02-11 20:26:56] - AsyncClient.__init__() got an unexpected keyword argument 'allow_redirects'
-[2025-02-11 20:26:56] - AsyncClient.__init__() got an unexpected keyword argument 'allow_redirects'
-[2025-02-11 20:27:02] - AsyncClient.__init__() got an unexpected keyword argument 'allow_redirects'
-[2025-02-11 20:27:02] - AsyncClient.__init__() got an unexpected keyword argument 'allow_redirects'
-[2025-02-11 20:27:07] - AsyncClient.__init__() got an unexpected keyword argument 'allow_redirects'
-[2025-02-13 12:20:02] - __enter__
-[2025-02-13 12:20:02] - __enter__
-[2025-02-13 12:20:03] - __enter__
-[2025-02-13 12:20:03] - __enter__
-[2025-02-13 12:20:11] - __enter__
-[2025-02-13 12:20:11] - __enter__
-[2025-02-13 12:20:11] - __enter__
-[2025-02-13 12:20:13] - __enter__
-[2025-02-13 12:20:13] - __enter__
-[2025-02-13 12:20:21] - __enter__
-[2025-02-13 12:20:21] - __enter__
-[2025-02-13 12:20:21] - __enter__
-[2025-02-13 12:20:26] - __enter__
-[2025-02-13 12:20:26] - __enter__
-[2025-02-13 12:20:26] - __enter__
-[2025-02-13 12:23:03] - __enter__
-[2025-02-13 12:23:04] - __enter__
-[2025-02-13 12:23:04] - __enter__
-[2025-02-13 12:23:05] - __enter__
-[2025-02-13 12:23:05] - __enter__
-[2025-02-13 12:23:05] - __enter__
-[2025-02-13 12:23:11] - __enter__
-[2025-02-13 12:23:11] - __enter__
-[2025-02-13 12:23:11] - __enter__
-[2025-02-13 12:23:12] - __enter__
-[2025-02-13 12:23:12] - __enter__
-[2025-02-13 12:23:17] - __enter__
-[2025-02-13 12:23:23] - __enter__
-[2025-02-13 12:23:23] - __enter__
-[2025-02-13 12:23:23] - __enter__
-[2025-02-13 12:23:25] - __enter__
-[2025-02-13 12:23:25] - __enter__
-[2025-02-13 12:23:25] - __enter__
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:15] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:21] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:29] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:29] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:29] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:29] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:29] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:29] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:29] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:29] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:29] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:39] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:39] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:39] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:39] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:39] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:39] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:39] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:39] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:40] - [Cookie] - list index out of range
+[2025-02-14 15:35:40] - [Cookie] - list index out of range
+[2025-02-14 15:35:49] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:49] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:49] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:49] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:49] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:49] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:49] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:49] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:49] - local variable 'data' referenced before assignment
+[2025-02-14 15:35:49] - [Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:35:49] - [Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:35] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:44] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:44] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:44] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:44] - [Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:44] - [No Cookie] - list index out of range
+[2025-02-14 15:36:44] - [No Cookie] - list index out of range
+[2025-02-14 15:36:44] - [No Cookie] - list index out of range
+[2025-02-14 15:36:44] - [Cookie] - list index out of range
+[2025-02-14 15:36:44] - [Cookie] - list index out of range
+[2025-02-14 15:36:54] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:54] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:54] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:54] - [Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:54] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:54] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:54] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:54] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:54] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 15:36:55] - [Cookie] - list index out of range
+[2025-02-14 15:36:55] - [Cookie] - list index out of range
+[2025-02-14 15:37:03] - [No Cookie] - list index out of range
+[2025-02-14 15:37:04] - [Cookie] - list index out of range
+[2025-02-14 15:37:04] - [Cookie] - list index out of range
+[2025-02-14 15:37:04] - [No Cookie] - list index out of range
+[2025-02-14 15:37:04] - [No Cookie] - list index out of range
+[2025-02-14 15:37:04] - [No Cookie] - list index out of range
+[2025-02-14 15:37:04] - [Cookie] - list index out of range
+[2025-02-14 15:37:05] - [Cookie] - list index out of range
+[2025-02-14 15:37:15] - [No Cookie] - list index out of range
+[2025-02-14 15:37:16] - [No Cookie] - list index out of range
+[2025-02-14 15:37:16] - [Cookie] - list index out of range
+[2025-02-14 15:37:16] - [No Cookie] - list index out of range
+[2025-02-14 15:37:16] - [No Cookie] - list index out of range
+[2025-02-14 15:37:20] - [Cookie] - Expecting value: line 1 column 1 (char 0)
+[2025-02-14 15:37:20] - [Cookie] - Expecting value: line 1 column 1 (char 0)
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 17:00:11] - [No Cookie] - Server disconnected without sending a response.
+[2025-02-14 21:39:13] - [Cookie] - Server disconnected without sending a response.
+[2025-02-14 21:39:17] - [Cookie] - Server disconnected without sending a response.
+[2025-02-14 21:39:20] - [Cookie] - Server disconnected without sending a response.

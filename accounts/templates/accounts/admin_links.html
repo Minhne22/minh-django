@@ -102,7 +102,7 @@
                         let rows = "";
                         data.links.forEach((link, index) => {
                             let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
-                            let formattedLastCommentTime = formatDate(link.last_comment_time);
+                            let formattedLastCommentTime = link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time);
                             rows += `<tr>
                                 <td>${index + 1}</td>
                                 <td>${formatDate(link.created_time)}</td>
@@ -228,7 +228,7 @@
                                                 ${link.name}
                                             </span>
                                         </td>
-                                        <td>${formatDate(link.last_comment_time)}</td>
+                                        <td>${link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time)}</td>
                                         <td>${link.comment_count}</td>
                                         <td><span class="badge ${link.status === 'public' ? 'bg-success' : 'bg-danger'}">${link.status}</span></td>
                                         <td>
@@ -337,6 +337,17 @@
                     return `${day}/${month}/${year}`;
                 }
                 return timestamp;  // If not a number, return the original value
+            }
+
+            function calculateHoursAgo(datetimeStr) {
+                if (datetimeStr === "Processing") {
+                    return "Processing";
+                }
+                let datetime = new Date(datetimeStr);
+                let now = new Date();
+                let diffInMs = now - datetime;
+                let diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+                return `${diffInHours}h`;
             }
         </script>
     </div>
