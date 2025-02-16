@@ -28,7 +28,8 @@ def get_thong_tin_task(collection, url, cookie, proxy={}):
                     "content": result['content'],
                     'origin_url': result['origin_url'],
                     'active': 'on',
-                    'delay': 5
+                    'delay': 5,
+                    'encoded_post': result['encoded_post']
                 }
                 collection.update_one(
                     {"origin_url": new_link['origin_url']},

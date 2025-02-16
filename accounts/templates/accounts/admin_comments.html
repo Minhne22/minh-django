@@ -91,7 +91,7 @@
         let formattedToday = today.split('-').reverse().join('-');
         $("#startDate").val(today);
         $("#endDate").val(today);
-        loadComments(parseDate(formattedToday), parseDate(formattedToday));
+        loadComments(parseDate(today), parseDate(today));
 
         $("#filterBtn").on("click", function () {
             let startDate = parseDate($("#startDate").val());

@@ -472,7 +472,8 @@ def add_links(request):
                 cookie = random.choice(list(cookie_collection.find({"status": "active"})))['cookie']
                 # print(cookie)
                 
-                links_collection.insert_one({"origin_url": link, "status": "pending"})
+                # links_collection.insert_one({"origin_url": link, "status": "pending"})
+                Thread(target=links_collection.insert_one, args=({"origin_url": link, "status": "pending"}, ))
                 Thread(target=get_thong_tin_task, args=(links_collection, link, cookie, proxy, )).start()
 
             return JsonResponse({"message": "URLs đã được thêm và đang xử lý"}, status=200)
@@ -494,7 +495,9 @@ def add_links(request):
                 cookie = random.choice(list(cookie_collection.find({"status": "active"})))['cookie']
                 # print(cookie)
                 
-                links_collection.insert_one({"origin_url": link, "status": "pending"})
+                # links_collection.insert_one({"origin_url": link, "status": "pending"})
+                Thread(target=links_collection.insert_one, args=({"origin_url": link, "status": "pending"}, ))
+                
                 Thread(target=get_thong_tin_task, args=(links_collection, link, cookie, proxy, )).start()
                 
             return JsonResponse({"message": "URLs đã được thêm và đang xử lý"}, status=200)
