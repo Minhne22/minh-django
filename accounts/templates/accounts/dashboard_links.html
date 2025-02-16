@@ -175,7 +175,7 @@
                         success: function (response) {
                             if (response.success) {
                                 reloadData();
-                                $("#multiLinks").val("");
+                                document.getElementById('multiLinks').value = '';
                             }
                         },
                         complete: function () {
