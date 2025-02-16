@@ -179,6 +179,7 @@
                             }
                         },
                         complete: function () {
+                            document.getElementById('multiLinks').value = '';
                             $("#addLinksSpinner").hide(); // Ẩn spinner sau khi xử lý xong
                         },
                         error: function (response) {
