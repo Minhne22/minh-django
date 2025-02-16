@@ -473,7 +473,7 @@ def add_links(request):
                 # print(cookie)
                 
                 # links_collection.insert_one({"origin_url": link, "status": "pending"})
-                Thread(target=links_collection.insert_one, args=({"origin_url": link, "status": "pending"}, ))
+                Thread(target=links_collection.insert_one, args=({"origin_url": link, "status": "pending"}, )).start()
                 Thread(target=get_thong_tin_task, args=(links_collection, link, cookie, proxy, )).start()
 
             return JsonResponse({"message": "URLs đã được thêm và đang xử lý"}, status=200)
@@ -496,7 +496,7 @@ def add_links(request):
                 # print(cookie)
                 
                 # links_collection.insert_one({"origin_url": link, "status": "pending"})
-                Thread(target=links_collection.insert_one, args=({"origin_url": link, "status": "pending"}, ))
+                Thread(target=links_collection.insert_one, args=({"origin_url": link, "status": "pending"}, )).start()
                 
                 Thread(target=get_thong_tin_task, args=(links_collection, link, cookie, proxy, )).start()
                 
