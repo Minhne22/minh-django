@@ -22,6 +22,8 @@ import time
 from markupsafe import escape
 import random
 from .modules_fb import get_link_detail
+from .tasks import get_thong_tin_task
+from threading import Thread
 
 
 def get_timestamp_x_days_later(x):
@@ -461,43 +463,19 @@ def add_links(request):
             if (links_available + len(links)) > limit_on:
                 return JsonResponse({"success": False, "error": "Vượt quá giới hạn link"}, status=400)
             
-
-            inserted_links = []
+            
             for link in links:
                 if link.isnumeric():
                     link = f'https://facebook.com/{link}'
-                print(link)
                 proxy = random.choice(list(proxies_collection.find({"status": "active"})))
                 # print(proxy)
                 cookie = random.choice(list(cookie_collection.find({"status": "active"})))['cookie']
                 # print(cookie)
                 
-                result = get_link_detail(link, proxy=proxy, cookie=cookie)
-                if result['success']:
-                    result = result['data']
-                    new_link = {
-                        "post_id": result['post_id'],
-                        "created_time": result['created_time'],
-                        "name": result['title'],
-                        "last_comment_time": 'Proccessing',
-                        "comment_count": result['comment_count'],
-                        "status": result['status'],
-                        "content": result['content'],
-                        'origin_url': result['origin_url'],
-                        'active': 'on',
-                        'delay': 5
-                    }
-                    # links_collection.insert_one(new_link)
-                    print(links_collection.update_one(
-                        {"post_id": new_link['post_id']},
-                        {"$set": new_link}, upsert=True
-                    ))
-                    # new_link['_id'] = str(new_link['_id'])
-                    inserted_links.append(new_link)
-            
-            print(inserted_links)
+                links_collection.insert_one({"origin_url": link, "status": "pending"})
+                Thread(target=get_thong_tin_task, args=(links_collection, link, cookie, proxy, )).start()
 
-            return JsonResponse({"success": True, "links": inserted_links})
+            return JsonResponse({"message": "URLs đã được thêm và đang xử lý"}, status=200)
         else:
             username = request.session.get("username")
             user_links_collection = users_db[username]
@@ -508,33 +486,19 @@ def add_links(request):
             links_available = user_links_collection.count_documents({})
             if (links_available + len(links)) > limit_on:
                 return JsonResponse({"success": False, "error": "Vượt quá giới hạn link"}, status=400)
-            inserted_links = []
             for link in links:
                 if link.isnumeric():
                     link = f'https://facebook.com/{link}'
-                result = get_link_detail(link)
-                if result['success']:
-                    result = result['data']
-                    new_link = {
-                        "post_id": result['post_id'],
-                        "created_time": result['created_time'],
-                        "name": result['title'],
-                        "last_comment_time": 'Proccessing',
-                        "comment_count": result['comment_count'],
-                        "status": result['status'],
-                        "content": result['content'],
-                        'origin_url': result['origin_url'],
-                        'active': 'on',
-                        'delay': 5
-                    }
-                    # links_collection.insert_one(new_link)
-                    print(user_links_collection.update_one(
-                        {"post_id": new_link['post_id']},
-                        {"$set": new_link}, upsert=True
-                    ))
-                    # new_link['_id'] = str(new_link['_id'])
-                    inserted_links.append(new_link)
-            return JsonResponse({"success": True, "links": inserted_links})
+                proxy = random.choice(list(proxies_collection.find({"status": "active"})))
+                # print(proxy)
+                cookie = random.choice(list(cookie_collection.find({"status": "active"})))['cookie']
+                # print(cookie)
+                
+                links_collection.insert_one({"origin_url": link, "status": "pending"})
+                Thread(target=get_thong_tin_task, args=(links_collection, link, cookie, proxy, )).start()
+                
+            return JsonResponse({"message": "URLs đã được thêm và đang xử lý"}, status=200)
+
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
@@ -545,9 +509,7 @@ def edit_link(request):
             data = json.loads(request.body)
             post_id = data.get("post_id")
             new_name = data.get("name")
-            new_last_comment_time = data.get("last_comment_time")  # Lấy thời gian comment cuối
             new_status = data.get("status")
-            new_comment_count = data.get("comment_count")
             delay = data.get("delay")
             delay = int(delay) if delay else 5
 
@@ -556,9 +518,7 @@ def edit_link(request):
                     {"post_id": post_id},
                     {"$set": {
                         "name": new_name,
-                        "last_comment_time": new_last_comment_time,  # Cập nhật thời gian comment cuối
                         "status": new_status,
-                        "comment_count": int(new_comment_count),
                         "delay": delay
                     }}
                 )
@@ -571,18 +531,14 @@ def edit_link(request):
             data = json.loads(request.body)
             post_id = data.get("post_id")
             new_name = data.get("name")
-            new_last_comment_time = data.get("last_comment_time")
-            new_status = data.get("status")
-            new_comment_count = data.get("comment_count")
+            new_content = data.get("content")
             
             if post_id:
                 user_links_collection.update_one(
                     {"post_id": post_id},
                     {"$set": {
                         "name": new_name,
-                        "last_comment_time": new_last_comment_time,
-                        "status": new_status,
-                        "comment_count": int(new_comment_count),
+                        "content": new_content
                     }}
                 )
                 return JsonResponse({"success": True})

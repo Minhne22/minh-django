@@ -68,24 +68,9 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="editLastCommentTime" class="form-label">Thời gian comment cuối</label>
-                            <input type="text" class="form-control" id="editLastCommentTime">
+                            <label for="editContent" class="form-label">Nội dung</label>
+                            <textarea class="form-control" id="editContent" rows="3"></textarea>
                         </div>
-
-                        <div class="mb-3">
-                            <label for="editStatus" class="form-label">Trạng thái</label>
-                            <select class="form-select" id="editStatus">
-                                <option value="public">Public</option>
-                                <option value="private">Private</option>
-                                <option value="die">Die</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="editCommentCount" class="form-label">Số lượng comment</label>
-                            <input type="number" class="form-control" id="editCommentCount">
-                        </div>
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -138,11 +123,9 @@
                         let row = $(this).closest("tr");
                         $("#editPostId").val(post_id);
                         $("#editPostName").val(row.find("td:eq(3)").text());
-                        $("#editLastCommentTime").val(row.find("td:eq(4)").text());
-                        $("#editCommentCount").val(row.find("td:eq(5)").text());
-                        $("#editDelay").val(row.find("td:eq(7)").text());
-                        $("#editStatus").val(row.find("td:eq(8)").text());
-
+                        $("#editContent").val(row.find("td:eq(3)").attr("title"));
+                        console.log(row.find("td:eq(3)").attr("title"));
+                        console.log(row.find("td:eq(3)").text());
                         $("#editModal").modal("show");
                     });
                 }
@@ -274,10 +257,7 @@
 
                     $("#editPostId").val($(this).data("post-id"));
                     $("#editPostName").val(row.find("td:eq(3)").text());
-                    $("#editLastCommentTime").val(row.find("td:eq(4)").text().trim()); // Lấy thời gian comment cuối
-                    $("#editStatus").val(row.find("td:eq(8)").text().trim());
-                    $("#editCommentCount").val(row.find("td:eq(5)").text());
-                    $("#editDelay").val(row.find("td:eq(7)").text());
+                    $("#editContent").val(row.find("td:eq(3)").attr("title"));
 
                     editModal.show();
                 });
@@ -285,11 +265,7 @@
                 $("#saveEdit").on("click", function () {
                     let postId = $("#editPostId").val();
                     let newName = $("#editPostName").val();
-                    let newLastCommentTime = $("#editLastCommentTime").val();
-                    let newStatus = $("#editStatus").val();
-                    let newCommentCount = $("#editCommentCount").val();
-
-                    $("#saveEditSpinner").show(); // Hiện spinner
+                    let newContent = $("#editContent").val();
 
                     $.ajax({
                         url: "{% url 'edit_link' %}",
@@ -297,9 +273,7 @@
                         data: JSON.stringify({
                             post_id: postId,
                             name: newName,
-                            last_comment_time: newLastCommentTime,
-                            status: newStatus,
-                            comment_count: newCommentCount
+                            content: newContent
                         }),
                         contentType: "application/json",
                         headers: { "X-CSRFToken": getCSRFToken() },
@@ -311,9 +285,6 @@
                                 console.log(response.responseJSON.error);
                                 alert(response.responseJSON.error);
                             }
-                        },
-                        complete: function () {
-                            $("#saveEditSpinner").hide(); // Ẩn spinner sau khi xử lý xong
                         },
                         error: function () {
                             alert("Lỗi khi gửi dữ liệu!");

@@ -1,62 +1,46 @@
-# import requests
-# import json
-
-# ACCESS_TOKEN = "EAAAAAYsX7TsBO2qZBJ9vod7zl2ZA7CfLIg3DjiXZCEKBp0w5iVdUmJEYaM64eqjN8InXCA6dK7GQ3wzmBpwd6WlPT1leyGPUNUoGVj41UHjp5MM6rrbMsYY6xKm8V5XBq6j4AnjAgwzCpuBRFs244NgNnzyNjfePfmHanwlVqXViZAHgGPpJJAZBv8jlm0yXRgwZDZD"
-# GRAPH_API_URL = "https://graph.facebook.com/v19.0"  # Cập nhật API version phù hợp
-
-# # Danh sách yêu cầu batch
-# batch_data = [
-#     {"method": "GET", "relative_url": "618458330610133/comments"},
-#     {"method": "GET", "relative_url": "956251175586540/comments"},
-#     {"method": "GET", "relative_url": "1290916811896499/comments"},
-#     {"method": "GET", "relative_url": "503275076031712/comments"},
-#     # {"method": "GET", "relative_url": "618458330610133/comments"},
-    
-# ]
-
-# # Gửi request
-# response = requests.post(
-#     f"{GRAPH_API_URL}",
-#     params={"access_token": ACCESS_TOKEN, 'include_headers': 'false'},
-#     json={"batch": batch_data}
-# )
-
-# # # Xử lý phản hồi
-# # if response.status_code == 200:
-# #     responses = response.json()
-# #     for idx, res in enumerate(responses):
-# #         print(f"Response {idx + 1}: {json.dumps(res, indent=2)}")
-# # else:
-# #     print("Error:", response.text)
-
-# # Xử lý phản hồi
-# print(response.json())
-
-
-
 import requests
 
+encoded_posts = 'ZmVlZGJhY2s6Mjg0Mzg2MjIzNDkxMTcwNjM='
+
 headers = {
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'accept': '*/*',
     'accept-language': 'en-US,en;q=0.9',
-    'priority': 'u=0, i',
+    'content-type': 'application/x-www-form-urlencoded',
+    # 'cookie': 'datr=oI-xZ60LQVqZq_fibagBnWIz; sb=pI-xZwaEBcMHDJXnF1F-Mctg; wd=842x551; dpr=1.5',
+    'origin': 'https://www.facebook.com',
+    'priority': 'u=1, i',
+    'referer': 'https://www.facebook.com/vtv.periodista/posts/pfbid02qfHM7zzG5VHaPR6KJvZEcdvjpWb6bQh5QFKTSg7q3gcfJFLRacNohKGVbs7omdPAl',
+    'sec-ch-prefers-color-scheme': 'light',
     'sec-ch-ua': '"Not A(Brand";v="8", "Chromium";v="132", "Google Chrome";v="132"',
+    'sec-ch-ua-full-version-list': '"Not A(Brand";v="8.0.0.0", "Chromium";v="132.0.6834.197", "Google Chrome";v="132.0.6834.197"',
     'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-model': '""',
     'sec-ch-ua-platform': '"Windows"',
-    'sec-fetch-dest': 'document',
-    'sec-fetch-mode': 'navigate',
-    'sec-fetch-site': 'none',
-    'sec-fetch-user': '?1',
-    'upgrade-insecure-requests': '1',
+    'sec-ch-ua-platform-version': '"19.0.0"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-origin',
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
 }
 
-params = {
-    'story_fbid': 'pfbid0vokiMswNuQe8i5GivyvrE59xnFkBRLh8bx65B4xXdzUD8DaRr7YqbFkpUKoaMrjTl',
-    'id': '61557549458306',
+data = {
+    'av': '0',
+    '__aaid': '0',
+    '__user': '0',
+    '__a': '1',
+    'dpr': '1',
+    '__ccg': 'GOOD',
+    '__comet_req': '15',
+    'lsd': '',
+    'jazoest': '',
+    '__spin_b': 'trunk',
+    'fb_api_caller_class': 'RelayModern',
+    'fb_api_req_friendly_name': 'CommentListComponentsRootQuery',
+    'variables': '{"commentsIntentToken":"RECENT_ACTIVITY_INTENT_V1","feedLocation":"DEDICATED_COMMENTING_SURFACE","feedbackSource":110,"focusCommentID":null,"scale":1,"useDefaultActor":false,"id":"' + encoded_posts + '","__relay_internal__pv__IsWorkUserrelayprovider":false}',
+    'server_timestamps': 'true',
+    'doc_id': '9051058151623566',
 }
 
-response = requests.get('https://www.facebook.com/permalink.php', params=params, headers=headers)
-
-with open('fbuid.html', 'w+', encoding='utf-8') as f:
-    f.write(response.text)
+response = requests.post('https://www.facebook.com/api/graphql/', headers=headers, data=data).text
+with open('hi.json', 'w+') as f:
+    f.write(response)

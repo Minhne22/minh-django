@@ -36,10 +36,40 @@
                 <th>Tên bài</th>
                 <th>Nội dung</th>
                 <th>Số điện thoại</th>
+                <th>Hành động</th>
             </tr>
         </thead>
         <tbody id="commentTable"></tbody>
     </table>
+</div>
+
+<!-- Modal Chỉnh sửa -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Chỉnh sửa Bình luận</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editCommentId">
+
+                <div class="mb-3">
+                    <label for="editPostName" class="form-label">Tên bài</label>
+                    <input type="text" class="form-control" id="editPostName">
+                </div>
+
+                <div class="mb-3">
+                    <label for="editContent" class="form-label">Nội dung</label>
+                    <textarea class="form-control" id="editContent" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveEdit">Lưu</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -57,13 +87,17 @@
                     <td>${authorLink}</td>
                     <td><span data-bs-toggle="tooltip" title="${comment.info}">${comment.name}</span></td>
                     <td>${postLink}</td>
+                    <td>${comment.post_name}</td>
                     <td>${comment.content}</td>
-                    <td>${comment.text}</td>
                     <td>${comment.phone}</td>
+                    <td>
+                        <button class="btn btn-warning edit-comment" data-comment-id="${comment.id}">✏️ Edit</button>
+                    </td>
                 </tr>`;
             });
             $("#commentTable").html(rows);
             $('[data-bs-toggle="tooltip"]').tooltip();
+            bindEditEvents();
         });
     }
 
@@ -84,6 +118,52 @@
     function parseDate(input) {
         let parts = input.split('-');
         return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+
+    function bindEditEvents() {
+        $(".edit-comment").off("click").on("click", function () {
+            let commentId = $(this).data("comment-id");
+            let row = $(this).closest("tr");
+            $("#editCommentId").val(commentId);
+            $("#editPostName").val(row.find("td:eq(5)").text());
+            $("#editContent").val(row.find("td:eq(6)").text());
+            $("#editModal").modal("show");
+        });
+    }
+
+    $("#saveEdit").on("click", function () {
+        let commentId = $("#editCommentId").val();
+        let newPostName = $("#editPostName").val();
+        let newContent = $("#editContent").val();
+
+        $.ajax({
+            url: "{% url 'edit_comment' %}",
+            type: "POST",
+            data: JSON.stringify({
+                id: commentId,
+                post_name: newPostName,
+                content: newContent
+            }),
+            contentType: "application/json",
+            headers: { "X-CSRFToken": getCSRFToken() },
+            success: function (response) {
+                if (response.success) {
+                    $("#editModal").modal("hide");
+                    let startDate = parseDate($("#startDate").val());
+                    let endDate = parseDate($("#endDate").val());
+                    loadComments(startDate, endDate);
+                } else {
+                    alert(response.error);
+                }
+            },
+            error: function () {
+                alert("Lỗi khi gửi dữ liệu!");
+            }
+        });
+    });
+
+    function getCSRFToken() {
+        return document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
     }
 
     $(document).ready(function () {
