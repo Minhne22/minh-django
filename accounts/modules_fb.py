@@ -227,7 +227,7 @@ class Get_Link_Detail:
         response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
         post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
             else response.split("'fbid': '")[1].split('\'')[0]
-        print(post_id)
+        encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
         title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
         content = response.split('CometFeedStoryDefaultMessageRenderingStrategy')[1].split('"text":"')[1].split('","delight_ranges"')[0]
         comment_count = response.split('"total_count":')[1].split('}')[0]
@@ -241,7 +241,8 @@ class Get_Link_Detail:
                 'comment_count': comment_count,
                 'status': 'public',
                 'created_time': timestamp_to_str(int(created_time)),
-                'origin_url': self.url
+                'origin_url': self.url,
+                'encoded_post': encoded_post
             }
         }
     
@@ -251,6 +252,7 @@ class Get_Link_Detail:
                 'cookie': cookie
             })
         response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
+        encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
         
         post_id = response.split('"post_id":"')[1].split('"')[0] if '"post_id":"' in response\
             else response.split("'post_id': '")[1].split('\'')[0]
@@ -267,7 +269,8 @@ class Get_Link_Detail:
                 'comment_count': comment_count,
                 'status': 'public',
                 'created_time': created_time,
-                'origin_url': self.url
+                'origin_url': self.url,
+                'encoded_post': encoded_post
             }
         }
     
@@ -277,6 +280,7 @@ class Get_Link_Detail:
                 'cookie': cookie
             })
         response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
+        encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
         post_id = response.split('"video_id":')[1].split(',')[0]
         title = response.split('"__isActor":"User"')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
         content = response.split('"message":{"text":"')[1].split('"')[0]
@@ -291,7 +295,8 @@ class Get_Link_Detail:
                 'comment_count': comment_count,
                 'status': 'public',
                 'created_time': created_time,
-                'origin_url': self.url
+                'origin_url': self.url,
+                'encoded_post': encoded_post
             }
         }
     
@@ -303,6 +308,8 @@ class Get_Link_Detail:
         response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
         post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
             else response.split("'fbid': '")[1].split('\'')[0]
+        encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
+        
         title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
         content = response.split('CometFeedStoryDefaultMessageRenderingStrategy')[1].split('"text":"')[1].split('","delight_ranges"')[0]
         comment_count = response.split('"total_count":')[1].split('}')[0]
@@ -316,7 +323,8 @@ class Get_Link_Detail:
                 'comment_count': comment_count,
                 'status': 'public',
                 'created_time': timestamp_to_str(int(created_time)),
-                'origin_url': self.url
+                'origin_url': self.url,
+                'encoded_post': encoded_post
             }
         }
     
