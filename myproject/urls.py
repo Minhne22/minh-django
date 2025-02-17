@@ -20,7 +20,7 @@ from accounts.views import admin_dashboard, user_dashboard, admin_comments, admi
 from accounts.views import login_view, logout_view, register_view, manage_users, delete_user, change_role, add_user, \
     get_links_on, get_links_off, delete_link, add_links, edit_link, \
         admin_proxies, get_proxies, add_proxy, delete_proxy, toggle_proxy, \
-            edit_limit, change_pass
+            edit_limit, change_pass, toggle_link_active
 from accounts.views import add_cookies, get_cookies, delete_cookie, delete_all_cookies
 from accounts.views import convert_tokens, get_tokens, delete_token, delete_all_tokens
 from accounts.views import comment_list, get_user_limit
@@ -68,5 +68,6 @@ urlpatterns = [
     path("api/api/delete_all_cookies/", delete_all_cookies, name="delete_all_cookies"),
     path("api/api/comment_list/", comment_list, name="comment_list"),
     path("api/api/get_user_limit/", get_user_limit, name="get_user_limit"),
+    path("api/api/toggle_link_active/", toggle_link_active, name="toggle-active"),
     # path("convert-cookie/", convert_cookie_to_token, name="convert_cookie_to_token"),
 ]

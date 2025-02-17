@@ -46,6 +46,7 @@
                     <th>Count Cmt</th>
                     <th>Delay</th>
                     <th>Status</th>
+                    <th>Active</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -102,6 +103,22 @@
                         data.links.forEach((link, index) => {
                             let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
                             let formattedLastCommentTime = link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time);
+                            var active = link.active;
+                            if (active == 'pending'){
+                                active = '⏳ Chờ xử lý';
+                            }
+                            if (active == 'failed'){
+                                    active = '❌ Thất bại';
+                                }
+                            if (active == 'on'){
+                                    active = '✅ Đang chạy';
+                                }
+                            if (active == 'off'){
+                                    active = '⚫ Đã tắt';}
+                            if (active == 'on'){
+                                    active = '✅ Đang chạy';
+                                }
+                            
                             rows += `<tr>
                                 <td>${index + 1}</td>
                                 <td>${formatDate(link.created_time)}</td>
@@ -115,6 +132,12 @@
                                 <td>${link.comment_count}</td>
                                 <td>${link.delay}</td>
                                 <td>${link.status}</td>
+                                <td>
+                                    <button class="btn btn-sm toggle-active" data-post-id="${link.post_id}">
+                                        ${active}
+                                    </button>
+                                </td>
+
                                 <td>
                                     <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">✏️ Edit</button>
                                     <button class="btn btn-danger delete-link" data-post-id="${link.post_id}">❌ Xóa</button>
@@ -342,7 +365,34 @@
                     let diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
                     return `${diffInHours}h`;
                 }
+                $(document).on("click", ".toggle-active", function () {
+                    let button = $(this);
+                    let postId = button.data("post-id");
+                    let newActive = !button.data("active");
+                
+                    $.ajax({
+                        url: "{% url 'toggle-active' %}",
+                        type: "POST",
+                        data: JSON.stringify({ post_id: postId, active: newActive }),
+                        contentType: "application/json",
+                        headers: { "X-CSRFToken": getCSRFToken() },
+                        success: function (response) {
+                            if (response.success) {
+                                // Cập nhật UI ngay lập tức
+                                button.data("active", newActive);
+                                button.toggleClass("btn-success btn-secondary");
+                                button.text(newActive);
+                            } else {
+                                alert(response.error);
+                            }
+                        },
+                        error: function () {
+                            alert("Lỗi khi cập nhật trạng thái!");
+                        }
+                    });
+                });
             });
+            
         </script>
     </div>
 </body>

@@ -21,7 +21,6 @@ from urllib.parse import urlparse, parse_qs, unquote
 import time
 from markupsafe import escape
 import random
-from .modules_fb import get_link_detail
 from .tasks import get_thong_tin_task
 from threading import Thread
 
@@ -425,7 +424,7 @@ def add_user(request):
 def get_links_on(request):
     """Lấy danh sách link"""
     if request.session.get("role") == "admin":
-        links = list(links_collection.find({"active": "on"}, {"_id": 0}))
+        links = list(links_collection.find({"active": {"$in": ["on", "pending", "failed"]}}, {"_id": 0}))
         links = [
             {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links
         ][::-1]
@@ -434,7 +433,7 @@ def get_links_on(request):
     else:
         username = request.session.get("username")
         user_links_collection = users_db[username]
-        links = list(user_links_collection.find({}, {"_id": 0}))
+        links = list(user_links_collection.find({"active": {"$in": ["on", "pending", "failed"]}}, {"_id": 0}))
         links = [
             {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links
         ][::-1]
@@ -443,12 +442,28 @@ def get_links_on(request):
 
 def get_links_off(request):
     """Lấy danh sách link"""
-    links = list(links_collection.find({}, {"_id": 0, "active": "off"}))
-    links = [
-        {**link, "content": link['content'].encode().decode('unicode_escape')} for link in links
-    ][::-1]
-    # print(links)
-    return JsonResponse({"links": links})
+    if request.session.get("role") == "admin":
+        links = list(links_collection.find({"active": "off"}, {"_id": 0}))
+        links = [
+            {**link, "content": link['content'].encode().decode('unicode_escape')} for link in links
+        ][::-1]
+        # print(links)
+        return JsonResponse({"links": links})
+    else:
+        username = request.session.get("username")
+        user_links_collection = users_db[username]
+        links = list(user_links_collection.find({"active": "off"}, {"_id": 0}))
+        links = [
+            {**link, "content": link['content'].encode().decode('unicode_escape')} for link in links
+        ][::-1]
+        # print(links)
+        return JsonResponse({"links": links})
+
+# @csrf_exempt
+# def toggle_link_status(request):
+#     if request.method == 'POST':
+        
+    
 
 @csrf_exempt
 def add_links(request):
@@ -473,7 +488,6 @@ def add_links(request):
                 # print(cookie)
                 
                 # links_collection.insert_one({"origin_url": link, "status": "pending"})
-                Thread(target=links_collection.insert_one, args=({"origin_url": link, "status": "pending"}, )).start()
                 Thread(target=get_thong_tin_task, args=(links_collection, link, cookie, proxy, )).start()
 
             return JsonResponse({"message": "URLs đã được thêm và đang xử lý"}, status=200)
@@ -496,12 +510,40 @@ def add_links(request):
                 # print(cookie)
                 
                 # links_collection.insert_one({"origin_url": link, "status": "pending"})
-                Thread(target=links_collection.insert_one, args=({"origin_url": link, "status": "pending"}, )).start()
+                # Thread(target=user_links_collection.insert_one, args=({"origin_url": link, "active": "pending"}, )).start()
                 
-                Thread(target=get_thong_tin_task, args=(links_collection, link, cookie, proxy, )).start()
+                Thread(target=get_thong_tin_task, args=(user_links_collection, link, cookie, proxy, )).start()
                 
             return JsonResponse({"message": "URLs đã được thêm và đang xử lý"}, status=200)
 
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+@csrf_exempt
+def toggle_link_active(request):
+    if request.method == "POST":
+        if request.session.get('role') == 'admin':
+            data = json.loads(request.body)
+            post_id = data.get("post_id")
+            new_active = data.get("active")
+
+            result = links_collection.update_one({"post_id": post_id}, {"$set": {"active": new_active}})
+            if result.matched_count == 0:
+                return JsonResponse({"success": False, "error": "Không tìm thấy link!"}, status=400)
+
+            return JsonResponse({"success": True})
+        else:
+            username = request.session.get("username")
+            user_links_collection = users_db[username]
+            data = json.loads(request.body)
+            post_id = data.get("post_id")
+            new_active = data.get("active")
+
+            result = user_links_collection.update_one({"post_id": post_id}, {"$set": {"active": new_active}})
+            if result.matched_count == 0:
+                return JsonResponse({"success": False, "error": "Không tìm thấy link!"}, status=400)
+
+            return JsonResponse({"success": True})
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 

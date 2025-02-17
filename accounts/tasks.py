@@ -6,6 +6,7 @@ from .modules_fb import Get_Link_Detail
 
 def get_thong_tin_task(collection, url, cookie, proxy={}):
     MAX_RETRIES = 5
+    collection.update_one({"origin_url": url}, {"$set": {"active": "pending"}}, upsert=True)
     for _ in range(MAX_RETRIES):
         try:
             client = Get_Link_Detail(url, proxy)
@@ -15,6 +16,7 @@ def get_thong_tin_task(collection, url, cookie, proxy={}):
                 with open("log-task.txt", "a+") as f:
                     f.write(f"{e} - Retrying {url}...\n")
                 result = client.get_all(cookie=cookie)
+                result['status'] = 'private'
             
             if result['success']:
                 result = result['data']
@@ -43,4 +45,4 @@ def get_thong_tin_task(collection, url, cookie, proxy={}):
             time.sleep(2)
             
     else:
-        collection.update_one({"origin_url": url}, {"$set": {"status": "failed", "error": str(e)}})
+        collection.update_one({"origin_url": url}, {"$set": {"active": "failed", "error": str(e)}})
