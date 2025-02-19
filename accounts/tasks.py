@@ -12,11 +12,15 @@ def get_thong_tin_task(collection, url, cookie, proxy={}):
             client = Get_Link_Detail(url, proxy)
             try:
                 result = client.get_all()
+                result['data']['status'] = 'public'
+                
             except IndexError as e:
                 with open("log-task.txt", "a+") as f:
                     f.write(f"{e} - Retrying {url}...\n")
                 result = client.get_all(cookie=cookie)
-                result['status'] = 'private'
+                result['data']['status'] = 'private'
+            
+            # print(result)
             
             if result['success']:
                 result = result['data']
@@ -39,10 +43,11 @@ def get_thong_tin_task(collection, url, cookie, proxy={}):
                 )
                 print('Ok')
             return 'Done'
-        except requests.RequestException as e:
+        except Exception as e:
+            error = e
             with open("log-task.txt", "a+") as f:
                 f.write(f"{e} - Retrying {url}...\n")
             time.sleep(2)
             
     else:
-        collection.update_one({"origin_url": url}, {"$set": {"active": "failed", "error": str(e)}})
+        collection.update_one({"origin_url": url}, {"$set": {"active": "failed", "error": str(error)}})

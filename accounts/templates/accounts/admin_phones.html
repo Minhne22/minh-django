@@ -1,0 +1,62 @@
+<input type="file" id="fileInput" accept=".txt">
+<p id="uploadStatus"></p>
+
+<script>
+    function getCSRFToken() {
+        var name = "csrftoken";
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + "=")) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.getElementById("fileInput").addEventListener("change", function(event) {
+        var file = event.target.files[0];
+        if (!file) return;
+
+        var chunkSize = 2 * 1024 * 1024; // 2MB mỗi lần gửi
+        var offset = 0;
+        var totalSize = file.size;
+
+        function uploadChunk() {
+            var chunk = file.slice(offset, offset + chunkSize);
+            var formData = new FormData();
+            formData.append("file", chunk);
+
+            fetch("{% url 'file_upload' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCSRFToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Upload failed: " + data.error);
+                    return;
+                }
+                offset += chunkSize;
+                var percent = ((offset / totalSize) * 100).toFixed(2);
+                document.getElementById("uploadStatus").innerText = "Uploaded: " + percent + "%";
+
+                if (offset < totalSize) {
+                    uploadChunk();
+                } else {
+                    alert("Upload hoàn tất!");
+                }
+            })
+            .catch(error => alert("Upload error: " + error));
+        }
+
+        uploadChunk();
+    });
+</script>

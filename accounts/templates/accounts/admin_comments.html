@@ -6,6 +6,9 @@
     <title>Comment</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <style>
         .table th:nth-child(2), .table td:nth-child(2) {
             width: 25%;
@@ -25,7 +28,8 @@
         <input type="date" id="endDate" class="form-control" value="">
     </div>
     <button id="filterBtn" class="btn btn-primary mb-3">Lọc</button>
-    <table class="table table-bordered">
+    <button id="exportExcelBtn" class="btn btn-success mb-3">📥 Export Excel</button>
+    <table class="table table-bordered" id="linkTable">
         <thead>
             <tr>
                 <th>STT</th>
@@ -43,6 +47,14 @@
 </div>
 
 <script>
+    function exportToExcel() {
+        let table = document.getElementById("linkTable");
+        let wb = XLSX.utils.table_to_book(table, {sheet: "Links"});
+        XLSX.writeFile(wb, "Admin_Links.xlsx");
+    }
+    $("#exportExcelBtn").on("click", function () {
+        exportToExcel();
+    });
     function loadComments(startDate, endDate) {
         $.get("{% url 'comment_list' %}", { start_date: startDate, end_date: endDate }, function (data) {
             let rows = "";

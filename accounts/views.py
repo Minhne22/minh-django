@@ -23,6 +23,8 @@ from markupsafe import escape
 import random
 from .tasks import get_thong_tin_task
 from threading import Thread
+import csv
+from pymongo import UpdateOne
 
 
 def get_timestamp_x_days_later(x):
@@ -64,6 +66,7 @@ def check_live_cookie(cookie: str, proxy=''):
                 'status': 'active',
                 'name': name,
                 'user_id': user_id,
+                'fb_dtsg': fb_dtsg
             }
         
         except (requests.exceptions.ConnectionError, 
@@ -93,6 +96,7 @@ fb_detail = settings.client['fb_cmt_manage']
 links_collection = fb_detail['facebook_links']
 proxies_collection = fb_detail['proxies']
 comments_collection = fb_detail['facebook_comments']
+phone_collection = fb_detail['phones']
 
 store_credentials = settings.client['store']
 cookie_collection = store_credentials['cookies']
@@ -111,7 +115,7 @@ user_comments_collection = settings.client['user_comments']
 
 def get_access_token(cookie: str, proxy={}):
     cookie = cookie.split('|')[0]
-    app_id = '6628568379'
+    app_id = '350685531728'
     cookies = {
        x.split('=')[0]: x.split('=')[1] for x in cookie.replace(' ', '').split(';') if x
     }
@@ -327,6 +331,9 @@ def admin_tokens(request):
 
 def admin_cookie(request):
     return render(request, "accounts/admin_cookie.html")
+
+def admin_phone(request):
+    return render(request, "accounts/admin_phones.html")
 
 def manage_users(request):
     if not request.session.get('role') == 'admin':
@@ -866,3 +873,33 @@ def get_user_limit(request):
     limit_on = user.get("limit_on", 0)
     user['limit_on'] = limit_on 
     return JsonResponse({'limit_on': limit_on})
+
+# Đọc file từng phần (chunk)
+def handle_uploaded_file(f, chunk_size=10000):
+    batch = []
+    for row in csv.reader(f.read().decode('utf-8').splitlines(), delimiter='\t'):
+        if len(row) >= 2:
+            batch.append(UpdateOne({'id': row[0], 'phone': row[1]}, {"$set": {'id': row[0], 'phone': row[1]}}))
+
+        if len(batch) >= chunk_size:
+            phone_collection.bulk_write(batch)  # Chèn dữ liệu theo batch
+            batch = []  # Reset batch
+
+    if batch:
+        phone_collection.bulk_write(batch)  # Chèn phần còn lại
+
+def file_upload(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        uploaded_file = request.FILES['file']
+        handle_uploaded_file(uploaded_file)
+
+        return JsonResponse({'message': 'Upload thành công!'})
+
+    return JsonResponse({'error': 'No file uploaded'}, status=400)
+
+def show_data(request):
+    user_id = request.GET.get('id', None)
+    if user_id:
+        phones = list(phone_collection.find({'id': user_id}, {'_id': 0}))
+        return JsonResponse({'phones': phones})
+    return JsonResponse({'error': 'ID not provided'}, status=400)

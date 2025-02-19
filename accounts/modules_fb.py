@@ -52,14 +52,19 @@ class Get_Link_Detail:
             self.headers.update({
                 'cookie': cookie
             })
+            print(self.headers.get('cookie'))
+            
         response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
-        post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
-            else response.split("'fbid': '")[1].split('\'')[0]
+        with open('cccc.html', 'w+', encoding='utf8') as f:
+            f.write(response)
+        post_id = response.split('"video_id":"')[1].split('"')[0] if '"video_id":"' in response\
+            else response.split("'video_id': '")[1].split('\'')[0]
         encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
         title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
-        content = response.split('"message":{"text":"')[1].split('",')[0].split('"}')[0]
+        content = response.split('"story":{"message":{"text":"')[1].split('",')[0].split('"}')[0]
         comment_count = response.split('"total_count":')[1].split('}')[0]
         created_time = get_publish_time(response)
+        
         return {
             'success': True,
             'data': {
@@ -137,8 +142,8 @@ class Get_Link_Detail:
                 'cookie': cookie
             })
         response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
-        post_id = response.split('"fbid":"')[1].split('"')[0] if '"fbid":"' in response\
-            else response.split("'fbid': '")[1].split('\'')[0]
+        post_id = response.split('"post_id":"')[1].split('"')[0] if '"post_id":"' in response\
+            else response.split("'post_id': '")[1].split('\'')[0]
         encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
         
         title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')

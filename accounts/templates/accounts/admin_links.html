@@ -226,7 +226,10 @@
                             alert(response.responseJSON.error);
                         }
                     });
+                    loadLinks();
                 });
+
+
 
                 function getCSRFToken() {
                     return document.cookie.split('; ').find(row => row.startsWith('csrftoken'))?.split('=')[1];

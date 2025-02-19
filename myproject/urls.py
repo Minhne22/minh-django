@@ -24,6 +24,7 @@ from accounts.views import login_view, logout_view, register_view, manage_users,
 from accounts.views import add_cookies, get_cookies, delete_cookie, delete_all_cookies
 from accounts.views import convert_tokens, get_tokens, delete_token, delete_all_tokens
 from accounts.views import comment_list, get_user_limit
+from accounts.views import file_upload, show_data, admin_phone
 
 urlpatterns = [
     path('', user_dashboard, name='home'),
@@ -37,6 +38,7 @@ urlpatterns = [
     path("admin-dashboard/links-off/", admin_links_off, name="admin_links_off"),
     path("admin-dashboard/comments/", admin_comments, name="admin_comments"),
     path("admin-dashboard/tokens/", admin_tokens, name="admin_tokens"),
+    path("admin-dashboard/phone/", admin_phone, name="admin_phone"),
     path("dashboard/", user_dashboard, name="user_dashboard"),
     path("dashboard/links-on/", dashboard_links_on, name="dashboard_links"),
     path("dashboard/links-off/", dashboard_links_off, name="dashboard_links_off"),
@@ -69,5 +71,7 @@ urlpatterns = [
     path("api/api/comment_list/", comment_list, name="comment_list"),
     path("api/api/get_user_limit/", get_user_limit, name="get_user_limit"),
     path("api/api/toggle_link_active/", toggle_link_active, name="toggle-active"),
+    path('api/upload/', file_upload, name='file_upload'),
+    path('api/show_data/',show_data, name='show_data'),
     # path("convert-cookie/", convert_cookie_to_token, name="convert_cookie_to_token"),
 ]
