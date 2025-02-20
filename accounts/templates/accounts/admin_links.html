@@ -140,7 +140,7 @@
 
                                 <td>
                                     <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">✏️ Edit</button>
-                                    <button class="btn btn-danger delete-link" data-post-id="${link.post_id}">❌ Xóa</button>
+                                    <button class="btn btn-danger delete-link" data-origin-url="${link.origin_url}">❌ Xóa</button>
                                 </td>
                             </tr>`;
                         });
@@ -282,11 +282,11 @@
 
                 // Xóa link
                 $(document).on("click", ".delete-link", function () {
-                    let post_id = $(this).data("post-id");
+                    let origin_url = $(this).data("origin-url");
 
                     $(this).html('❌ Xóa <span class="spinner-border spinner-border-sm" role="status"></span>');
 
-                    $.post("{% url 'delete_link' %}", JSON.stringify({ post_id: post_id }), function () {
+                    $.post("{% url 'delete_link' %}", JSON.stringify({ origin_url: origin_url }), function () {
                         reloadData();
                     }, "json").always(function () {
                         $(this).html('❌ Xóa');

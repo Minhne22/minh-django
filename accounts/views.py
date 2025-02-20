@@ -605,25 +605,26 @@ def delete_link(request):
     if request.method == "POST":
         if request.session.get("role") == "admin":
             data = json.loads(request.body)
-            post_id = str(data.get("post_id"))  # Chuyển post_id thành string
+            origin_url = str(data.get("origin_url"))  # Chuyển post_id thành string
+            print(origin_url)
 
             # Kiểm tra nếu link tồn tại
-            link = links_collection.find_one({"post_id": post_id})
+            link = links_collection.find_one({"origin_url": origin_url})
             if not link:
                 return JsonResponse({"success": False, "error": "Link không tồn tại"}, status=400)
 
             # Xóa link
-            links_collection.delete_one({"post_id": post_id})
+            links_collection.delete_one({"origin_url": origin_url})
             return JsonResponse({"success": True})
         else:
             username = request.session.get("username")
             user_links_collection = users_db[username]
             data = json.loads(request.body)
-            post_id = str(data.get("post_id"))
-            link = user_links_collection.find_one({"post_id": post_id})
+            origin_url = str(data.get("origin_url"))
+            link = user_links_collection.find_one({"origin_url": origin_url})
             if not link:
                 return JsonResponse({"success": False, "error": "Link không tồn tại"}, status=400)
-            user_links_collection.delete_one({"post_id": post_id})
+            user_links_collection.delete_one({"origin_url": origin_url})
             return JsonResponse({"success": True})
 
 def admin_proxies(request):

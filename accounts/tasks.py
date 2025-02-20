@@ -12,15 +12,18 @@ def get_thong_tin_task(collection, url, cookie, proxy={}):
             client = Get_Link_Detail(url, proxy)
             try:
                 result = client.get_all()
+                print('bai nay pubb')
                 result['data']['status'] = 'public'
                 
             except IndexError as e:
+                print('loi o day')
+                print(e)
                 with open("log-task.txt", "a+") as f:
                     f.write(f"{e} - Retrying {url}...\n")
                 result = client.get_all(cookie=cookie)
                 result['data']['status'] = 'private'
             
-            # print(result)
+            print(result)
             
             if result['success']:
                 result = result['data']

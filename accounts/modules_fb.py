@@ -55,13 +55,14 @@ class Get_Link_Detail:
             print(self.headers.get('cookie'))
             
         response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
-        with open('cccc.html', 'w+', encoding='utf8') as f:
-            f.write(response)
+        if not cookie:
+            with open('cccc.html', 'w+', encoding='utf8') as f:
+                f.write(response)
         post_id = response.split('"video_id":"')[1].split('"')[0] if '"video_id":"' in response\
             else response.split("'video_id': '")[1].split('\'')[0]
         encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
         title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
-        content = response.split('"story":{"message":{"text":"')[1].split('",')[0].split('"}')[0]
+        content = response.split('"message":{"text":"')[1].split('",')[0].split('"}')[0]
         comment_count = response.split('"total_count":')[1].split('}')[0]
         created_time = get_publish_time(response)
         
