@@ -857,7 +857,7 @@ def comment_list(request):
         return JsonResponse({"comments": comments})
     else:
         username = request.session.get("username")
-        user_comments_collection = users_db[username]
+        user_comments = user_comments_collection[username]
         start_time = request.GET.get("start_date")
         start_time = datetime.strptime(start_time, "%d-%m-%Y")
         start_time = datetime(start_time.year, start_time.month, start_time.day, 0, 0, 0).timestamp()
@@ -865,7 +865,7 @@ def comment_list(request):
         end_time = datetime.strptime(end_time, "%d-%m-%Y")
         end_time = datetime(end_time.year, end_time.month, end_time.day, 23, 59, 59).timestamp()
         query = {"time": {"$gte": start_time, "$lt": end_time}}
-        comments = list(user_comments_collection.find(query, {"_id": 0}).sort('time', -1))
+        comments = list(user_comments.find(query, {"_id": 0}).sort('time', -1))
         return JsonResponse({"comments": comments})
 
 def get_user_limit(request):
