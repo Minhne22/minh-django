@@ -313,7 +313,7 @@ async def quet_bai_token(id_post, token, proxy={}):
         async with session.get(url=url, params=params, proxy=ipport) as response:
             response = await response.text()
             response = json.loads(response)
-            print(response)
+            # print(response)
             comment = response['comments']['data'][0]
             return {
                 'post_id': id_post,
@@ -422,7 +422,7 @@ async def don_luong(indata, collection, delay=5):
                 return
             data = response
             if data:
-                print(data)
+                # print(data)
                 filter_condition = {
                     "post_id": data["post_id"],
                     "author_id": data["author_id"],

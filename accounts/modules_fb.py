@@ -47,20 +47,16 @@ class Get_Link_Detail:
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
         }
     
-    def get_normal(self, cookie=''):
-        if cookie:
-            self.headers.update({
-                'cookie': cookie
-            })
-            print(self.headers.get('cookie'))
+    def get_normal(self, response):
+        # if cookie:
+        #     self.headers.update({
+        #         'cookie': cookie
+        #     })
+        #     print(self.headers.get('cookie'))
             
-        response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
-        if not cookie:
-            with open('cccc.html', 'w+', encoding='utf8') as f:
-                f.write(response)
-        else:
-            with open('ccccc.html', 'w+', encoding='utf8') as f:
-                f.write(response)
+        # response = requests.get(self.url, headers=self.headers, proxies=self.proxy)
+        # print(response.url)
+        response = response.text
         post_id = response.split('"video_id":"')[1].split('"')[0] if '"video_id":"' in response\
             else response.split("'video_id': '")[1].split('\'')[0]
         # print(post_id)
@@ -90,12 +86,12 @@ class Get_Link_Detail:
             }
         }
     
-    def get_posts(self, cookie=''):
-        if cookie:
-            self.headers.update({
-                'cookie': cookie
-            })
-        response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
+    def get_posts(self, response):
+        # if cookie:
+        #     self.headers.update({
+        #         'cookie': cookie
+        #     })
+        # response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
         encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
         
         post_id = response.split('"post_id":"')[1].split('"')[0] if '"post_id":"' in response\
@@ -121,16 +117,16 @@ class Get_Link_Detail:
             }
         }
     
-    def get_reel(self, cookie=''):
-        if cookie:
-            self.headers.update({
-                'cookie': cookie
-            })
-        response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
+    def get_reel(self, response):
+        # if cookie:
+        #     self.headers.update({
+        #         'cookie': cookie
+        #     })
+        # response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
         encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
-        post_id = response.split('"post_id":')[1].split('"')[0]
+        post_id = response.split('"post_id":"')[1].split('"')[0]
         title = response.split('"__isActor":"User"')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
-        content = response.split('"message":{"text":"')[1].split('"},')[0]
+        content = response.split('"message":{"text":"')[1].split('"},')[0].split('",')[0]
         comment_count = response.split('"total_comment_count":')[1].split(',')[0]
         created_time = get_publish_time(response)
         return {
@@ -147,12 +143,12 @@ class Get_Link_Detail:
             }
         }
     
-    def get_story(self, cookie=''):
-        if cookie:
-            self.headers.update({
-                'cookie': cookie
-            })
-        response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
+    def get_story(self, response):
+        # if cookie:
+        #     self.headers.update({
+        #         'cookie': cookie
+        #     })
+        # response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
         post_id = response.split('"post_id":"')[1].split('"')[0] if '"post_id":"' in response\
             else response.split("'post_id': '")[1].split('\'')[0]
         encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
@@ -176,12 +172,23 @@ class Get_Link_Detail:
         }
     
     def get_all(self, cookie=''):
-        if '/reel/' in self.url:
-            response = self.get_reel(cookie)
-        elif '/posts/' in self.url:
-            response = self.get_posts(cookie)
-        elif 'story_fbid=' in self.url:
-            response = self.get_story(cookie)
+        if cookie:
+            self.headers.update({
+                'cookie': cookie
+            })
+        response = requests.get(self.url, headers=self.headers, proxies=self.proxy)
+        
+        url = response.url
+        
+        response = response.text
+        
+        if '/reel/' in url:
+            response = self.get_reel(response)
+        elif '/posts/' in url:
+            response = self.get_posts(response)
+        elif 'story_fbid=' in url:
+            response = self.get_story(response)
         else:
-            response = self.get_normal(cookie)
+            response = self.get_normal(response)
         return response
+        
