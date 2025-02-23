@@ -241,8 +241,8 @@ async def quet_bai_cookie(encoded_post, cookie_inp, proxy={}):
     async with aiohttp.ClientSession() as session:
         async with session.post('https://www.facebook.com/api/graphql/', headers=headers, data=data, proxy=ipport) as response:
             response_text = await response.text()
-            # with open('sech.json', 'w+', encoding='utf8') as f:
-            #             f.write(response_text)
+            with open('sech.json', 'w+', encoding='utf8') as f:
+                        f.write(response_text)
             try:
                 response_json = json.loads(response_text)
                 # with open('sech.json', 'w+', encoding='utf8') as f:

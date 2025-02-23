@@ -128,7 +128,7 @@ class Get_Link_Detail:
             })
         response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
         encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
-        post_id = response.split('"video_id":')[1].split(',')[0]
+        post_id = response.split('"post_id":')[1].split('"')[0]
         title = response.split('"__isActor":"User"')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
         content = response.split('"message":{"text":"')[1].split('"},')[0]
         comment_count = response.split('"total_comment_count":')[1].split(',')[0]

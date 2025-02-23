@@ -1,306 +1,104 @@
-'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of range'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptablelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptabl'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of ranget subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptable'NoneType' object is not subscriptablelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of rangelist index out of ranget subscriptablelist index out of range'NoneType' object is not subscriptable'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
 list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-list index out of range
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
-'NoneType' object is not subscriptable
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+list index out of range
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+list index out of range
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+list index out of range
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
+local variable 'response' referenced before assignment
