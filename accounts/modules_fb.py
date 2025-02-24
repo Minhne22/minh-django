@@ -56,15 +56,20 @@ class Get_Link_Detail:
             
         # response = requests.get(self.url, headers=self.headers, proxies=self.proxy)
         # print(response.url)
-        response = response.text
+        # response = response.text
         post_id = response.split('"video_id":"')[1].split('"')[0] if '"video_id":"' in response\
             else response.split("'video_id': '")[1].split('\'')[0]
-        # print(post_id)
-        encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
+        print(post_id)
+        # with open('sex.txt', 'w+', encoding='utf8') as f:
+        #     f.write(response)
+        encoded_post = response.split('"feedback":{')[1].split('"id":"')[1].split('"')[0]
         print(encoded_post)
         # print(len(response.split('profile_url')[1].split('"name":"')[1]))
-        title = response.split('profile_url')[1].split('"name":"')[1].split('",')[0].encode().decode('unicode_escape')
-        # print(title)
+        title = response.split('profile_url')[1:]
+        title = [
+            tit.split('"name":"')[1].split('",')[0] for tit in title if '"name":"' in tit
+        ][0].encode().decode('unicode_escape')
+        print(title)
         content = response.split('"message":{"text":"')[1].split('",')[0].split('"}')[0]
         # print(content)
         comment_count = response.split('"total_count":')[1].split('}')[0]
@@ -180,6 +185,8 @@ class Get_Link_Detail:
         
         url = response.url
         
+        print(url)
+        
         response = response.text
         
         if '/reel/' in url:
@@ -189,6 +196,10 @@ class Get_Link_Detail:
         elif 'story_fbid=' in url:
             response = self.get_story(response)
         else:
+            if cookie:
+                with open('seggay.txt', 'w+', encoding='utf8') as f:
+                    f.write(response)
             response = self.get_normal(response)
+            
         return response
         

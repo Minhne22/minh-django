@@ -66,7 +66,7 @@ async def get_uid_num(link_pro5):
                 while True:
                     # response = await session.post('https://id.traodoisub.com/api.php', data=data)
                     # response = response.json()
-                    async with session.get(f'https://www.facebook.com/{link_pro5}') as response:
+                    async with session.post(f'https://id.traodoisub.com/api.php', data=data) as response:
                         response = await response.text()
                         if 'id' not in response:
                             await asyncio.sleep(3)
@@ -127,6 +127,7 @@ async def quet_bai_no_cookie(encoded_post, proxy={}):
     print('Ok')
     
     async with aiohttp.ClientSession() as session:
+        global uid_cache
         async with session.post('https://www.facebook.com/api/graphql/', headers=headers, data=data, proxy=ipport) as response:
             response_text = await response.text()
             # print(response_text)
@@ -157,7 +158,7 @@ async def quet_bai_no_cookie(encoded_post, proxy={}):
                     if link_pro5.isnumeric():
                         uid = link_pro5
                     else:
-                        uid = await get_uid_num(link_pro5, session)
+                        uid = await get_uid_num(link_pro5)
                     
                     uid_cache += f'{link_pro5}|{uid}\n'
                     with open('./uid.cache', 'w+', encoding='utf8') as f:
@@ -181,6 +182,7 @@ async def quet_bai_no_cookie(encoded_post, proxy={}):
 
 async def quet_bai_cookie(encoded_post, cookie_inp, proxy={}):
     # print(cookie_inp)
+    global uid_cache
     if proxy:
         ipport = f'{proxy["ip"]}:{proxy["port"]}' if not proxy['username'] else f'{proxy["username"]}:{proxy["password"]}@{proxy["ip"]}:{proxy["port"]}'
         ipport = f'http://{ipport}'
@@ -268,7 +270,7 @@ async def quet_bai_cookie(encoded_post, cookie_inp, proxy={}):
                     if link_pro5.isnumeric():
                         uid = link_pro5
                     else:
-                        uid = await get_uid_num(link_pro5, session)
+                        uid = await get_uid_num(link_pro5)
                     
                     uid_cache += f'{link_pro5}|{uid}\n'
                     with open('./uid.cache', 'w+', encoding='utf8') as f:
@@ -397,10 +399,12 @@ async def don_luong(indata, collection, delay=5):
                         if ck not in loi_cookie:
                             loi_cookie[ck] = 0
                         loi_cookie[ck] += 1
+                        print(loi_cookie[ck])
                         if loi_cookie[ck] > 5:
-                            await cookie_collection.update_one({"cookie": ck}, {'$set': {
+                            res = await cookie_collection.update_one({"cookie": ck}, {'$set': {
                                 'status': 'inactive'
                             }})
+                            print(res)
                         
                     
                 else:
@@ -414,10 +418,12 @@ async def don_luong(indata, collection, delay=5):
                             loi_token[token] = 0
                         print("loi token")
                         loi_token[token] += 1
+                        print(loi_token[token])
                         if loi_token[token] > 5:
-                            await token_collection.update_one({"token": loi_token[token]}, {'$set': {
+                            res = await token_collection.update_one({"token": token}, {'$set': {
                                 'status': 'inactive'
                             }})
+                            print(res)
             else:
                 return
             data = response
@@ -440,23 +446,30 @@ async def don_luong(indata, collection, delay=5):
         await asyncio.sleep(delay)
 
 async def khoi_tao_luong():
+    global cookies, tokens
     existing_data = []
     tasks = []
     while True:
-        await quan_ly_luong(existing_data=existing_data, tasks=tasks)
-        # await asyncio.sleep(10)
+        try:
+            cookies = [
+                x async for x in cookie_collection.find({'status': 'active'})
+            ]
+            tokens = [
+                x async for x in token_collection.find({'status': 'active'})
+            ]
+            await quan_ly_luong(existing_data=existing_data, tasks=tasks)
+            # await asyncio.sleep(10)
+        except Exception as e:
+            async with aiofiles.open('error_log.txt', 'a+', encoding='utf8') as f:
+                now = datetime.datetime.now()
+                formatted_time = now.strftime("%Y-%m-%d %H:%M:%S")
+                await f.write(f'[{formatted_time}] {str(e)}\n')
 
 async def quan_ly_luong(existing_data, tasks):
-    global cookies, tokens
     # print(existing_data, tasks)
     users = await users_db.list_collection_names()
     # print(users)
-    cookies = [
-        x async for x in cookie_collection.find({'status': 'active'})
-    ]
-    tokens = [
-        x async for x in token_collection.find({'status': 'active'})
-    ]
+    
     
     for username in users:
         posts = users_db[username].find({'active': 'on'})
