@@ -21,7 +21,7 @@ from urllib.parse import urlparse, parse_qs, unquote
 import time
 from markupsafe import escape
 import random
-from .tasks import get_thong_tin_task
+from .tasks import get_thong_tin_task, get_thong_tin_task_off
 from threading import Thread
 import csv
 from pymongo import UpdateOne
@@ -115,7 +115,7 @@ user_comments_collection = settings.client['user_comments']
 
 def get_access_token(cookie: str, proxy={}):
     cookie = cookie.split('|')[0]
-    app_id = '350685531728'
+    app_id = '2220391788200892'
     cookies = {
        x.split('=')[0]: x.split('=')[1] for x in cookie.replace(' ', '').split(';') if x
     }
@@ -527,14 +527,69 @@ def add_links(request):
     return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
 
 @csrf_exempt
+def add_links_off(request):
+    if request.method == "POST":
+        if request.session.get("role") == "admin":
+            data = json.loads(request.body)
+            links = data.get("links", [])
+            username = request.session.get("username")
+            user = users_collection.find_one({"username": username}, {"_id": 0})
+            limit_off = user.get("limit_off", 0)
+            links_available = links_collection.count_documents({"active": "off"})
+            if (links_available + len(links)) > limit_off:
+                return JsonResponse({"success": False, "error": "Vượt quá giới hạn link"}, status=400)
+            
+            
+            for link in links:
+                if link.isnumeric():
+                    link = f'https://facebook.com/{link}'
+                proxy = random.choice(list(proxies_collection.find({"status": "active"})))
+                # print(proxy)
+                cookie = random.choice(list(cookie_collection.find({"status": "active"})))['cookie']
+                # print(cookie)
+                
+                # links_collection.insert_one({"origin_url": link, "status": "pending"})
+                Thread(target=get_thong_tin_task_off, args=(links_collection, link, cookie, proxy, )).start()
+
+            return JsonResponse({"message": "URLs đã được thêm và đang xử lý"}, status=200)
+        else:
+            username = request.session.get("username")
+            user_links_collection = users_db[username]
+            data = json.loads(request.body)
+            links = data.get("links", [])
+            user = users_collection.find_one({"username": username}, {"_id": 0})
+            limit_off = user.get("limit_off", 0)
+            links_available = user_links_collection.count_documents({"active": "off"})
+            if (links_available + len(links)) > limit_off:
+                return JsonResponse({"success": False, "error": "Vượt quá giới hạn link"}, status=400)
+            for link in links:
+                if link.isnumeric():
+                    link = f'https://facebook.com/{link}'
+                proxy = random.choice(list(proxies_collection.find({"status": "active"})))
+                # print(proxy)
+                cookie = random.choice(list(cookie_collection.find({"status": "active"})))['cookie']
+                # print(cookie)
+                
+                # links_collection.insert_one({"origin_url": link, "status": "pending"})
+                # Thread(target=user_links_collection.insert_one, args=({"origin_url": link, "active": "pending"}, )).start()
+                
+                Thread(target=get_thong_tin_task_off, args=(user_links_collection, link, cookie, proxy, )).start()
+                
+            return JsonResponse({"message": "URLs đã được thêm và đang xử lý"}, status=200)
+
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+
+@csrf_exempt
 def toggle_link_active(request):
     if request.method == "POST":
         if request.session.get('role') == 'admin':
             data = json.loads(request.body)
-            post_id = data.get("post_id")
+            origin_url = data.get("origin_url")
             new_active = data.get("active")
 
-            result = links_collection.update_one({"post_id": post_id}, {"$set": {"active": new_active}})
+            result = links_collection.update_one({"origin_url": origin_url}, {"$set": {"active": new_active}})
             if result.matched_count == 0:
                 return JsonResponse({"success": False, "error": "Không tìm thấy link!"}, status=400)
 
@@ -543,10 +598,12 @@ def toggle_link_active(request):
             username = request.session.get("username")
             user_links_collection = users_db[username]
             data = json.loads(request.body)
-            post_id = data.get("post_id")
+            origin_url = data.get("origin_url")
+            print(origin_url)
             new_active = data.get("active")
 
-            result = user_links_collection.update_one({"post_id": post_id}, {"$set": {"active": new_active}})
+            result = user_links_collection.update_one({"origin_url": origin_url}, {"$set": {"active": new_active}})
+            print(result)
             if result.matched_count == 0:
                 return JsonResponse({"success": False, "error": "Không tìm thấy link!"}, status=400)
 
@@ -872,8 +929,10 @@ def get_user_limit(request):
     username = request.session.get("username")
     user = users_collection.find_one({"username": username}, {"_id": 0})
     limit_on = user.get("limit_on", 0)
-    user['limit_on'] = limit_on 
-    return JsonResponse({'limit_on': limit_on})
+    user['limit_on'] = limit_on
+    limit_off = user.get("limit_off", 0)
+    user['limit_off'] = limit_off 
+    return JsonResponse({'limit_on': limit_on, 'limit_off': limit_off})
 
 # Đọc file từng phần (chunk)
 def handle_uploaded_file(f, chunk_size=10000):

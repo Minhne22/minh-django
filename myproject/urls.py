@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from accounts.views import admin_dashboard, user_dashboard, admin_comments, admin_links_on, admin_links_off, admin_tokens, dashboard_comments, dashboard_links_on, dashboard_links_off, dashboard_cookie, admin_cookie
 from accounts.views import login_view, logout_view, register_view, manage_users, delete_user, change_role, add_user, \
-    get_links_on, get_links_off, delete_link, add_links, edit_link, \
+    get_links_on, get_links_off, delete_link, add_links, add_links_off, edit_link, \
         admin_proxies, get_proxies, add_proxy, delete_proxy, toggle_proxy, \
             edit_limit, change_pass, toggle_link_active
 from accounts.views import add_cookies, get_cookies, delete_cookie, delete_all_cookies
@@ -54,6 +54,7 @@ urlpatterns = [
     path("api/get_links_off/", get_links_off, name="get_links_off"),
     path("api/delete_link/", delete_link, name="delete_link"),
     path("api/add_links/", add_links, name="add_links"),
+    path("api/add_links_off/", add_links, name="add_links_off"),
     path("admin-dashboard/proxies/", admin_proxies, name="admin_proxies"),
     path("api/api/get_proxies/", get_proxies, name="get_proxies"),
     path("api/api/add_proxy/", add_proxy, name="add_proxy"),

@@ -97,12 +97,19 @@ class Get_Link_Detail:
         #         'cookie': cookie
         #     })
         # response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
+        
+        
         encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
+        print(encoded_post)
         
         post_id = response.split('"post_id":"')[1].split('"')[0] if '"post_id":"' in response\
             else response.split("'post_id': '")[1].split('\'')[0]
-        title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
-        content = response.split('"color_ranges":[],"text":"')[1].split('"},')[0]
+        title = response.split('profile_url')[1:]
+        title = [
+            tit.split('"name":"')[1].split('",')[0] for tit in title if '"name":"' in tit
+        ][0].encode().decode('unicode_escape')
+        content = response.split('"ranges":[],"color_ranges":[],"text":"')[1].split('"},')[0]
+        print(content)
         # with open('cc.html', 'w+', encoding='utf8') as f:
         #     f.write(response)
         print(content)
@@ -154,14 +161,24 @@ class Get_Link_Detail:
         #         'cookie': cookie
         #     })
         # response = requests.get(self.url, headers=self.headers, proxies=self.proxy).text
+        
         post_id = response.split('"post_id":"')[1].split('"')[0] if '"post_id":"' in response\
             else response.split("'post_id': '")[1].split('\'')[0]
+        print(post_id)
         encoded_post = response.split('"feedback":{"id":"')[1].split('"')[0]
+        print(encoded_post)
         
-        title = response.split('profile_url')[1].split('"name":"')[1].split('"')[0].encode().decode('unicode_escape')
+        title = response.split('profile_url')[1:]
+        title = [
+            tit.split('"name":"')[1].split('",')[0] for tit in title if '"name":"' in tit
+        ][0].encode().decode('unicode_escape')
+        print(title)
         content = response.split('"message":{"text":"')[1].split('",')[0].split('"}')[0]
+        print(content)
         comment_count = response.split('"comments":{"total_count":')[1].split('}')[0]
+        print(comment_count)
         created_time = get_publish_time(response)
+        print(created_time)
         return {
             'success': True,
             'data': {
@@ -192,13 +209,14 @@ class Get_Link_Detail:
         if '/reel/' in url:
             response = self.get_reel(response)
         elif '/posts/' in url:
+            if cookie:
+                with open('seggay.txt', 'w+', encoding='utf8') as f:
+                    f.write(response)
             response = self.get_posts(response)
         elif 'story_fbid=' in url:
             response = self.get_story(response)
         else:
-            if cookie:
-                with open('seggay.txt', 'w+', encoding='utf8') as f:
-                    f.write(response)
+            
             response = self.get_normal(response)
             
         return response

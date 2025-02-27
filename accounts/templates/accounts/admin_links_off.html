@@ -12,9 +12,9 @@
     <div class="container mt-5">
         <h3>🔗 Quản lý Links Off 🔴</h3>
 
-        <!-- Box hiển thị số links đã có / limit_on -->
+        <!-- Box hiển thị số links đã có / limit_off -->
         <div class="alert alert-info" role="alert">
-            <span id="linksCount">0</span> / <span id="limitOn">0</span> Links
+            <span id="linksCount">0</span> / <span id="limitOff">0</span> Links
         </div>
 
         <!-- Thêm Link -->
@@ -150,7 +150,7 @@
                 function updateLinksCount(count) {
                     $("#linksCount").text(count);
                     $.get("{% url 'get_user_limit' %}", function (data) {
-                        $("#limitOn").text(data.limit_on);
+                        $("#limitOff").text(data.limit_off);
                     });
                 }
 
@@ -184,7 +184,7 @@
                     });
 
                     $.ajax({
-                        url: "{% url 'add_links' %}",
+                        url: "{% url 'add_links_off' %}",
                         type: "POST",
                         data: JSON.stringify({ links: links }),
                         contentType: "application/json",

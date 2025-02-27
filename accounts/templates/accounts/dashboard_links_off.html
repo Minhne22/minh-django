@@ -10,11 +10,11 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h3>🔗 Quản lý Links Off 🔴</h3>
+        <h3>🔗 Quản lý Links Off🔴</h3>
 
-        <!-- Box hiển thị số links đã có / limit_on -->
+        <!-- Box hiển thị số links đã có / limit_off -->
         <div class="alert alert-info" role="alert">
-            <span id="linksCount">0</span> / <span id="limitOn">0</span> Links
+            <span id="linksCount">0</span> / <span id="limitOff">0</span> Links
         </div>
 
         <!-- Thêm Link -->
@@ -44,7 +44,8 @@
                     <th>Tên Bài</th>
                     <th>Thời Gian Cmt Cuối</th>
                     <th>Count Cmt</th>
-                    <th>Status</th>
+                    <th>Delay</th>
+                    <th>Active</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -68,24 +69,14 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="editLastCommentTime" class="form-label">Thời gian comment cuối</label>
-                            <input type="text" class="form-control" id="editLastCommentTime">
+                            <label for="editContent" class="form-label">Nội dung</label>
+                            <textarea class="form-control" id="editContent" rows="3"></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="editStatus" class="form-label">Trạng thái</label>
-                            <select class="form-select" id="editStatus">
-                                <option value="public">Public</option>
-                                <option value="private">Private</option>
-                                <option value="die">Die</option>
-                            </select>
+                            <label for="editDelay" class="form-label">Delay Time</label>
+                            <input type="text" class="form-control" id="editDelay">
                         </div>
-
-                        <div class="mb-3">
-                            <label for="editCommentCount" class="form-label">Số lượng comment</label>
-                            <input type="number" class="form-control" id="editCommentCount">
-                        </div>
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -102,7 +93,23 @@
                         let rows = "";
                         data.links.forEach((link, index) => {
                             let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
-                            let formattedLastCommentTime = formatDate(link.last_comment_time);
+                            let formattedLastCommentTime = link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time);
+                            var active = link.active;
+                            if (active == 'pending'){
+                                active = '⏳ Chờ xử lý';
+                            }
+                            if (active == 'failed'){
+                                    active = '❌ Thất bại';
+                                }
+                            if (active == 'on'){
+                                    active = '✅ Đang chạy';
+                                }
+                            if (active == 'off'){
+                                    active = '⚫ Đã tắt';}
+                            if (active == 'on'){
+                                    active = '✅ Đang chạy';
+                                }
+                            
                             rows += `<tr>
                                 <td>${index + 1}</td>
                                 <td>${formatDate(link.created_time)}</td>
@@ -114,10 +121,16 @@
                                 </td>
                                 <td>${formattedLastCommentTime}</td>
                                 <td>${link.comment_count}</td>
-                                <td>${link.status}</td>
+                                <td>${link.delay}</td>
+                                <td>
+                                    <button class="btn btn-sm toggle-active" data-origin-url="${link.origin_url}">
+                                        ${active}
+                                    </button>
+                                </td>
+
                                 <td>
                                     <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">✏️ Edit</button>
-                                    <button class="btn btn-danger delete-link" data-post-id="${link.post_id}">❌ Xóa</button>
+                                    <button class="btn btn-danger delete-link" data-origin-url="${link.origin_url}">❌ Xóa</button>
                                 </td>
                             </tr>`;
                         });
@@ -138,10 +151,9 @@
                         let row = $(this).closest("tr");
                         $("#editPostId").val(post_id);
                         $("#editPostName").val(row.find("td:eq(3)").text());
-                        $("#editLastCommentTime").val(row.find("td:eq(4)").text());
-                        $("#editCommentCount").val(row.find("td:eq(5)").text());
-                        $("#editDelay").val(row.find("td:eq(7)").text());
-                        $("#editStatus").val(row.find("td:eq(8)").text());
+                        $("#editContent").val(row.find("td:eq(3) span").attr("title"));
+                        $("#editDelay").val(row.find("td:eq(6)").text());
+                        $("#editStatus").val(row.find("td:eq(7)").text());
 
                         $("#editModal").modal("show");
                     });
@@ -150,7 +162,7 @@
                 function updateLinksCount(count) {
                     $("#linksCount").text(count);
                     $.get("{% url 'get_user_limit' %}", function (data) {
-                        $("#limitOn").text(data.limit_on);
+                        $("#limitOff").text(data.limit_off);
                     });
                 }
 
@@ -184,7 +196,7 @@
                     });
 
                     $.ajax({
-                        url: "{% url 'add_links' %}",
+                        url: "{% url 'add_links_off' %}",
                         type: "POST",
                         data: JSON.stringify({ links: links }),
                         contentType: "application/json",
@@ -192,17 +204,22 @@
                         success: function (response) {
                             if (response.success) {
                                 reloadData();
-                                $("#multiLinks").val("");
+                                document.getElementById('multiLinks').value = '';
                             }
                         },
                         complete: function () {
+                            document.getElementById('multiLinks').value = '';
                             $("#addLinksSpinner").hide(); // Ẩn spinner sau khi xử lý xong
                         },
-                        error: function () {
-                            alert("Lỗi khi thêm links!");
+                        error: function (response) {
+                            console.log(response);
+                            alert(response.responseJSON.error);
                         }
                     });
+                    loadLinks();
                 });
+
+
 
                 function getCSRFToken() {
                     return document.cookie.split('; ').find(row => row.startsWith('csrftoken'))?.split('=')[1];
@@ -211,7 +228,7 @@
                 function reloadData() {
                     $("#loadingSpinner").show(); // Hiện spinner
                     $.ajax({
-                        url: "{% url 'get_links_off' %}",
+                        url: "{% url 'get_links_on' %}",
                         type: "GET",
                         success: function (response) {
                             if (response.success) {
@@ -227,8 +244,9 @@
                                                 ${link.name}
                                             </span>
                                         </td>
-                                        <td>${formatDate(link.last_comment_time)}</td>
+                                        <td>${link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time)}</td>
                                         <td>${link.comment_count}</td>
+                                        <td>${link.delay}</td>
                                         <td><span class="badge ${link.status === 'public' ? 'bg-success' : 'bg-danger'}">${link.status}</span></td>
                                         <td>
                                             <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">Edit</button>
@@ -254,11 +272,11 @@
 
                 // Xóa link
                 $(document).on("click", ".delete-link", function () {
-                    let post_id = $(this).data("post-id");
+                    let origin_url = $(this).data("origin-url");
 
                     $(this).html('❌ Xóa <span class="spinner-border spinner-border-sm" role="status"></span>');
 
-                    $.post("{% url 'delete_link' %}", JSON.stringify({ post_id: post_id }), function () {
+                    $.post("{% url 'delete_link' %}", JSON.stringify({ origin_url: origin_url }), function () {
                         reloadData();
                     }, "json").always(function () {
                         $(this).html('❌ Xóa');
@@ -273,10 +291,9 @@
 
                     $("#editPostId").val($(this).data("post-id"));
                     $("#editPostName").val(row.find("td:eq(3)").text());
-                    $("#editLastCommentTime").val(row.find("td:eq(4)").text().trim()); // Lấy thời gian comment cuối
-                    $("#editStatus").val(row.find("td:eq(8)").text().trim());
-                    $("#editCommentCount").val(row.find("td:eq(5)").text());
-                    $("#editDelay").val(row.find("td:eq(7)").text());
+                    $("#editContent").val(row.find("td:eq(3) span").attr("title"));
+                    $("#editDelay").val(row.find("td:eq(6)").text());
+                    $("#editStatus").val(row.find("td:eq(7)").text());
 
                     editModal.show();
                 });
@@ -284,11 +301,9 @@
                 $("#saveEdit").on("click", function () {
                     let postId = $("#editPostId").val();
                     let newName = $("#editPostName").val();
-                    let newLastCommentTime = $("#editLastCommentTime").val();
+                    let newContent = $("#editContent").val();
+                    let newDelay = $("#editDelay").val();
                     let newStatus = $("#editStatus").val();
-                    let newCommentCount = $("#editCommentCount").val();
-
-                    $("#saveEditSpinner").show(); // Hiện spinner
 
                     $.ajax({
                         url: "{% url 'edit_link' %}",
@@ -296,9 +311,9 @@
                         data: JSON.stringify({
                             post_id: postId,
                             name: newName,
-                            last_comment_time: newLastCommentTime,
-                            status: newStatus,
-                            comment_count: newCommentCount
+                            content: newContent,
+                            delay: newDelay,
+                            status: newStatus
                         }),
                         contentType: "application/json",
                         headers: { "X-CSRFToken": getCSRFToken() },
@@ -307,11 +322,8 @@
                                 reloadData();
                                 $("#editModal").modal("hide");
                             } else {
-                                alert("Lỗi khi cập nhật!");
+                                alert(response.error);
                             }
-                        },
-                        complete: function () {
-                            $("#saveEditSpinner").hide(); // Ẩn spinner sau khi xử lý xong
                         },
                         error: function () {
                             alert("Lỗi khi gửi dữ liệu!");
@@ -324,18 +336,56 @@
                         .find(row => row.startsWith('csrftoken'))
                         ?.split('=')[1];
                 }
-            });
 
-            function formatDate(timestamp) {
-                if (!isNaN(timestamp)) {
-                    let date = new Date(timestamp * 1000);  // Convert UNIX timestamp to JavaScript Date object
-                    let day = date.getDate().toString().padStart(2, '0');
-                    let month = (date.getMonth() + 1).toString().padStart(2, '0');  // Months are zero-based
-                    let year = date.getFullYear();
-                    return `${day}/${month}/${year}`;
+                function formatDate(timestamp) {
+                    if (!isNaN(timestamp)) {
+                        let date = new Date(timestamp * 1000);  // Convert UNIX timestamp to JavaScript Date object
+                        let day = date.getDate().toString().padStart(2, '0');
+                        let month = (date.getMonth() + 1).toString().padStart(2, '0');  // Months are zero-based
+                        let year = date.getFullYear();
+                        return `${day}/${month}/${year}`;
+                    }
+                    return timestamp;  // If not a number, return the original value
                 }
-                return timestamp;  // If not a number, return the original value
-            }
+
+                function calculateHoursAgo(datetimeStr) {
+                    if (datetimeStr === "Processing") {
+                        return "Processing";
+                    }
+                    let datetime = new Date(datetimeStr);
+                    let now = new Date();
+                    let diffInMs = now - datetime;
+                    let diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+                    return `${diffInHours}h`;
+                }
+                $(document).on("click", ".toggle-active", function () {
+                    let button = $(this);
+                    let originUrl = button.data("origin-url");
+                    let newActive = 'on'
+                
+                    $.ajax({
+                        url: "{% url 'toggle-active' %}",
+                        type: "POST",
+                        data: JSON.stringify({ origin_url: originUrl, active: newActive }),
+                        contentType: "application/json",
+                        headers: { "X-CSRFToken": getCSRFToken() },
+                        success: function (response) {
+                            if (response.success) {
+                                // Cập nhật UI ngay lập tức
+                                button.data("active", newActive);
+                                button.toggleClass("btn-success btn-secondary");
+                                button.text(newActive);
+                            } else {
+                                alert(response.error);
+                            }
+                        },
+                        error: function (response) {
+                            alert(response.responseJSON.error);
+                        }
+                    });
+                });
+            });
+            
         </script>
     </div>
 </body>

@@ -133,7 +133,7 @@
                                 <td>${link.delay}</td>
                                 <td>${link.status}</td>
                                 <td>
-                                    <button class="btn btn-sm toggle-active" data-post-id="${link.post_id}">
+                                    <button class="btn btn-sm toggle-active" data-origin-url="${link.origin_url}">
                                         ${active}
                                     </button>
                                 </td>
@@ -370,13 +370,13 @@
                 }
                 $(document).on("click", ".toggle-active", function () {
                     let button = $(this);
-                    let postId = button.data("post-id");
-                    let newActive = !button.data("active");
+                    let originUrl = button.data("origin-url");
+                    let newActive = 'off'
                 
                     $.ajax({
                         url: "{% url 'toggle-active' %}",
                         type: "POST",
-                        data: JSON.stringify({ post_id: postId, active: newActive }),
+                        data: JSON.stringify({ origin_url: originUrl, active: newActive }),
                         contentType: "application/json",
                         headers: { "X-CSRFToken": getCSRFToken() },
                         success: function (response) {
@@ -389,8 +389,8 @@
                                 alert(response.error);
                             }
                         },
-                        error: function () {
-                            alert("Lỗi khi cập nhật trạng thái!");
+                        error: function (response) {
+                            alert(response.responseJSON.error);
                         }
                     });
                 });

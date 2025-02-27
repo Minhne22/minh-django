@@ -44,7 +44,8 @@
                     <th>Tên Bài</th>
                     <th>Thời Gian Cmt Cuối</th>
                     <th>Count Cmt</th>
-                    <th>Status</th>
+                    <th>Delay</th>
+                    <th>Active</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -71,6 +72,11 @@
                             <label for="editContent" class="form-label">Nội dung</label>
                             <textarea class="form-control" id="editContent" rows="3"></textarea>
                         </div>
+
+                        <div class="mb-3">
+                            <label for="editDelay" class="form-label">Delay Time</label>
+                            <input type="text" class="form-control" id="editDelay">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -88,6 +94,22 @@
                         data.links.forEach((link, index) => {
                             let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
                             let formattedLastCommentTime = link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time);
+                            var active = link.active;
+                            if (active == 'pending'){
+                                active = '⏳ Chờ xử lý';
+                            }
+                            if (active == 'failed'){
+                                    active = '❌ Thất bại';
+                                }
+                            if (active == 'on'){
+                                    active = '✅ Đang chạy';
+                                }
+                            if (active == 'off'){
+                                    active = '⚫ Đã tắt';}
+                            if (active == 'on'){
+                                    active = '✅ Đang chạy';
+                                }
+                            
                             rows += `<tr>
                                 <td>${index + 1}</td>
                                 <td>${formatDate(link.created_time)}</td>
@@ -99,7 +121,13 @@
                                 </td>
                                 <td>${formattedLastCommentTime}</td>
                                 <td>${link.comment_count}</td>
-                                <td>${link.status}</td>
+                                <td>${link.delay}</td>
+                                <td>
+                                    <button class="btn btn-sm toggle-active" data-origin-url="${link.origin_url}">
+                                        ${active}
+                                    </button>
+                                </td>
+
                                 <td>
                                     <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">✏️ Edit</button>
                                     <button class="btn btn-danger delete-link" data-origin-url="${link.origin_url}">❌ Xóa</button>
@@ -123,9 +151,10 @@
                         let row = $(this).closest("tr");
                         $("#editPostId").val(post_id);
                         $("#editPostName").val(row.find("td:eq(3)").text());
-                        $("#editContent").val(row.find("td:eq(3)").attr("title"));
-                        console.log(row.find("td:eq(3)").attr("title"));
-                        console.log(row.find("td:eq(3)").text());
+                        $("#editContent").val(row.find("td:eq(3) span").attr("title"));
+                        $("#editDelay").val(row.find("td:eq(6)").text());
+                        $("#editStatus").val(row.find("td:eq(7)").text());
+
                         $("#editModal").modal("show");
                     });
                 }
@@ -187,7 +216,10 @@
                             alert(response.responseJSON.error);
                         }
                     });
+                    loadLinks();
                 });
+
+
 
                 function getCSRFToken() {
                     return document.cookie.split('; ').find(row => row.startsWith('csrftoken'))?.split('=')[1];
@@ -214,10 +246,11 @@
                                         </td>
                                         <td>${link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time)}</td>
                                         <td>${link.comment_count}</td>
+                                        <td>${link.delay}</td>
                                         <td><span class="badge ${link.status === 'public' ? 'bg-success' : 'bg-danger'}">${link.status}</span></td>
                                         <td>
                                             <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">Edit</button>
-                                            <button class="btn btn-danger delete-link" data-origin-url="${link.origin_url}">Delete</button>
+                                            <button class="btn btn-danger delete-link" data-post-id="${link.post_id}">Delete</button>
                                         </td>
                                     </tr>`;
                                     tableBody.append(row);
@@ -258,7 +291,9 @@
 
                     $("#editPostId").val($(this).data("post-id"));
                     $("#editPostName").val(row.find("td:eq(3)").text());
-                    $("#editContent").val(row.find("td:eq(3)").attr("title"));
+                    $("#editContent").val(row.find("td:eq(3) span").attr("title"));
+                    $("#editDelay").val(row.find("td:eq(6)").text());
+                    $("#editStatus").val(row.find("td:eq(7)").text());
 
                     editModal.show();
                 });
@@ -267,6 +302,8 @@
                     let postId = $("#editPostId").val();
                     let newName = $("#editPostName").val();
                     let newContent = $("#editContent").val();
+                    let newDelay = $("#editDelay").val();
+                    let newStatus = $("#editStatus").val();
 
                     $.ajax({
                         url: "{% url 'edit_link' %}",
@@ -274,7 +311,9 @@
                         data: JSON.stringify({
                             post_id: postId,
                             name: newName,
-                            content: newContent
+                            content: newContent,
+                            delay: newDelay,
+                            status: newStatus
                         }),
                         contentType: "application/json",
                         headers: { "X-CSRFToken": getCSRFToken() },
@@ -283,8 +322,7 @@
                                 reloadData();
                                 $("#editModal").modal("hide");
                             } else {
-                                console.log(response.responseJSON.error);
-                                alert(response.responseJSON.error);
+                                alert(response.error);
                             }
                         },
                         error: function () {
@@ -298,29 +336,56 @@
                         .find(row => row.startsWith('csrftoken'))
                         ?.split('=')[1];
                 }
+
+                function formatDate(timestamp) {
+                    if (!isNaN(timestamp)) {
+                        let date = new Date(timestamp * 1000);  // Convert UNIX timestamp to JavaScript Date object
+                        let day = date.getDate().toString().padStart(2, '0');
+                        let month = (date.getMonth() + 1).toString().padStart(2, '0');  // Months are zero-based
+                        let year = date.getFullYear();
+                        return `${day}/${month}/${year}`;
+                    }
+                    return timestamp;  // If not a number, return the original value
+                }
+
+                function calculateHoursAgo(datetimeStr) {
+                    if (datetimeStr === "Processing") {
+                        return "Processing";
+                    }
+                    let datetime = new Date(datetimeStr);
+                    let now = new Date();
+                    let diffInMs = now - datetime;
+                    let diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+                    return `${diffInHours}h`;
+                }
+                $(document).on("click", ".toggle-active", function () {
+                    let button = $(this);
+                    let originUrl = button.data("origin-url");
+                    let newActive = 'off'
+                
+                    $.ajax({
+                        url: "{% url 'toggle-active' %}",
+                        type: "POST",
+                        data: JSON.stringify({ origin_url: originUrl, active: newActive }),
+                        contentType: "application/json",
+                        headers: { "X-CSRFToken": getCSRFToken() },
+                        success: function (response) {
+                            if (response.success) {
+                                // Cập nhật UI ngay lập tức
+                                button.data("active", newActive);
+                                button.toggleClass("btn-success btn-secondary");
+                                button.text(newActive);
+                            } else {
+                                alert(response.error);
+                            }
+                        },
+                        error: function (response) {
+                            alert(response.responseJSON.error);
+                        }
+                    });
+                });
             });
-
-            function formatDate(timestamp) {
-                if (!isNaN(timestamp)) {
-                    let date = new Date(timestamp * 1000);  // Convert UNIX timestamp to JavaScript Date object
-                    let day = date.getDate().toString().padStart(2, '0');
-                    let month = (date.getMonth() + 1).toString().padStart(2, '0');  // Months are zero-based
-                    let year = date.getFullYear();
-                    return `${day}/${month}/${year}`;
-                }
-                return timestamp;  // If not a number, return the original value
-            }
-
-            function calculateHoursAgo(datetimeStr) {
-                if (datetimeStr === "Processing") {
-                    return "Processing";
-                }
-                let datetime = new Date(datetimeStr);
-                let now = new Date();
-                let diffInMs = now - datetime;
-                let diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-                return `${diffInHours}h`;
-            }
+            
         </script>
     </div>
 </body>
