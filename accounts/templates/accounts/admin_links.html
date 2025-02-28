@@ -12,33 +12,41 @@
     <div class="container mt-5">
         <h3>🔗 Quản lý Links On🟢</h3>
 
-        <!-- Box hiển thị số links đã có / limit_on -->
-        <div class="alert alert-info" role="alert">
-            <span id="linksCount">0</span> / <span id="limitOn">0</span> Links
-        </div>
-
-        <!-- Thêm Link -->
+        <!-- Bộ lọc -->
         <div class="mb-3">
-            <label for="multiLinks">Nhập nhiều links (mỗi dòng một link):</label>
-            <textarea id="multiLinks" class="form-control" rows="5" placeholder="Dán các link vào đây, mỗi dòng một link..."></textarea>
-            <button id="addLinksBtn" class="btn btn-primary mt-2">
-                ➕Thêm Links
-                <span id="addLinksSpinner" class="spinner-border spinner-border-sm" role="status" style="display: none;"></span>
-            </button>
-        </div>
-
-        <!-- Spinner hiển thị khi đang tải -->
-        <div id="loadingSpinner" class="text-center my-3" style="display: none;">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+            <label>Username:</label>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="usernameDropdown">
+                    Chọn Username
+                </button>
+                <ul class="dropdown-menu" id="filterUsername"></ul>
             </div>
+
+            <label for="filterTimeRange">Thời gian comment cuối (giờ):</label>
+            <div class="d-flex gap-2">
+                <input type="number" id="filterTimeMin" class="form-control" placeholder="Từ giờ">
+                <input type="number" id="filterTimeMax" class="form-control" placeholder="Đến giờ">
+            </div>
+
+            <label for="filterType">Loại:</label>
+            <select id="filterType" class="form-select">
+                <option value="">Tất cả</option>
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+            </select>
+
+            <button id="applyFilter" class="btn btn-primary mt-2">Lọc</button>
+            <button id="selectAllPosts" class="btn btn-secondary mt-2">Chọn Tất Cả</button>
+            <button id="deleteSelected" class="btn btn-danger mt-2">Xóa những bài đã chọn</button>
         </div>
 
         <!-- Bảng Links -->
         <table class="table">
             <thead>
                 <tr>
+                    <th><input type="checkbox" id="selectAll"></th>
                     <th>STT</th>
+                    <th>Username</th>
                     <th>Time Created</th>
                     <th>ID Post</th>
                     <th>Tên Bài</th>
@@ -94,309 +102,199 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            $(document).ready(function () {
-                function loadLinks() {
-                    $.get("{% url 'get_links_on' %}", function (data) {
-                        let rows = "";
-                        data.links.forEach((link, index) => {
-                            let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
-                            let formattedLastCommentTime = link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time);
-                            var active = link.active;
-                            if (active == 'pending'){
-                                active = '⏳ Chờ xử lý';
-                            }
-                            if (active == 'failed'){
-                                    active = '❌ Thất bại';
-                                }
-                            if (active == 'on'){
-                                    active = '✅ Đang chạy';
-                                }
-                            if (active == 'off'){
-                                    active = '⚫ Đã tắt';}
-                            if (active == 'on'){
-                                    active = '✅ Đang chạy';
-                                }
-                            
-                            rows += `<tr>
-                                <td>${index + 1}</td>
-                                <td>${formatDate(link.created_time)}</td>
-                                <td>${postLink}</td>
-                                <td>
-                                    <span data-bs-toggle="tooltip" title="${link.content}">
-                                        ${link.name}
-                                    </span>
-                                </td>
-                                <td>${formattedLastCommentTime}</td>
-                                <td>${link.comment_count}</td>
-                                <td>${link.delay}</td>
-                                <td>${link.status}</td>
-                                <td>
-                                    <button class="btn btn-sm toggle-active" data-origin-url="${link.origin_url}">
-                                        ${active}
-                                    </button>
-                                </td>
+    <script>
+        $(document).ready(function () {
+            function getCsrfToken() {
+                return $('input[name="csrfmiddlewaretoken"]').val();
+            }
 
-                                <td>
-                                    <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">✏️ Edit</button>
-                                    <button class="btn btn-danger delete-link" data-origin-url="${link.origin_url}">❌ Xóa</button>
-                                </td>
-                            </tr>`;
-                        });
-                        $("#linkTable").html(rows);
-                        updateLinksCount(data.links.length);
-                    }).done(function () {
-                        // BIND lại sự kiện click sau khi load data
-                        bindEvents();
-                    });
-                }
-
-                function bindEvents() {
-                    // Mở modal chỉnh sửa
-                    $(".edit-link").off("click").on("click", function () {
-                        let post_id = $(this).data("post-id");
-
-                        // Lấy thông tin từ bảng
-                        let row = $(this).closest("tr");
-                        $("#editPostId").val(post_id);
-                        $("#editPostName").val(row.find("td:eq(3)").text());
-                        $("#editContent").val(row.find("td:eq(3) span").attr("title"));
-                        $("#editDelay").val(row.find("td:eq(6)").text());
-                        $("#editStatus").val(row.find("td:eq(7)").text());
-
-                        $("#editModal").modal("show");
-                    });
-                }
-
-                function updateLinksCount(count) {
-                    $("#linksCount").text(count);
-                    $.get("{% url 'get_user_limit' %}", function (data) {
-                        $("#limitOn").text(data.limit_on);
-                    });
-                }
-
-                loadLinks();
-
-                // Thêm link
-                $("#addLinksBtn").on("click", function () {
-                    let links = $("#multiLinks").val().trim().split("\n").map(link => link.trim()).filter(link => link);
-
-                    if (links.length === 0) {
-                        alert("Vui lòng nhập ít nhất một link!");
-                        return;
+            $(document).on("click", ".toggle-active", function () {
+                let button = $(this);
+                let originUrl = button.data("origin-url");
+                let user = button.data("user");
+                let newActive = 'off'
+            
+                $.ajax({
+                    url: "{% url 'toggle-active' %}",
+                    type: "POST",
+                    data: JSON.stringify({ origin_url: originUrl, active: newActive, username: user }),
+                    contentType: "application/json",
+                    headers: { "X-CSRFToken": getCsrfToken() },
+                    success: function (response) {
+                        if (response.success) {
+                            // Cập nhật UI ngay lập tức
+                            button.data("active", newActive);
+                            button.toggleClass("btn-success btn-secondary");
+                            button.text(newActive);
+                        } else {
+                            alert(response.error);
+                        }
+                    },
+                    error: function (response) {
+                        alert(response.responseJSON.error);
                     }
-
-                    $("#addLinksSpinner").show(); // Hiện spinner
-
-                    let tableBody = $("#linkTable");
-                    links.forEach((link) => {
-                        let newRow = `<tr data-post-id="">
-                            <td>New</td>
-                            <td>Processing...</td>
-                            <td>${link}</td>
-                            <td>Processing...</td>
-                            <td>Processing...</td>
-                            <td>Processing...</td>
-                            <td>Processing...</td>
-                            <td><span class="badge bg-warning">Processing</span></td>
-                            <td>-</td>
-                        </tr>`;
-                        tableBody.append(newRow);
-                    });
-
-                    $.ajax({
-                        url: "{% url 'add_links' %}",
-                        type: "POST",
-                        data: JSON.stringify({ links: links }),
-                        contentType: "application/json",
-                        headers: { "X-CSRFToken": getCSRFToken() },
-                        success: function (response) {
-                            if (response.success) {
-                                reloadData();
-                                document.getElementById('multiLinks').value = '';
-                            }
-                        },
-                        complete: function () {
-                            document.getElementById('multiLinks').value = '';
-                            $("#addLinksSpinner").hide(); // Ẩn spinner sau khi xử lý xong
-                        },
-                        error: function (response) {
-                            console.log(response);
-                            alert(response.responseJSON.error);
-                        }
-                    });
-                    loadLinks();
-                });
-
-
-
-                function getCSRFToken() {
-                    return document.cookie.split('; ').find(row => row.startsWith('csrftoken'))?.split('=')[1];
-                }
-
-                function reloadData() {
-                    $("#loadingSpinner").show(); // Hiện spinner
-                    $.ajax({
-                        url: "{% url 'get_links_on' %}",
-                        type: "GET",
-                        success: function (response) {
-                            if (response.success) {
-                                let tableBody = $("#linkTable");
-                                tableBody.empty();
-                                response.links.forEach((link, index) => {
-                                    let row = `<tr>
-                                        <td>${index + 1}</td>
-                                        <td>${formatDate(link.created_time)}</td>
-                                        <td><a href="https://www.facebook.com/${link.post_id}" target="_blank">${link.post_id}</a></td>
-                                        <td>
-                                            <span data-bs-toggle="tooltip" title="${link.content}">
-                                                ${link.name}
-                                            </span>
-                                        </td>
-                                        <td>${link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time)}</td>
-                                        <td>${link.comment_count}</td>
-                                        <td>${link.delay}</td>
-                                        <td><span class="badge ${link.status === 'public' ? 'bg-success' : 'bg-danger'}">${link.status}</span></td>
-                                        <td>
-                                            <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">Edit</button>
-                                            <button class="btn btn-danger delete-link" data-post-id="${link.post_id}">Delete</button>
-                                        </td>
-                                    </tr>`;
-                                    tableBody.append(row);
-                                });
-
-                                $('[data-bs-toggle="tooltip"]').tooltip(); // Cập nhật tooltip
-                                updateLinksCount(response.links.length);
-                            }
-                        },
-                        complete: function () {
-                            $("#loadingSpinner").hide(); // Ẩn spinner sau khi load xong
-                        },
-                        error: function () {
-                            alert("Không thể tải lại dữ liệu!");
-                            $("#loadingSpinner").hide(); // Ẩn spinner nếu có lỗi
-                        }
-                    });
-                }
-
-                // Xóa link
-                $(document).on("click", ".delete-link", function () {
-                    let origin_url = $(this).data("origin-url");
-
-                    $(this).html('❌ Xóa <span class="spinner-border spinner-border-sm" role="status"></span>');
-
-                    $.post("{% url 'delete_link' %}", JSON.stringify({ origin_url: origin_url }), function () {
-                        reloadData();
-                    }, "json").always(function () {
-                        $(this).html('❌ Xóa');
-                    });
-                });
-
-                // Mở modal chỉnh sửa
-                let editModal = new bootstrap.Modal(document.getElementById("editModal"));
-
-                $(".edit-link").on("click", function () {
-                    let row = $(this).closest("tr");
-
-                    $("#editPostId").val($(this).data("post-id"));
-                    $("#editPostName").val(row.find("td:eq(3)").text());
-                    $("#editContent").val(row.find("td:eq(3) span").attr("title"));
-                    $("#editDelay").val(row.find("td:eq(6)").text());
-                    $("#editStatus").val(row.find("td:eq(7)").text());
-
-                    editModal.show();
-                });
-
-                $("#saveEdit").on("click", function () {
-                    let postId = $("#editPostId").val();
-                    let newName = $("#editPostName").val();
-                    let newContent = $("#editContent").val();
-                    let newDelay = $("#editDelay").val();
-                    let newStatus = $("#editStatus").val();
-
-                    $.ajax({
-                        url: "{% url 'edit_link' %}",
-                        type: "POST",
-                        data: JSON.stringify({
-                            post_id: postId,
-                            name: newName,
-                            content: newContent,
-                            delay: newDelay,
-                            status: newStatus
-                        }),
-                        contentType: "application/json",
-                        headers: { "X-CSRFToken": getCSRFToken() },
-                        success: function (response) {
-                            if (response.success) {
-                                reloadData();
-                                $("#editModal").modal("hide");
-                            } else {
-                                alert(response.error);
-                            }
-                        },
-                        error: function () {
-                            alert("Lỗi khi gửi dữ liệu!");
-                        }
-                    });
-                });
-
-                function getCSRFToken() {
-                    return document.cookie.split('; ')
-                        .find(row => row.startsWith('csrftoken'))
-                        ?.split('=')[1];
-                }
-
-                function formatDate(timestamp) {
-                    if (!isNaN(timestamp)) {
-                        let date = new Date(timestamp * 1000);  // Convert UNIX timestamp to JavaScript Date object
-                        let day = date.getDate().toString().padStart(2, '0');
-                        let month = (date.getMonth() + 1).toString().padStart(2, '0');  // Months are zero-based
-                        let year = date.getFullYear();
-                        return `${day}/${month}/${year}`;
-                    }
-                    return timestamp;  // If not a number, return the original value
-                }
-
-                function calculateHoursAgo(datetimeStr) {
-                    if (datetimeStr === "Processing") {
-                        return "Processing";
-                    }
-                    let datetime = new Date(datetimeStr);
-                    let now = new Date();
-                    let diffInMs = now - datetime;
-                    let diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-                    return `${diffInHours}h`;
-                }
-                $(document).on("click", ".toggle-active", function () {
-                    let button = $(this);
-                    let originUrl = button.data("origin-url");
-                    let newActive = 'off'
-                
-                    $.ajax({
-                        url: "{% url 'toggle-active' %}",
-                        type: "POST",
-                        data: JSON.stringify({ origin_url: originUrl, active: newActive }),
-                        contentType: "application/json",
-                        headers: { "X-CSRFToken": getCSRFToken() },
-                        success: function (response) {
-                            if (response.success) {
-                                // Cập nhật UI ngay lập tức
-                                button.data("active", newActive);
-                                button.toggleClass("btn-success btn-secondary");
-                                button.text(newActive);
-                            } else {
-                                alert(response.error);
-                            }
-                        },
-                        error: function (response) {
-                            alert(response.responseJSON.error);
-                        }
-                    });
                 });
             });
+
+            function loadUsernames() {
+                $.get("{% url 'get_username' %}", function (data) {
+                    let userContainer = $("#filterUsername");
+                    userContainer.empty();
+                    data.username.forEach(user => {
+                        userContainer.append(`
+                            <li>
+                                <label class="dropdown-item">
+                                    <input class="form-check-input me-2 user-checkbox" type="checkbox" value="${user}" checked> ${user}
+                                </label>
+                            </li>
+                        `);
+                    });
+                });
+            }
+
+            $("#usernameDropdown").on("click", function (event) {
+                event.stopPropagation();
+                $("#filterUsername").toggle();
+            });
+
+            $(document).on("click", function (event) {
+                if (!$(event.target).closest(".dropdown").length) {
+                    $("#filterUsername").hide();
+                }
+            });
+
+            function timeAgo(timestamp) {
+                let hoursAgo = Math.floor((Date.now() / 1000 - timestamp) / 3600);
+                return `${hoursAgo}h`;
+            }
+
+            function updateTable(data) {
+                if (!Array.isArray(data)) {
+                    console.error("Data is not an array:", data);
+                    return;
+                }
+                let tableBody = $("#linkTable");
+                tableBody.empty();
+                data.forEach((link, index) => {
+                    let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
+                    // let formattedLastCommentTime = link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time);
+                    var active = link.active;
+                    if (active == 'pending'){
+                        active = '⏳ Chờ xử lý';
+                    }
+                    if (active == 'failed'){
+                            active = '❌ Thất bại';
+                        }
+                    if (active == 'on'){
+                            active = '✅ Đang chạy';
+                        }
+                    if (active == 'off'){
+                            active = '⚫ Đã tắt';}
+                    tableBody.append(`
+                        <tr>
+                            <td><input type="checkbox" class="select-post" value="${link.post_id}"></td>
+                            <td>${index + 1}</td>
+                            <td>${link.username}</td>
+                            <td>${link.created_time}</td>
+                            <td><a href="${link.origin_url}" target="_blank">${link.post_id}</a></td>
+                            <td>
+                                <span data-bs-toggle="tooltip" title="${link.content}">
+                                    ${link.name}
+                                </span>
+                            </td>
+                            <td>${timeAgo(link.last_comment_time)}</td>
+                            <td>${link.comment_count}</td>
+                            <td>${link.delay}</td>
+                            <td>${link.status}</td>
+                            <td>
+                                <button class="btn btn-sm toggle-active" data-origin-url="${link.origin_url}" data-user="${link.username}">
+                                    ${active}
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning edit-link" data-post-id="${link.post_id}">✏️ Edit</button>
+                                <button class="btn btn-danger delete-link" data-origin-url="${link.origin_url}">❌ Xóa</button>
+                            </td>
+                        </tr>
+                    `);
+                });
+            }
+
             
-        </script>
-    </div>
+
+            $("#applyFilter").on("click", function () {
+                let selectedUsernames = [];
+                $(".user-checkbox:checked").each(function () {
+                    selectedUsernames.push($(this).val());
+                });
+                
+                let filterData = {
+                    usernames: selectedUsernames,
+                    min_time: $("#filterTimeMin").val(),
+                    max_time: $("#filterTimeMax").val(),
+                    type: $("#filterType").val()
+                };
+                
+                $.ajax({
+                    url: "{% url 'get_links_on' %}",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(filterData),
+                    headers: { "X-CSRFToken": getCsrfToken() },
+                    success: function (response) {
+                        updateTable(response.links);
+                    }
+                });
+            });
+
+            // Chức năng chọn tất cả bài viết
+            $("#selectAll").on("change", function () {
+                $(".select-post").prop("checked", this.checked);
+            });
+
+            $("#selectAllPosts").on("click", function () {
+                let allChecked = $(".select-post:checked").length === $(".select-post").length;
+                $(".select-post").prop("checked", !allChecked);
+                $("#selectAll").prop("checked", !allChecked);
+            });
+
+            // Chức năng xóa bài viết đã chọn
+            $("#deleteSelected").on("click", function () {
+                let selectedPosts = [];
+                $(".select-post:checked").each(function () {
+                    selectedPosts.push({
+                        post_id: $(this).val(),
+                        origin_url: $(this).closest("tr").find("a").attr("href")
+                    });
+                });
+
+                if (selectedPosts.length === 0) {
+                    alert("Vui lòng chọn ít nhất một bài để xóa!");
+                    return;
+                }
+
+                if (!confirm("Bạn có chắc muốn xóa những bài đã chọn?")) return;
+
+                $.ajax({
+                    url: "{% url 'delete_posts' %}",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ posts: selectedPosts }),
+                    headers: { "X-CSRFToken": getCsrfToken() },
+                    success: function () {
+                        alert("Đã xóa thành công!");
+                        $("#applyFilter").click(); // Tải lại dữ liệu sau khi xóa
+                    },
+                    error: function () {
+                        alert("Xóa thất bại!");
+                    }
+                });
+            });
+
+            loadUsernames();
+        });
+    </script>
 </body>
 </html>

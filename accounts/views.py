@@ -428,14 +428,54 @@ def add_user(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+@csrf_exempt
+def get_username(request):
+    if request.session.get('role') == 'admin':
+        users = list(users_db.list_collection_names())
+        return JsonResponse({"username": users})
+
+@csrf_exempt
+def delete_posts(request):
+    pass
+
+@csrf_exempt
 def get_links_on(request):
     """Lấy danh sách link"""
     if request.session.get("role") == "admin":
-        links = list(links_collection.find({"active": {"$in": ["on", "pending", "failed"]}}, {"_id": 0}))
-        links = [
-            {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links
-        ][::-1]
+        # links = list(links_collection.find({"active": {"$in": ["on", "pending", "failed"]}}, {"_id": 0}))
+        # links = [
+        #     {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links
+        # ][::-1]
         # print(links)
+        
+        data = json.loads(request.body)
+        
+        users = data.get("usernames", [])
+        print(users)
+        
+        type_ = data.get("type", "")
+        print(type_)
+        
+        query = {"active": {"$in": ["on", "pending", "failed"]}}
+        if users:
+            users = [users_db[username] for username in users]
+        else:
+            users = users_db.list_collection
+        if type_:
+            query["type"] = type_
+        
+        
+        
+        links = []
+        for user in users:
+            link_single = list(user.find(query, {"_id": 0}))
+            link_single = [
+                {**link, "username": user.name} for link in link_single
+            ]
+            links += link_single
+        links = [
+            {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links][::-1]
+        
         return JsonResponse({"links": links})
     else:
         username = request.session.get("username")
@@ -588,11 +628,14 @@ def toggle_link_active(request):
             data = json.loads(request.body)
             origin_url = data.get("origin_url")
             new_active = data.get("active")
+            username = data.get("username")
 
-            result = links_collection.update_one({"origin_url": origin_url}, {"$set": {"active": new_active}})
+            user_links_collection = users_db[username]
+
+            result = user_links_collection.update_one({"origin_url": origin_url}, {"$set": {"active": new_active}})
+            print(result)
             if result.matched_count == 0:
                 return JsonResponse({"success": False, "error": "Không tìm thấy link!"}, status=400)
-
             return JsonResponse({"success": True})
         else:
             username = request.session.get("username")

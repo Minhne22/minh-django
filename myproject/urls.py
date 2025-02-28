@@ -23,7 +23,7 @@ from accounts.views import login_view, logout_view, register_view, manage_users,
             edit_limit, change_pass, toggle_link_active
 from accounts.views import add_cookies, get_cookies, delete_cookie, delete_all_cookies
 from accounts.views import convert_tokens, get_tokens, delete_token, delete_all_tokens
-from accounts.views import comment_list, get_user_limit
+from accounts.views import comment_list, get_user_limit, get_username, delete_posts
 from accounts.views import file_upload, show_data, admin_phone
 
 urlpatterns = [
@@ -51,8 +51,10 @@ urlpatterns = [
     path("admin-dashboard/change-pass/<str:username>/", change_pass, name="change_pass"),
     path("admin-dashboard/add-user/", add_user, name="add_user"),
     path("api/get_links_on/", get_links_on, name="get_links_on"),
+    path("api/get_username/", get_username, name="get_username"),
     path("api/get_links_off/", get_links_off, name="get_links_off"),
     path("api/delete_link/", delete_link, name="delete_link"),
+    path("api/delete_posts/", delete_posts, name="delete_posts"),
     path("api/add_links/", add_links, name="add_links"),
     path("api/add_links_off/", add_links, name="add_links_off"),
     path("admin-dashboard/proxies/", admin_proxies, name="admin_proxies"),
