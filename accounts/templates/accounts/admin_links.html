@@ -179,7 +179,6 @@
                 tableBody.empty();
                 data.forEach((link, index) => {
                     let postLink = `<a href="${link.origin_url}" target="_blank">${link.post_id}</a>`;
-                    // let formattedLastCommentTime = link.last_comment_time === "Processing" ? "Processing" : calculateHoursAgo(link.last_comment_time);
                     var active = link.active;
                     if (active == 'pending'){
                         active = '⏳ Chờ xử lý';
@@ -222,21 +221,22 @@
                 });
             }
 
-            
-
             $("#applyFilter").on("click", function () {
                 let selectedUsernames = [];
                 $(".user-checkbox:checked").each(function () {
                     selectedUsernames.push($(this).val());
                 });
-                
+
+                let minTime = $("#filterTimeMin").val();
+                let maxTime = $("#filterTimeMax").val();
+
                 let filterData = {
                     usernames: selectedUsernames,
-                    min_time: $("#filterTimeMin").val(),
-                    max_time: $("#filterTimeMax").val(),
+                    min_time: minTime ? Date.now() - minTime * 3600 * 1000 : null,
+                    max_time: maxTime ? Date.now() - maxTime * 3600 * 1000 : null,
                     type: $("#filterType").val()
                 };
-                
+
                 $.ajax({
                     url: "{% url 'get_links_on' %}",
                     type: "POST",

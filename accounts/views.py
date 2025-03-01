@@ -458,16 +458,16 @@ def get_links_on(request):
         
         query = {"active": {"$in": ["on", "pending", "failed"]}}
         if users:
-            users = [users_db[username] for username in users]
+            users_collection_db = [users_db[username] for username in users]
         else:
-            users = users_db.list_collection
+            users_collection_db = users_db.list_collection_names()
+            users_collection_db = [users_db[username] for username in users_collection_db]
         if type_:
-            query["type"] = type_
-        
-        
+            query["type"] = {"$in": type_}
         
         links = []
-        for user in users:
+        # print(users_collection_db)
+        for user in users_collection_db:
             link_single = list(user.find(query, {"_id": 0}))
             link_single = [
                 {**link, "username": user.name} for link in link_single
@@ -475,6 +475,34 @@ def get_links_on(request):
             links += link_single
         links = [
             {**link, "content": escape(link.get('content', '').encode().decode('unicode_escape'))} for link in links][::-1]
+        
+        comments = []
+        # print(user_comments_collection.list_collections())
+        for user_comment_name in user_comments_collection.list_collection_names():
+            print(user_comment_name)
+            user_comment = user_comments_collection[user_comment_name]
+            print(user_comment)
+            if user_comment_name in users:
+                comment_single = list(user_comment.find({}, {"_id": 0}))
+                comment_single = [
+                    {**comment, "username": user_comment.name} for comment in comment_single
+                ]
+                comments += comment_single
+        print(comments)
+        
+        last_comments = {}
+        for comment in comments:
+            # comment['post_id']: comment['time']
+            post_id = str(comment['post_id'])
+            time_ = comment['time']
+            if post_id not in last_comments or time_ > last_comments[post_id]:
+                print('huhu')
+                last_comments[post_id] = time_
+        
+        for link in links:
+            post_id = str(link['post_id']) if 'post_id' in link else None
+            if post_id in last_comments:
+                link['last_comment_time'] = last_comments[post_id]
         
         return JsonResponse({"links": links})
     else:
